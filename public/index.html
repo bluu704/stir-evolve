@@ -236,6 +236,8 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 .set-code{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
 .set-code b{font-family:var(--font-data);letter-spacing:.06em;user-select:text;-webkit-user-select:text}
 .code-row{display:flex;gap:6px}
+.code-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#codeCopy{border:1px solid rgba(255,255,255,.16);border-radius:7px;padding:3px 9px;font-size:11.5px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.1)}#codeCopy:hover{background:rgba(255,255,255,.18)}
 .code-row input{flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:var(--ink);padding:6px 8px;font:500 12.5px var(--font-data);outline:none}
 .code-row input:focus{border-color:var(--liq)}
 .code-row button{flex:none;border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:6px 10px;font-size:12.5px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.1)}
@@ -417,8 +419,8 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
     <div class="set-row"><button id="resetBtn" class="icon-btn" type="button" aria-label="내 젓기 초기화"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="set-txt"><span>내 젓기 <b id="mineVal">0</b></span><small id="resetHint">누르면 내가 저은 만큼 전체에서도 빠져요</small></div></div>
     <div class="set-code">
-      <div class="set-txt"><span>내 연구원 코드 <b id="myCode"></b></span><small>다른 기기에 이 코드를 넣으면 같은 연구원으로 기여가 이어져요. 남에게 알려 주지 마세요.</small></div>
-      <div class="code-row"><button id="codeCopy" type="button">복사</button><input id="codeIn" maxlength="16" placeholder="다른 기기의 코드 입력" aria-label="연구원 코드 입력" autocomplete="off" spellcheck="false"><button id="codeUse" type="button">적용</button></div>
+      <div class="set-txt"><span class="code-line">내 연구원 코드 <b id="myCode"></b><button id="codeCopy" type="button">복사</button></span><small>다른 기기에 이 코드를 넣으면 같은 연구원으로 기여가 이어져요. 남에게 알려 주지 마세요.</small></div>
+      <div class="code-row"><input id="codeIn" maxlength="16" placeholder="다른 기기의 코드 입력" aria-label="연구원 코드 입력" autocomplete="off" spellcheck="false"><button id="codeUse" type="button">적용</button></div>
       <small id="codeMsg"></small>
     </div>
     <div class="set-foot" id="syncState">로컬 모드</div>
@@ -1298,12 +1300,17 @@ window.addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;
    ===================================================================== */
 const $=id=>document.getElementById(id);
 const tubeRow=$('tubeRow'),flaskRow=$('flaskRow'),tray=$('tray'),tooltip=$('tooltip');
+// 시약 선반 설명: 마우스는 올렸을 때만 보이고 벗어나면 사라짐. 터치는 누르고 있는 동안만 보임
+function hoverTip(el,html){el.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')showTip(el,html());});
+  el.addEventListener('pointerleave',hideTip);el.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')showTip(el,html());});
+  ['pointerup','pointercancel'].forEach(t=>el.addEventListener(t,e=>{if(e.pointerType!=='mouse')hideTip();}));
+  el.addEventListener('click',e=>e.stopPropagation());el.addEventListener('contextmenu',e=>e.preventDefault());}
 const tubes=STAGES.map((s,i)=>{const b=document.createElement('button');b.className='tube';b.type='button';b.setAttribute('aria-label','도감 '+(i+1));b.innerHTML='<div class="fill"></div><div class="q">?</div>';
-  b.addEventListener('click',ev=>{ev.stopPropagation();showTip(b,isFound(i)?`<div class="no">SAMPLE ${String(i+1).padStart(2,'0')}</div><h4>${i+1}단계 · ${s.name}</h4>${s.log}`:
-    `<div class="no">SAMPLE ${String(i+1).padStart(2,'0')}</div><h4>미확인 용액</h4>${i===stageIdx+1?'용액의 색이 서서히 변하고 있다. 조금만 더 저으면 정체가 드러날 것 같다.':'기록 없음. 더 저어야 한다.'}`);});
+  hoverTip(b,()=>(isFound(i)?`<div class="no">SAMPLE ${String(i+1).padStart(2,'0')}</div><h4>${i+1}단계 · ${s.name}</h4>${s.log}`:
+    `<div class="no">SAMPLE ${String(i+1).padStart(2,'0')}</div><h4>미확인 용액</h4>${i===stageIdx+1?'용액의 색이 서서히 변하고 있다. 조금만 더 저으면 정체가 드러날 것 같다.':'기록 없음. 더 저어야 한다.'}`));
   tubeRow.appendChild(b);return b;});
 const flasks=MUTATIONS.map(m=>{const b=document.createElement('button');b.className='flask';b.type='button';b.setAttribute('aria-label','돌연변이 '+m.name);b.innerHTML='<div class="fill"></div><div class="q">?</div>';
-  b.addEventListener('click',ev=>{ev.stopPropagation();showTip(b,found.has(m.id)?`<div class="no">MUTANT</div><h4>${m.name}</h4>${m.log}`:`<div class="no">MUTANT · 미발견</div><h4>???</h4>힌트: ${m.hint}`);});
+  hoverTip(b,()=>found.has(m.id)?`<div class="no">MUTANT</div><h4>${m.name}</h4>${m.log}`:`<div class="no">MUTANT · 미발견</div><h4>???</h4>힌트: ${m.hint}`);
   flaskRow.appendChild(b);return b;});
 for(const type in ITEMS){if(ITEMS[type].hidden)continue;const b=document.createElement('button');b.className='item';b.type='button';b.innerHTML=`<span class="dish"><img alt="" src="${ITEMS[type].icon}"></span><span class="nm">${ITEMS[type].label}</span>`;
   b.addEventListener('pointerdown',e=>{e.preventDefault();Snd.init();hideTip();drag={type,sx:e.clientX,sy:e.clientY,moved:false};});
@@ -1316,7 +1323,7 @@ function showTip(el,html,side){tooltip.innerHTML=html;const r=el.getBoundingClie
   tooltip.style.left=clamp(r.left+r.width/2-tw/2,8,innerWidth-tw-8)+'px';tooltip.style.top=(side==='left'?Math.max(8,r.top-th-10):r.bottom+10)+'px';}
 function hideTip(){tooltip.classList.remove('on');}
 document.addEventListener('click',hideTip);
-function openMenu(which){if(which!=='board'&&typeof boardOpen==='function')boardOpen(false);if(typeof rankOpen==='function')rankOpen(false);const sm=$('setMenu'),dm=$('dexOverlay');const openS=which==='set'&&sm.hidden,openD=which==='dex'&&dm.hidden;
+function openMenu(which){hideTip();if(which!=='board'&&typeof boardOpen==='function')boardOpen(false);if(typeof rankOpen==='function')rankOpen(false);const sm=$('setMenu'),dm=$('dexOverlay');const openS=which==='set'&&sm.hidden,openD=which==='dex'&&dm.hidden;
   sm.hidden=!openS;dm.hidden=!openD;$('gearBtn').setAttribute('aria-expanded',String(openS));$('dexBtn').setAttribute('aria-expanded',String(openD));if(openD){renderDex();$('dexClose').focus();}}
 $('gearBtn').addEventListener('click',e=>{e.stopPropagation();openMenu('set');});
 $('dexBtn').addEventListener('click',e=>{e.stopPropagation();openMenu('dex');});
@@ -2283,6 +2290,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&Rank.open)rankOpen(
 async function syncMine(){if(!Sync.endpoint)return;try{const r=await fetch('/api/rank?client='+encodeURIComponent(Sync.client),{cache:'no-store'});const j=r.ok?await r.json():null;
   if(j&&j.me&&typeof j.me.c==='number'){Sync.mine=Math.max(j.me.c,0);Sync.mineE=Sync.mine;}}catch(e){}}
 setTimeout(syncMine,2500);$('gearBtn').addEventListener('click',()=>{if(!$('setMenu').hidden)syncMine();});
+document.querySelector('.dex-scroll').addEventListener('scroll',hideTip,{passive:true});
 /* 연구원 코드: 다른 기기에서도 같은 연구원(기여도)으로 이어서 하기 */
 $('myCode').textContent=Sync.client;
 $('codeCopy').addEventListener('click',async()=>{const m=$('codeMsg');m.className='';
