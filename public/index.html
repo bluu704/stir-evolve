@@ -449,8 +449,6 @@ const CONFIG = {
   // '/api/stir': 같은 주소의 Cloudflare Worker가 모두의 젓기를 합산. 서버가 없으면(미리보기 등) 자동으로 로컬 모드로 전환
   sync: { endpoint: '/api/stir', pushIntervalMs: 2000, storageKey: 'stir-evolve-v1' },
 };
-const QS = new URLSearchParams(location.search);
-const FAST = QS.get('fast') ? Math.max(1, +QS.get('fast') || 15) : 1;   // ?fast=15 미리보기용 가속
 
 /* 진화 단계 (need = 다음 단계까지 필요한 젓기 횟수) */
 const STAGES = [
@@ -676,7 +674,6 @@ const Sync={
 };
 const found=new Set(store.get(CONFIG.sync.storageKey,{}).found||[]);
 Sync.load();
-if(QS.get('stage')){const s=clamp((+QS.get('stage')|0)-1,0,STAGES.length-1);Sync.localTotal=CUM[s]+0.01;if(!Sync.endpoint)Sync.base=Sync.localTotal;}  // 로컬 모드 미리보기 전용
 setInterval(()=>Sync.save(),1500);
 Sync.init();
 
@@ -1569,7 +1566,7 @@ app.ticker.add(()=>{
   /* --- 젓기 / RPM --- */
   const subNow=!broken&&mode==='play'&&tip.y>surfaceAt(tip.x)+5&&drain<BB-LEVEL-20;
   const dist=Math.min(80,Math.hypot(tip.x-prevTip.x,tip.y-prevTip.y));prevTip.x=tip.x;prevTip.y=tip.y;
-  if(subNow&&dist>.4){const st=dist/CONFIG.stir.pxPerStir;const mult=(boostTime>0?CONFIG.evolution.sugarBoost:1)*FAST;Sync.add(st*mult,st);if(dist>3)hideHint();}
+  if(subNow&&dist>.4){const st=dist/CONFIG.stir.pxPerStir;const mult=(boostTime>0?CONFIG.evolution.sugarBoost:1);Sync.add(st*mult,st);if(dist>3)hideHint();}
   const target=subNow?Math.min(CONFIG.stir.rpmMax,sp*CONFIG.stir.rpmPerSpeed)*(1-freeze*.8):0;
   rpm+=(target-rpm)*(1-Math.exp(-(target>rpm?CONFIG.stir.riseRate:CONFIG.stir.decayRate/(1+look.viscosity*4))*dt));
   const self=look.selfSpin*(.75+.25*Math.sin(T*.7));if(mode==='play'&&rpm<self)rpm=lerp(rpm,self,dt);
@@ -2222,7 +2219,6 @@ $('boardForm').addEventListener('submit',async e=>{e.preventDefault();const text
 // 게시판 입력 중에는 키 입력이 게임 단축키로 새지 않게
 ['boardText','boardName'].forEach(id=>$(id).addEventListener('keydown',e=>e.stopPropagation()));
 pollBoard();
-if(QS.get('debug'))window.__se={act:k=>{actCd[k]=0;doAct(k);},setFreeze:v=>{freeze=v;},st:()=>({spillL,spillR,spilled,edge:edgeRaw.map(v=>v|0),rise:rise|0,n:items.length,BY}),snd:Snd,items,toScreen:(x,y)=>{const q=world.toGlobal(new PIXI.Point(x,y));return {x:q.x,y:q.y}},spawnItem,shatter:()=>shatter(),mutate:k=>triggerMutation(MUTATIONS[k])};
 /* 시작 */
 refreshFlasks();layout();setTimeout(layout,200);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
