@@ -34,6 +34,7 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 #counter .cap{font:600 11px var(--font-data);letter-spacing:.24em;color:#d5dce6}
 #bigCount{display:block;font:600 84px/1 var(--font-data);font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-shadow:0 0 30px color-mix(in srgb,var(--liq) 35%,transparent)}
 #rpmLine{display:block;margin-top:2px;font:600 14px var(--font-data);letter-spacing:.08em;font-variant-numeric:tabular-nums;color:var(--ink);transition:color .15s}
+#onlineLine{display:block;margin-top:3px;font:500 12px var(--font-data);color:#c9d1dc}#onlineLine:empty{display:none}
 #rpmLine.danger{animation:shiver .09s linear infinite}
 @keyframes shiver{50%{transform:translateX(1.5px)}}
 /* ---------- 도감 (왼쪽 패널 안) ---------- */
@@ -289,6 +290,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 <header id="counter" aria-live="polite" aria-label="모두가 저은 횟수">
   <b id="bigCount">0</b>
   <span id="rpmLine">RPM 0</span>
+  <span id="onlineLine"></span>
 </header>
 
 <section id="hud" class="panel" aria-label="계측 패널">
@@ -376,7 +378,8 @@ const CONFIG = {
   particles: { bubbleMax: 260, bubbleBase: 4, bubbleRpm: 140, metaMax: 34, starMax: 80, eyesMax: 7, emberMax: 170, dropletMax: 260 },
   // 여러 사람의 젓기를 합치는 서버 주소. 비워두면 로컬 모드.
   // POST {endpoint} body {delta, client} → {total, online?} / GET {endpoint} → {total, online?}
-  sync: { endpoint: '', pushIntervalMs: 2000, pollIntervalMs: 4000, storageKey: 'stir-evolve-v1' },
+  // '/api/stir': 같은 주소의 Cloudflare Worker가 모두의 젓기를 합산. 서버가 없으면(미리보기 등) 자동으로 로컬 모드로 전환
+  sync: { endpoint: '/api/stir', pushIntervalMs: 2000, storageKey: 'stir-evolve-v1' },
 };
 const QS = new URLSearchParams(location.search);
 const FAST = QS.get('fast') ? Math.max(1, +QS.get('fast') || 15) : 1;   // ?fast=15 미리보기용 가속
@@ -545,13 +548,22 @@ const CYCLE=CUM[STAGES.length-1]+STAGES[STAGES.length-1].need;   // 한 세대(1
    ===================================================================== */
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 const Sync={
-  endpoint:CONFIG.sync.endpoint, base:0, pending:0, mine:0, online:null, ok:true, busy:false,
-  client:(()=>{try{let id=sessionStorage.getItem('se-client');if(!id){id=Math.random().toString(36).slice(2,10);sessionStorage.setItem('se-client',id);}return id;}catch(e){return Math.random().toString(36).slice(2,10);}})(),
-  load(){const d=store.get(CONFIG.sync.storageKey,{});this.mine=d.mine||0;if(!this.endpoint)this.base=d.total||0;},
-  save(){store.set(CONFIG.sync.storageKey,{total:this.endpoint?0:this.base,mine:this.mine,found:[...found]});},
+  endpoint:CONFIG.sync.endpoint, base:0, pending:0, mine:0, localTotal:0, online:null, ok:true, busy:false, ready:false, silent:false,
+  client:(()=>{try{let id=localStorage.getItem('se-client');if(!id){id=Math.random().toString(36).slice(2,12);localStorage.setItem('se-client',id);}return id;}catch(e){return Math.random().toString(36).slice(2,12);}})(),
+  load(){const d=store.get(CONFIG.sync.storageKey,{});this.mine=d.mine||0;this.localTotal=d.total||0;if(!this.endpoint)this.base=this.localTotal;},
+  save(){store.set(CONFIG.sync.storageKey,{total:this.endpoint?this.localTotal:this.base,mine:this.mine,found:[...found]});},
   add(e,stirs){this.mine+=stirs;if(this.endpoint)this.pending+=e;else this.base+=e;},
   total(){return this.base+this.pending;},
   reset(){if(this.endpoint)return false;this.base=0;this.save();return true;},
+  // 처음 한 번 서버에 접속해 보고, 안 되면 로컬 모드로 전환
+  async init(){
+    if(!this.endpoint){this.ready=true;return;}
+    try{const res=await fetch(this.endpoint,{cache:'no-store'});const j=res.ok?await res.json():null;
+      if(j&&typeof j.total==='number'){this.base=j.total;this.online=j.online??null;this.ok=true;}else throw 0;}
+    catch(e){this.endpoint='';this.base=this.localTotal;}
+    this.ready=true;this.silent=true;
+    if(this.endpoint)setInterval(()=>this.tick(),CONFIG.sync.pushIntervalMs);
+  },
   async tick(){
     if(!this.endpoint||this.busy)return;this.busy=true;
     try{
@@ -559,7 +571,7 @@ const Sync={
       if(this.pending>0.01){const sent=this.pending;
         res=await fetch(this.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({delta:sent,client:this.client})});
         if(res.ok){this.pending-=sent;}
-      }else res=await fetch(this.endpoint);
+      }else res=await fetch(this.endpoint,{cache:'no-store'});
       if(res.ok){const j=await res.json();if(typeof j.total==='number')this.base=j.total;this.online=j.online??null;this.ok=true;}else this.ok=false;
     }catch(e){this.ok=false;}
     this.busy=false;
@@ -567,9 +579,9 @@ const Sync={
 };
 const found=new Set(store.get(CONFIG.sync.storageKey,{}).found||[]);
 Sync.load();
-if(QS.get('stage')){const s=clamp((+QS.get('stage')|0)-1,0,STAGES.length-1);if(!Sync.endpoint)Sync.base=CUM[s]+0.01;}
+if(QS.get('stage')){const s=clamp((+QS.get('stage')|0)-1,0,STAGES.length-1);Sync.localTotal=CUM[s]+0.01;if(!Sync.endpoint)Sync.base=Sync.localTotal;}  // 로컬 모드 미리보기 전용
 setInterval(()=>Sync.save(),1500);
-if(Sync.endpoint){setInterval(()=>Sync.tick(),CONFIG.sync.pushIntervalMs);Sync.tick();}
+Sync.init();
 
 /* =====================================================================
    오디오 (Web Audio 절차적 합성)
@@ -1361,8 +1373,9 @@ app.ticker.add(()=>{
 
   /* --- 진화 상태 --- */
   const total=Sync.total(),g=Math.floor(total/CYCLE)+1;cycT=total-(g-1)*CYCLE;let si=0;for(let i=STAGES.length-1;i>=0;i--)if(cycT>=CUM[i]){si=i;break;}
-  if(g!==gen){const up=g>gen&&stageIdx>=0;gen=g;if(up)newGeneration();}
-  if(si!==stageIdx)setStage(si,stageIdx>=0);
+  const silent=Sync.silent;Sync.silent=false;   // 첫 동기화로 단계가 뛰는 건 연출 없이 반영
+  if(g!==gen){const up=g>gen&&stageIdx>=0&&!silent;gen=g;if(up)newGeneration();}
+  if(si!==stageIdx)setStage(si,stageIdx>=0&&!silent);
   const last=stageIdx===STAGES.length-1;progress=clamp((cycT-CUM[stageIdx])/STAGES[stageIdx].need,0,1);
   previewKick=Math.max(0,previewKick-dt*.08);
   const blend=Math.min(.95,progress*progress*CONFIG.evolution.previewBlend+previewKick);
@@ -1869,6 +1882,7 @@ function updateHUD(total){
   // RPM: 파손 구간(브레이크 RPM 이상)에 들어가면 빨강, 파손에 가까울수록 더 진한 빨강
   const rl=$('rpmLine');rl.textContent='RPM '+Math.round(rpm);const danger=mode==='play'&&(rpm>CONFIG.breakage.rpm||stress>.02);
   rl.style.color=danger?css(mixC(0xff9c8a,0xff1f1f,clamp(stress,0,1))):'';rl.classList.toggle('danger',danger&&stress>.6);
+  $('onlineLine').textContent=Sync.endpoint&&Sync.ok&&Sync.online?`지금 ${Sync.online}명이 젓는 중`:'';
   $('syncState').textContent=Sync.endpoint?(Sync.ok?(Sync.online?`온라인 ${Sync.online}명`:'공유 모드'):'연결 끊김'):'로컬 모드';
   const mb=$('mutBadge');mb.classList.toggle('on',!!mut.active);if(mut.active)mb.textContent=`돌연변이 진행 중 · ${Math.ceil(mut.time)}초`;
 }

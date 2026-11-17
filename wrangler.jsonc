@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stir-evolve",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  // public/ 의 index.html 을 정적 파일로 제공
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  // 모두의 젓기 합계를 들고 있는 Durable Object (무료 플랜에서 쓸 수 있는 SQLite 저장소 방식)
+  "durable_objects": {
+    "bindings": [{ "name": "COUNTER", "class_name": "Counter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Counter"] }]
+}
