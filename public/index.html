@@ -572,8 +572,8 @@ const ITEMS = {
   marsh:   { label:'마시멜로',  tag:'뜸·부풀어오름', w:26, h:22, rel:.25, chamfer:9 },
   sub:     { label:'장난감 잠수함', tag:'잠수·부상',  w:46, h:22, rel:1.0, chamfer:9, life:60 },
   crystal: { label:'수정 씨앗', tag:'자람',          r:10, rel:2.2 },
-  banana:  { label:'바나나',    tag:'뜸·노릇',       w:42, h:18, rel:.9, chamfer:8 },
-  jelly:   { label:'형광 해파리', tag:'둥둥·발광',    r:15, rel:1.0, life:55 },
+  banana:  { label:'바나나',    tag:'뜸·노릇',       w:72, h:40, rel:.9, chamfer:16 },
+  jelly:   { label:'형광 해파리', tag:'둥둥·발광',    r:29, rel:1.0, life:55 },
   teabag:  { label:'녹차 티백', tag:'우러남',        w:26, h:30, rel:1.1, chamfer:4, dissolve:50 },
   pumice:  { label:'부석',      tag:'돌인데 뜸',     r:15, rel:.7 },
   watch:   { label:'회중시계',  tag:'째깍째깍',      r:14, rel:3.2 },
@@ -1262,13 +1262,16 @@ Object.assign(DRAW,{
       x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=w*.02;x.stroke();x.restore();});},
 });
 Object.assign(DRAW,{
-  banana(x,w,h){x.fillStyle=LG(x,0,0,0,h,[[0,'#fff27a'],[.6,'#f7d21a'],[1,'#c99a00']]);x.beginPath();x.moveTo(w*.06,h*.3);x.quadraticCurveTo(w*.5,h*1.15,w*.96,h*.2);x.quadraticCurveTo(w*.5,h*.62,w*.06,h*.3);x.fill();
-    x.fillStyle='#5a3a10';x.beginPath();x.arc(w*.07,h*.3,h*.1,0,7);x.fill();x.fillStyle='#6a8a1a';rr(x,w*.9,h*.06,w*.08,h*.2,h*.05);x.fill();
-    x.strokeStyle='rgba(160,110,0,.5)';x.lineWidth=h*.05;x.beginPath();x.moveTo(w*.15,h*.42);x.quadraticCurveTo(w*.5,h*.86,w*.88,h*.28);x.stroke();},
+  banana(x,w,h){x.fillStyle=LG(x,0,0,0,h,[[0,'#fff59a'],[.5,'#f7d21a'],[1,'#c08f00']]);x.beginPath();x.moveTo(w*.05,h*.22);x.bezierCurveTo(w*.2,h*1.08,w*.8,h*1.08,w*.95,h*.14);
+    x.bezierCurveTo(w*.74,h*.2,w*.26,h*.2,w*.05,h*.22);x.closePath();x.fill();
+    x.fillStyle='rgba(255,255,255,.4)';x.beginPath();x.moveTo(w*.16,h*.3);x.bezierCurveTo(w*.35,h*.46,w*.65,h*.46,w*.84,h*.26);x.bezierCurveTo(w*.65,h*.38,w*.35,h*.38,w*.16,h*.3);x.fill();
+    x.strokeStyle='rgba(150,100,0,.45)';x.lineWidth=h*.04;x.beginPath();x.moveTo(w*.1,h*.3);x.bezierCurveTo(w*.28,h*.92,w*.72,h*.92,w*.9,h*.24);x.stroke();
+    x.fillStyle='#4a2e0c';x.beginPath();x.ellipse(w*.05,h*.22,w*.03,h*.07,0,0,7);x.fill();x.fillStyle='#7a9a1a';rr(x,w*.9,h*.02,w*.08,h*.18,w*.02);x.fill();},
   jelly(x,w,h){const c=w/2;x.fillStyle=RG(x,c,h*.3,1,c,h*.38,w*.5,[[0,'rgba(255,255,255,.95)'],[.45,'rgba(140,240,255,.85)'],[1,'rgba(200,120,255,.6)']]);
-    x.beginPath();x.moveTo(w*.08,h*.5);x.bezierCurveTo(w*.08,h*.02,w*.92,h*.02,w*.92,h*.5);x.quadraticCurveTo(c,h*.58,w*.08,h*.5);x.fill();
-    x.strokeStyle='rgba(180,140,255,.8)';x.lineWidth=w*.045;x.lineCap='round';for(let i=0;i<5;i++){const sx=w*(.2+i*.15);x.beginPath();x.moveTo(sx,h*.52);x.bezierCurveTo(sx-w*.08,h*.7,sx+w*.08,h*.82,sx,h*.98);x.stroke();}
-    x.fillStyle='rgba(255,255,255,.7)';x.beginPath();x.ellipse(w*.35,h*.22,w*.12,h*.06,-.4,0,7);x.fill();},
+    x.strokeStyle='rgba(190,150,255,.85)';x.lineWidth=w*.07;x.lineCap='round';for(let i=0;i<5;i++){const sx=w*(.18+i*.16);x.beginPath();x.moveTo(sx,h*.55);x.bezierCurveTo(sx-w*.08,h*.72,sx+w*.08,h*.84,sx,h*.98);x.stroke();}
+    x.beginPath();x.moveTo(w*.02,h*.58);x.bezierCurveTo(w*.0,h*-.02,w*1,h*-.02,w*.98,h*.58);x.quadraticCurveTo(w*.75,h*.66,c,h*.6);x.quadraticCurveTo(w*.25,h*.66,w*.02,h*.58);x.fill();
+    x.fillStyle='rgba(255,170,240,.45)';x.beginPath();x.ellipse(c,h*.4,w*.22,h*.12,0,0,7);x.fill();
+    x.fillStyle='rgba(255,255,255,.75)';x.beginPath();x.ellipse(w*.3,h*.2,w*.14,h*.07,-.4,0,7);x.fill();},
   teabag(x,w,h){x.strokeStyle='#e8e2d0';x.lineWidth=w*.03;x.beginPath();x.moveTo(w/2,h*.2);x.lineTo(w/2,0);x.stroke();x.fillStyle='#f06a3a';x.fillRect(w*.3,0,w*.4,h*.12);
     rr(x,w*.06,h*.2,w*.88,h*.78,w*.08);x.fillStyle=LG(x,0,h*.2,0,h,[[0,'#f6f2e6'],[1,'#ddd4bc']]);x.fill();
     x.fillStyle='rgba(90,140,40,.75)';for(let i=0;i<40;i++){x.beginPath();x.arc(rand(w*.14,w*.86),rand(h*.36,h*.92),w*rand(.015,.035),0,7);x.fill();}
@@ -2138,7 +2141,7 @@ function updateItems(dt){
     // ---- 바나나: 뜨거우면 노릇하게 ----
     if(it.type==='banana'&&it.sub>.1&&curTemp>80){it.cook=Math.min(1,(it.cook||0)+dt*.08);it.up.tint=mixC(0xffffff,0xb87a2a,it.cook);if(Math.random()<dt*3)spawnFog(p.x,surfaceAt(p.x)-4,true);}
     // ---- 형광 해파리: 오므렸다 펴며 위로, 은은한 빛 ----
-    if(it.type==='jelly'){it.life-=dt/ITEMS.jelly.life;const a=Math.max(0,it.life);
+    if(it.type==='jelly'){it.life-=dt/ITEMS.jelly.life;const a=Math.max(0,it.life);Body.setAngle(b,Math.sin(T*1.3+(it.ph||0))*.12);Body.setAngularVelocity(b,0);
       if(it.sub>.2&&a>0){it.ph=(it.ph||rand(0,3))+dt*2.2;const k=Math.sin(it.ph);if(k>.95&&!it.kick){it.kick=true;Body.applyForce(b,p,{x:rand(-1,1)*b.mass*.002,y:-b.mass*.009});Snd.pulse();if(Math.random()<.5)spawnBubble(p.x,p.y+12,rand(1,2));}if(k<0)it.kick=false;
         it.squash=1+.12*k;if(it.zap&&Math.random()<dt*4){bolt(p.x,p.y,p.x+rand(-70,70),p.y+rand(-50,60),.12,1.6,0xd8b8ff);Snd.spark();}}
       if(!it.light){it.light=new PIXI.Sprite(TX.glow);it.light.anchor.set(.5);it.light.blendMode=ADD;it.light.tint=it.zap?0xc8a8ff:[0x7af0ff,0xff8af0,0x9aff9a][Math.random()*3|0];lc.stars.addChild(it.light);}
