@@ -104,7 +104,7 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 .act svg{width:26px;height:26px;position:relative}.act .an{font-size:11.5px;font-weight:600;position:relative}
 .act .cd{position:absolute;inset:0;background:conic-gradient(rgba(5,7,10,.74) var(--p,0deg),transparent 0);pointer-events:none}
 .act[disabled]{cursor:default}
-@media (max-width:760px){#actions{left:8px;right:8px;transform:none;justify-content:space-between;gap:4px}.act{flex:1;width:auto;height:50px;border-radius:12px;gap:2px}.act svg{width:19px;height:19px}.act .an{font-size:9.5px}}
+@media (max-width:760px), (orientation:portrait) and (max-width:1100px){#actions{left:8px;right:8px;transform:none;justify-content:space-between;gap:4px}.act{flex:1;width:auto;height:50px;border-radius:12px;gap:2px}.act svg{width:19px;height:19px}.act .an{font-size:9.5px}}
 #stateTxt{color:#9fe6ff;font:600 12.5px var(--font-data)}
 .meter{display:flex;flex-direction:column;gap:9px}
 .mhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -282,7 +282,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 .card p{margin:0 0 18px;font-size:13px;line-height:1.65;color:#c4ccd8}
 .card button{background:var(--liq);color:#0b1218;border:0;border-radius:12px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px}
 
-@media (max-width:760px){
+@media (max-width:760px), (orientation:portrait) and (max-width:1100px){
   #counter{top:calc(6px + env(safe-area-inset-top,0px))}
   #bigCount{font-size:40px}#rpmLine{font-size:12px}
   #boardPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:40vh}
@@ -300,11 +300,40 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
   .dex{padding:8px 6px 6px;gap:6px}.dex-head{display:none}
   .shelf-row{gap:3px}.tube{width:12px;height:34px}.flask{width:14px;height:14px}.flask::before{display:none}
   .btns button{padding:6px 0}
-  #tray{top:auto;bottom:calc(6px + env(safe-area-inset-bottom,0px));left:8px;right:8px;transform:none;grid-template-columns:repeat(8,1fr);padding:6px;gap:0;border-radius:14px}
+  #tray{top:auto;bottom:calc(6px + env(safe-area-inset-bottom,0px));left:8px;right:8px;transform:none;grid-template-columns:none;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:minmax(56px,1fr);overflow-x:auto;overflow-y:hidden;padding:4px 6px;gap:0;border-radius:14px;scrollbar-width:none;overscroll-behavior-x:contain}
+  #tray::-webkit-scrollbar{display:none}
+  .item{touch-action:pan-x}
   .tray-title{display:none}
   .dish{width:32px;height:32px}.item img{width:27px;height:27px}
   .item{padding:4px 0;gap:2px}.item .nm{font-size:9px}
   #hint{bottom:auto;top:52%;font-size:11px}
+}
+/* 세로 화면이지만 높이가 낮은 폰: 설명은 1줄로 줄여 비커 공간 확보 */
+@media (orientation:portrait) and (max-height:720px){
+  #stageDesc{-webkit-line-clamp:1}#bigCount{font-size:34px}#hud{padding:8px 10px;gap:6px}#stageName{font-size:17px}.tempbig b{font-size:26px}
+}
+/* 태블릿 세로: 글자·아이콘을 조금 키움 */
+@media (orientation:portrait) and (min-width:700px) and (max-width:1100px){
+  #hud{left:16px;right:16px;padding:14px 18px}#stageName{font-size:24px}#stageDesc{font-size:15px}.tempbig b{font-size:38px}
+  .dish{width:44px;height:44px}.item img{width:36px;height:36px}.item .nm{font-size:11px}#tray{grid-auto-columns:minmax(64px,1fr)}
+  .act{height:58px}.act svg{width:24px;height:24px}.act .an{font-size:11px}#bigCount{font-size:52px}
+}
+/* 가로로 눕힌 폰 (높이가 낮음): 좌측 상태, 우측 스크롤 트레이, 하단 작은 작용 버튼 */
+@media (orientation:landscape) and (max-height:520px){
+  #counter{top:calc(4px + env(safe-area-inset-top,0px))}#bigCount{font-size:30px}#rpmLine{font-size:11px}#onlineLine{font-size:10px}
+  #hud{left:calc(10px + env(safe-area-inset-left,0px));top:52px!important;width:210px;padding:4px 6px;gap:6px}
+  #stageDesc,.lvrow .of{display:none}#stageName{font-size:15px}.tempbig b{font-size:24px}.tempbig b em{font-size:11px}.mhead b{font-size:15px}.evo .gauge{height:8px}
+  #tray{right:calc(10px + env(safe-area-inset-right,0px));top:52px;bottom:60px;transform:none;grid-template-columns:repeat(3,58px);grid-auto-rows:max-content;overflow-y:auto;padding:4px;gap:2px;scrollbar-width:none}
+  #tray::-webkit-scrollbar{display:none}.item{touch-action:pan-y;padding:4px 0;gap:1px}
+  .dish{width:32px;height:32px}.item img{width:26px;height:26px}.item .nm{font-size:9.5px}
+  #actions{bottom:calc(4px + env(safe-area-inset-bottom,0px))}.act{width:56px;height:46px;gap:2px;border-radius:12px}.act svg{width:18px;height:18px}.act .an{font-size:9px}
+  .icon-btn{width:36px;height:36px}#settings,#boardWrap{top:calc(8px + env(safe-area-inset-top,0px))}
+  #boardPanel{top:44px;height:calc(100vh - 110px)}
+  #hint{display:none}
+}
+/* PC지만 화면이 낮을 때(가로 태블릿·작은 노트북): 재료 트레이가 작용 버튼과 겹치지 않게 스크롤 */
+@media (orientation:landscape) and (min-height:521px) and (max-width:1180px){
+  #tray{max-height:calc(100vh - 196px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
 }
 @media (prefers-reduced-motion:reduce){#toast.on,.tube.pop,body.glitch #stage canvas{animation-duration:.01s}}
 .btns button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
@@ -1225,6 +1254,7 @@ window.addEventListener('pointermove',e=>{
     if(drag.moved){drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px';}return;}
   if(e.target===app.view){const w=toWorld(e.clientX,e.clientY);pointer.x=w.x;pointer.y=w.y;pointer.has=true;}
 },{passive:true});
+window.addEventListener('pointercancel',()=>{if(drag){if(drag.ghost)drag.ghost.remove();drag=null;}});
 window.addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;
   if(d.moved){d.ghost.remove();const w=toWorld(e.clientX,e.clientY);if(w.x>BX-30&&w.x<BR+30&&w.y<BB)spawnItem(d.type,w.x,Math.min(w.y,BY-30));}
   else spawnItem(d.type,rand(BX+40,BR-40),BY-60);});
@@ -1248,7 +1278,7 @@ for(const type in ITEMS){if(ITEMS[type].hidden)continue;const b=document.createE
   b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();Snd.init();spawnItem(type,rand(BX+40,BR-40),BY-60);}});
   tray.appendChild(b);}
 function showTip(el,html,side){tooltip.innerHTML=html;const r=el.getBoundingClientRect();tooltip.classList.add('on');const tw=tooltip.offsetWidth,th=tooltip.offsetHeight;
-  if(side==='left'&&innerWidth>760&&r.left-tw-12>8){tooltip.style.left=(r.left-tw-12)+'px';tooltip.style.top=clamp(r.top+r.height/2-th/2,8,innerHeight-th-8)+'px';return;}
+  if(side==='left'&&!(typeof isNarrow==='function'&&isNarrow())&&r.left-tw-12>8){tooltip.style.left=(r.left-tw-12)+'px';tooltip.style.top=clamp(r.top+r.height/2-th/2,8,innerHeight-th-8)+'px';return;}
   tooltip.style.left=clamp(r.left+r.width/2-tw/2,8,innerWidth-tw-8)+'px';tooltip.style.top=(side==='left'?Math.max(8,r.top-th-10):r.bottom+10)+'px';}
 function hideTip(){tooltip.classList.remove('on');}
 document.addEventListener('click',hideTip);
@@ -1303,12 +1333,13 @@ function modal(tag,title,body,btn,cb){$('modalTag').textContent=tag;$('modalTitl
   $('modalBtn').onclick=()=>{$('modal').classList.remove('on');cb&&cb();};}
 
 /* 레이아웃: 월드를 UI 사이 공간에 맞춤 */
-function layout(){const vw=innerWidth,vh=innerHeight,wide=vw>760;$('hud').style.top=wide?$('hud').style.top:($('counter').getBoundingClientRect().bottom+6)+'px';const sr=$('counter').getBoundingClientRect(),hr=$('hud').getBoundingClientRect(),tr=tray.getBoundingClientRect();
+const NARROW_Q='(max-width:760px), (orientation:portrait) and (max-width:1100px)';const isNarrow=()=>matchMedia(NARROW_Q).matches;
+function layout(){const vw=innerWidth,vh=innerHeight,wide=!isNarrow();$('hud').style.top=wide?$('hud').style.top:($('counter').getBoundingClientRect().bottom+6)+'px';const sr=$('counter').getBoundingClientRect(),hr=$('hud').getBoundingClientRect(),tr=tray.getBoundingClientRect();
   const ab=$('actions');ab.style.bottom=wide?'':(vh-tr.top+6)+'px';const ar=ab.getBoundingClientRect();
   let rx,ry,rw,rh;if(wide){rx=hr.right+8;ry=sr.bottom+2;rw=tr.left-8-rx;rh=ar.top-ry-4;}else{rx=0;ry=hr.bottom;rw=vw;rh=ar.top-ry-2;}
   const s=Math.max(.25,Math.min(rw/(W*.84),rh/(H*.97)));world.scale.set(s);world.x=rx+rw/2-W/2*s;world.y=ry+rh/2-H/2*s+H*.01*s;
   if(wide){$('hud').style.top=Math.max(sr.bottom+14,vh/2-hr.height/2)+'px';}}
-window.addEventListener('resize',()=>setTimeout(layout,30));
+window.addEventListener('resize',()=>setTimeout(layout,30));window.addEventListener('orientationchange',()=>setTimeout(layout,250));
 
 /* =====================================================================
    파티클 시스템
