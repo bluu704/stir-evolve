@@ -9,5 +9,7 @@
   "durable_objects": {
     "bindings": [{ "name": "COUNTER", "class_name": "Counter" }]
   },
+  // 봇 확인(Turnstile) 사이트 키. 비밀 키는 대시보드에서 비밀값 TURNSTILE_SECRET 으로 넣음
+  "vars": { "TURNSTILE_SITEKEY": "" },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Counter"] }]
 }

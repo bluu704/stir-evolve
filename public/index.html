@@ -368,6 +368,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 }
 @media (prefers-reduced-motion:reduce){#toast.on,.tube.pop,body.glitch #stage canvas{animation-duration:.01s}}
 .btns button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+#botCheck{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:9999}
 </style>
 
 </head>
@@ -809,7 +810,7 @@ const Sync={
     try{const res=await fetch(ep,{cache:'no-store'});if(res.ok)j=await res.json().catch(()=>null);else this.why='서버 응답 '+res.status;
       if(!(j&&typeof j.total==='number')){j=null;if(!this.why)this.why='서버 응답 형식 오류';}}
     catch(e){this.why='서버에 연결할 수 없음';}
-    if(j){this.endpoint=ep;this.base=j.total;this.pending=0;this.online=j.online??null;this.ok=true;this.why='';this.silent=true;this.ready=true;
+    if(j){Bot.check(j);this.endpoint=ep;this.base=j.total;this.pending=0;this.online=j.online??null;this.ok=true;this.why='';this.silent=true;this.ready=true;
       if(!this.timer)this.timer=setInterval(()=>this.tick(),CONFIG.sync.pushIntervalMs);return;}
     if(!this.ready){this.endpoint='';this.base=this.localTotal;this.ready=true;this.silent=true;}
     setTimeout(()=>{this.endpoint='';this.init2(ep);},10000);
@@ -825,10 +826,21 @@ const Sync={
         res=await fetch(this.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({delta:sent,client:this.client,tab:this.tab,name:(()=>{try{return localStorage.getItem('se-nick')||'';}catch(e){return '';}})()})});
         if(res.ok){this.pending-=sent;}
       }else res=await fetch(this.endpoint+'?tab='+this.tab,{cache:'no-store'});
-      if(res.ok){const j=await res.json();if(typeof j.total==='number')this.base=j.total;this.online=j.online??null;this.ok=true;}else this.ok=false;
+      if(res.ok){const j=await res.json();if(typeof j.total==='number')this.base=j.total;this.online=j.online??null;this.ok=true;Bot.check(j);}else this.ok=false;
     }catch(e){this.ok=false;}
     this.busy=false;
   }
+};
+// 봇 확인 (Cloudflare Turnstile): 서버가 켜 두면(j.bot) 보이지 않게 확인하고, 필요할 때만 체크 상자를 띄움
+const Bot={busy:false,next:0,el:null,
+  check(j){if(!j||!j.bot||j.human||this.busy||Date.now()<this.next)return;this.busy=true;this.load(j.bot);},
+  fail(){this.busy=false;this.next=Date.now()+30000;},
+  load(key){const go=()=>{try{if(!this.el){this.el=document.createElement('div');this.el.id='botCheck';document.body.appendChild(this.el);}
+      const id=turnstile.render(this.el,{sitekey:key,appearance:'interaction-only',callback:t=>this.send(t,id),'error-callback':()=>{try{turnstile.remove(id);}catch(e){}this.fail();}});}catch(e){this.fail();}};
+    if(window.turnstile)return go();
+    const sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;sc.onload=go;sc.onerror=()=>this.fail();document.head.appendChild(sc);},
+  async send(t,id){let ok=false;try{const r=await fetch(Sync.endpoint.replace(/stir$/,'verify'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:t})});ok=r.ok;}catch(e){}
+    try{turnstile.remove(id);}catch(e){}if(ok)this.busy=false;else this.fail();}
 };
 const found=new Set(store.get(CONFIG.sync.storageKey,{}).found||[]);
 Sync.load();

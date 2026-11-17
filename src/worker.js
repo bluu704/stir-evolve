@@ -38,6 +38,10 @@ const G_SOFT = 0.5;              // 여유분이 이 비율 아래로 떨어지�
 const G_HOUR = 600000;           // 사이트 전체 1시간 상한
 const BOARD_GLOBAL_PER_MIN = 40; // 게시판 전체 1분 글 수 (여러 IP로 도배 방지)
 const BOARD_NEW_IP_MS = 15000;   // 처음 보는 IP는 이 시간이 지나야 글을 쓸 수 있음
+// ---- 봇 확인 (Cloudflare Turnstile) ----
+// wrangler.jsonc 의 vars.TURNSTILE_SITEKEY 와 Worker 비밀값 TURNSTILE_SECRET 이 둘 다 있을 때만 켜짐
+const HUMAN_MS = 6 * 3600000;    // 한 번 확인되면 이 시간 동안 그 IP를 사람으로 봄
+const UNVERIFIED_MUL = 0.1;      // 확인 안 된 IP의 젓기는 10%만 인정 (스크립트·curl 대비)
 const MAX_BODY = 2048;           // 요청 본문 최대 크기
 const BOARD_KEEP = 150;          // 게시판에 보관하는 최근 글 수
 const BOARD_GAP_MS = 4000;       // 같은 사람(IP)이 글을 연달아 쓸 수 있는 최소 간격
@@ -71,6 +75,8 @@ async function readJson(request) {
 export class Counter {
   constructor(ctx, env) {
     this.ctx = ctx;
+    this.env = env || {};
+    this.human = new Map();     // IP → 봇 확인 통과 시각
     this.total = null;
     this.lastSave = 0;
     this.lastSweep = 0;
@@ -107,6 +113,7 @@ export class Counter {
     if (now - p.last < BOARD_GAP_MS || p.times.length >= BOARD_PER_MIN) return json({ error: '조금 뒤에 다시 써 주세요' }, 429);
     this.boardTimes = this.boardTimes.filter(t => now - t < 60000);
     if (this.boardTimes.length >= BOARD_GLOBAL_PER_MIN) return json({ error: '지금 게시판이 붐벼요. 조금 뒤에 써 주세요' }, 429);
+    if (this.botOn() && !this.isHuman(ip, now)) return json({ error: '봇 확인이 끝나면 쓸 수 있어요' }, 403);
     const ib = this.ips.get(ip);
     if (!ib || now - ib.born < BOARD_NEW_IP_MS) return json({ error: '접속 직후에는 잠시 뒤에 쓸 수 있어요' }, 429);
     if (text === p.lastText && now - p.last < 60000) return json({ error: '같은 글은 잠시 뒤에 다시 쓸 수 있어요' }, 429);
@@ -200,6 +207,7 @@ export class Counter {
     for (const [k, c] of this.clients) if (now - c.t > 120000) this.clients.delete(k);
     for (const [k, v] of this.ips) if (now - v.t > 3600000) this.ips.delete(k);
     for (const [k, v] of this.posters) if (now - v.last > 120000) this.posters.delete(k);
+    for (const [k, t] of this.human) if (now - t > HUMAN_MS) this.human.delete(k);
     for (const [k, v] of this.nets) if (now - v.t > 3600000) this.nets.delete(k);
     for (const [k, v] of this.cHour) if (now - v.hourStart > 3600000) this.cHour.delete(k);
     if (this.contrib.size > 5000) for (const k of this.contrib.keys()) if (!this.dirty.has(k)) this.contrib.delete(k);
@@ -215,6 +223,32 @@ export class Counter {
     const burst = Math.round(10 + (IP_BURST - 10) * trust);
     const b = bucket(this.ips, ip, now, rate, burst, IP_HOUR);
     return { b, max: Math.max(0, Math.min(b.tok, IP_HOUR - b.hour)) };
+  }
+
+  botOn() { return !!(this.env.TURNSTILE_SITEKEY && this.env.TURNSTILE_SECRET); }
+  isHuman(ip, now) { const t = this.human.get(ip); return t != null && now - t < HUMAN_MS; }
+  // 응답에 붙이는 봇 확인 상태: 켜져 있으면 사이트 키와 통과 여부를 알려 줌
+  botInfo(ip, now) { return this.botOn() ? { bot: this.env.TURNSTILE_SITEKEY, human: this.isHuman(ip, now) } : {}; }
+
+  // Turnstile 토큰을 Cloudflare에 확인받고, 통과하면 이 IP를 사람으로 기록
+  async verify(request, now, ip) {
+    const json = (o, st = 200) => Response.json(o, { status: st, headers: { 'cache-control': 'no-store' } });
+    if (!this.botOn()) return json({ ok: true, off: true });
+    const body = await readJson(request);
+    const token = body && typeof body.token === 'string' ? body.token.slice(0, 2048) : '';
+    if (!token) return json({ ok: false }, 400);
+    const form = new FormData();
+    form.append('secret', this.env.TURNSTILE_SECRET);
+    form.append('response', token);
+    if (ip !== 'local') form.append('remoteip', ip);
+    let ok = false;
+    try {
+      const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
+      const j = await r.json();
+      ok = !!j.success;
+    } catch { ok = false; }
+    if (ok) this.human.set(ip, now);
+    return json({ ok }, ok ? 200 : 403);
   }
 
   // 사이트 전체 소프트캡: 여유분이 줄면 모두의 인정 비율을 부드럽게 낮추고, 바닥나면 0
@@ -234,6 +268,7 @@ export class Counter {
     this.sweep(now);
     if (!this.ips.has(ip)) this.ipAllow(ip, now); // 처음 본 시각 기록 (게시판 대기 시간용)
     const url = new URL(request.url);
+    if (url.pathname === '/api/verify') return request.method === 'POST' ? this.verify(request, now, ip) : Response.json(this.botInfo(ip, now));
     if (url.pathname === '/api/board') return this.board(request, url, now, ip);
     if (url.pathname === '/api/rank') {
       const me = String(url.searchParams.get('client') || '');
@@ -261,7 +296,7 @@ export class Counter {
         this.dirty.add(id);
         if (this.lb[id]) { delete this.lb[id]; this.lbDirty = true; }
         await this.save();
-        return res({ total: this.total, online: this.online(now), removed: mine });
+        return res({ total: this.total, online: this.online(now), removed: mine, ...this.botInfo(ip, now) });
       }
       let delta = Number(body.delta);
       if (!Number.isFinite(delta) || delta < 0) delta = 0;
@@ -280,6 +315,8 @@ export class Counter {
       const cMax = Math.max(0, CLIENT_HOUR - ch.hour);
       // 5) 전역 소프트캡
       const gl = this.globalAllow(now);
+      // 6) 봇 확인을 안 거친 IP는 일부만 인정
+      if (this.botOn() && !this.isHuman(ip, now)) delta *= UNVERIFIED_MUL;
       delta = Math.min(delta * gl.soft, tabTok, max, netMax, cMax, gl.max);
       delta = Math.max(0, delta);
       b.tok -= delta; b.hour += delta;
@@ -302,7 +339,7 @@ export class Counter {
       }
     }
 
-    return res({ total: this.total, online: this.online(now) });
+    return res({ total: this.total, online: this.online(now), ...this.botInfo(ip, now) });
   }
 
   async alarm() {
@@ -314,7 +351,7 @@ export class Counter {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/stir' || url.pathname === '/api/board' || url.pathname === '/api/rank') {
+    if (url.pathname === '/api/stir' || url.pathname === '/api/board' || url.pathname === '/api/rank' || url.pathname === '/api/verify') {
       if (request.method !== 'GET' && request.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 });
       }

@@ -45,3 +45,10 @@
 npx wrangler dev
 ```
 
+
+### 봇 확인 (Cloudflare Turnstile)
+1. Cloudflare 대시보드 → Turnstile → 위젯 추가 (호스트: `stir-evolve.pages.dev`, `stir-evolve.lsshhh704.workers.dev`, 모드: Managed).
+2. 사이트 키를 `wrangler.jsonc` 의 `vars.TURNSTILE_SITEKEY` 에 넣습니다.
+3. 비밀 키는 Workers → stir-evolve → 설정 → 변수 및 비밀 에서 **비밀(Secret)** `TURNSTILE_SECRET` 으로 넣습니다.
+
+둘 다 있으면 켜집니다. 확인을 통과한 IP는 6시간 동안 정상 인정, 통과하지 않은 IP(스크립트 등)는 젓기 10%만 인정되고 게시판에 글을 쓸 수 없습니다.
