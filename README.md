@@ -9,7 +9,7 @@
 | `public/index.html` | 게임 전체 (PixiJS 7 · Matter.js 0.19 CDN, 사운드는 Web Audio 합성) |
 | `src/worker.js` | 모두의 젓기 합계를 관리하는 Cloudflare Worker + Durable Object |
 | `wrangler.jsonc` | Worker 설정 (정적 파일 + Durable Object) |
-| `functions/api/stir.js` | Pages에서 `/api/stir`를 Worker로 전달하는 함수 |
+| `functions/api/stir.js`, `functions/api/board.js` | Pages에서 `/api/*` 요청을 Worker로 전달하는 함수 |
 
 ## Cloudflare에 배포
 공유 카운터는 **Worker**(Durable Object)가 담당하고, 화면은 **Pages**(`stir-evolve.pages.dev`)로도 제공합니다.
@@ -29,7 +29,10 @@
 
 `functions/api/stir.js`가 `/api/stir` 요청을 Worker로 전달합니다.
 
-## 공유 카운터 API
+## 공유 API
+- `GET /api/board?since=ID` → `{ messages }` · `POST /api/board` body `{ name, text, tab }` (게시판, 최근 150개 보관, 탭당 4초 간격)
+
+### 젓기 카운터
 - `GET /api/stir` → `{ total, online }`
 - `POST /api/stir` body `{ delta, client }` → `{ total, online }`
 - `POST /api/stir` body `{ reset: true, client }` → 그 클라이언트가 보탠 만큼 전체에서 뺌 (`removed` 포함)
