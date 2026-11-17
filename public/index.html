@@ -129,23 +129,30 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 #boardBtn{position:relative}
 #boardBtn[aria-expanded="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25)}
 #boardBadge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#ff6b57;color:#fff;font:700 10.5px/18px var(--font-data);font-style:normal}
-#boardPanel{position:absolute;top:52px;left:0;width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 100px));display:flex;flex-direction:column;border-radius:18px;overflow:hidden;
-  background:linear-gradient(180deg,rgba(38,43,52,.97),rgba(20,23,29,.98));border:1px solid var(--line);box-shadow:0 26px 60px -20px rgba(0,0,0,.85);animation:rise .22s cubic-bezier(.2,.9,.3,1)}
-.bd-head{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 16px 10px;border-bottom:1px solid var(--line)}
-.bd-head h3{margin:3px 0 0;font-size:19px}.bd-head .icon-btn{width:34px;height:34px;border-radius:10px}
-#boardList{flex:1;min-height:0;overflow:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
-.bd-item{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.05)}
-.bd-item.mine{background:color-mix(in srgb,var(--liq) 10%,rgba(255,255,255,.04));border-color:color-mix(in srgb,var(--liq) 35%,transparent)}
-.bd-meta{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px}
-.bd-name{font-weight:700;font-size:13px}.bd-time{font:500 11px var(--font-data);color:#a9b2c1;white-space:nowrap}
-.bd-text{font-size:13.5px;line-height:1.55;color:#e3e8ef;word-break:break-word;white-space:pre-wrap}
-.bd-empty{margin:auto;text-align:center;color:#a9b2c1;font-size:13px;line-height:1.6;padding:20px}
-#boardForm{border-top:1px solid var(--line);padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,.18)}
-.bd-row{display:flex;align-items:center;gap:8px}.bd-row label{font:600 11px var(--font-data);color:#c9d1dc;letter-spacing:.06em;white-space:nowrap}
-#boardForm input{flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:var(--ink);padding:9px 11px;font:inherit;font-size:14px;outline:none}
-#boardForm input:focus{border-color:var(--liq)}#boardName{max-width:170px;padding:6px 10px!important;font-size:13px!important}
-#boardSend{border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13.5px;background:var(--liq);color:#0b0f14;cursor:pointer}#boardSend:disabled{opacity:.5;cursor:default}
-.bd-foot{display:flex;justify-content:space-between;font:500 11px var(--font-data);color:#a9b2c1}#boardStatus.err{color:#ff8a75}
+/* 게시판: 바깥 상자 없이 게임 채팅창처럼 가볍게 */
+#hud{transition:opacity .25s}body.board-open #hud{opacity:.1;pointer-events:none}
+#boardPanel{position:absolute;top:52px;left:0;width:min(320px,calc(100vw - 24px));height:min(340px,calc(100vh - 140px));display:flex;flex-direction:column;gap:6px;animation:rise .2s cubic-bezier(.2,.9,.3,1)}
+.bd-head{display:none}
+#boardList{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:4px;padding:2px 2px 4px;scrollbar-width:none;overscroll-behavior:contain;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38px);mask-image:linear-gradient(180deg,transparent 0,#000 38px)}
+#boardList::-webkit-scrollbar{display:none}
+#boardList>:first-child{margin-top:auto}
+.bd-item{align-self:flex-start;max-width:92%;padding:5px 10px 6px;border-radius:12px 12px 12px 4px;background:rgba(10,12,16,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-size:13px;line-height:1.45}
+.bd-item.mine{align-self:flex-end;border-radius:12px 12px 4px 12px;background:color-mix(in srgb,var(--liq) 22%,rgba(10,12,16,.62))}
+.bd-meta{display:inline}.bd-name{font-weight:700;font-size:12.5px;margin-right:6px}.bd-time{display:none}
+.bd-item:hover .bd-time{display:inline;font:500 10px var(--font-data);color:#9aa4b4;margin-left:6px}
+.bd-text{display:inline;color:#eef2f7;word-break:break-word;white-space:pre-wrap}
+.bd-empty{margin:auto 0 0;padding:6px 10px;border-radius:10px;background:rgba(10,12,16,.55);color:#c9d1dc;font-size:12px;line-height:1.5}
+#boardForm{display:flex;flex-direction:column;gap:4px}
+.bd-row{display:flex;align-items:center;gap:6px}.bd-row label{display:none}
+#boardForm input{min-width:0;background:rgba(10,12,16,.7);border:1px solid rgba(255,255,255,.14);border-radius:999px;color:var(--ink);padding:8px 13px;font:inherit;font-size:13.5px;outline:none;backdrop-filter:blur(6px)}
+#boardForm input:focus{border-color:var(--liq)}
+#boardName{width:110px;flex:none;padding:5px 11px!important;font-size:12px!important}
+#boardText{flex:1}
+#boardSend{flex:none;width:36px;height:36px;border:0;border-radius:50%;padding:0;font-size:0;background:var(--liq);color:#0b0f14;cursor:pointer;display:grid;place-items:center}
+#boardSend::before{content:"";width:14px;height:14px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%,22% 50%)}
+#boardSend:disabled{opacity:.45;cursor:default}
+.bd-foot{display:flex;justify-content:space-between;padding:0 6px;font:500 10.5px var(--font-data);color:#a9b2c1;min-height:12px}#boardStatus.err{color:#ff8a75}
 #settings{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:calc(18px + env(safe-area-inset-right,0px));z-index:12;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .btnrow{display:flex;gap:8px}
 #dexBtn[aria-expanded="true"],#gearBtn[aria-expanded="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25)}
@@ -279,7 +286,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 @media (max-width:760px){
   #counter{top:calc(6px + env(safe-area-inset-top,0px))}
   #bigCount{font-size:40px}#rpmLine{font-size:12px}
-  #boardPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:calc(100vh - 90px)}
+  #boardPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:44vh}
   #hud{left:8px;right:8px;width:auto;top:96px;padding:10px 12px;gap:8px;border-radius:14px;display:grid;grid-template-columns:1fr auto;align-items:start}
   .hud-head{gap:3px;grid-column:1/2}
   #stageName{font-size:19px}
@@ -336,9 +343,9 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
     <header class="bd-head"><div><span class="eyebrow">LAB BOARD</span><h3>연구실 게시판</h3></div><button id="boardClose" class="icon-btn" type="button" aria-label="게시판 닫기"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></header>
     <div id="boardList" aria-live="polite"></div>
     <form id="boardForm" autocomplete="off">
-      <div class="bd-row"><label for="boardName">닉네임</label><input id="boardName" maxlength="16" placeholder="익명 연구원"></div>
-      <div class="bd-row bd-msg"><input id="boardText" maxlength="200" placeholder="연구 일지를 남겨 주세요"><button id="boardSend" type="submit">등록</button></div>
-      <div class="bd-foot"><span id="boardStatus"></span><span id="boardCount">0/200</span></div>
+      <div class="bd-row"><label for="boardName">닉네임</label><input id="boardName" maxlength="16" placeholder="닉네임"></div>
+      <div class="bd-row bd-msg"><input id="boardText" maxlength="200" placeholder="메시지 보내기"><button id="boardSend" type="submit">등록</button></div>
+      <div class="bd-foot"><span id="boardStatus"></span><span id="boardCount"></span></div>
     </form>
   </section>
 </div>
@@ -2155,8 +2162,8 @@ $('boardName').addEventListener('change',()=>{try{localStorage.setItem('se-nick'
 const nickColor=n=>{let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 80% 72%)`;};
 const ago=t=>{const d=(Date.now()-t)/1000;return d<60?'방금':d<3600?`${Math.floor(d/60)}분 전`:d<86400?`${Math.floor(d/3600)}시간 전`:`${Math.floor(d/86400)}일 전`;};
 function renderBoard(){const L3=$('boardList');const atBottom=L3.scrollHeight-L3.scrollTop-L3.clientHeight<40;L3.textContent='';
-  if(!Board.ok&&!Board.msgs.length){const e=document.createElement('div');e.className='bd-empty';e.textContent='공유 서버에 연결되면 다른 연구원들과 글을 나눌 수 있어요.';L3.appendChild(e);return;}
-  if(!Board.msgs.length){const e=document.createElement('div');e.className='bd-empty';e.textContent='아직 글이 없어요. 첫 연구 일지를 남겨 보세요!';L3.appendChild(e);return;}
+  if(!Board.ok&&!Board.msgs.length){const e=document.createElement('div');e.className='bd-empty';e.textContent='공유 서버에 연결되면 다른 연구원들과 대화할 수 있어요.';L3.appendChild(e);return;}
+  if(!Board.msgs.length){const e=document.createElement('div');e.className='bd-empty';e.textContent='아직 대화가 없어요. 먼저 인사해 보세요!';L3.appendChild(e);return;}
   for(const m of Board.msgs){const d=document.createElement('div');d.className='bd-item'+(Board.mine.has(m.id)?' mine':'');
     const meta=document.createElement('div');meta.className='bd-meta';const nm=document.createElement('span');nm.className='bd-name';nm.textContent=m.name;nm.style.color=nickColor(m.name);
     const tm=document.createElement('span');tm.className='bd-time';tm.textContent=ago(m.t);meta.append(nm,tm);
@@ -2164,22 +2171,22 @@ function renderBoard(){const L3=$('boardList');const atBottom=L3.scrollHeight-L3
   if(atBottom||Board.justOpened){L3.scrollTop=L3.scrollHeight;Board.justOpened=false;}}
 function boardBadge(){const n=Board.open?0:Board.msgs.filter(m=>m.id>Board.seen&&!Board.mine.has(m.id)).length;const b=$('boardBadge');b.hidden=!n;b.textContent=n>99?'99+':n;}
 async function pollBoard(){try{const r=await fetch(BOARD_URL+(Board.last?`?since=${Board.last}`:''),{cache:'no-store'});const j=r.ok?await r.json().catch(()=>null):null;
-    if(j&&Array.isArray(j.messages)){Board.ok=true;if(j.messages.length){Board.msgs=Board.msgs.concat(j.messages).slice(-150);Board.last=Board.msgs[Board.msgs.length-1].id;}}else Board.ok=false;}
+    if(j&&Array.isArray(j.messages)){Board.ok=true;if(j.messages.length){const ids=new Set(Board.msgs.map(m=>m.id));Board.msgs=Board.msgs.concat(j.messages.filter(m=>!ids.has(m.id))).sort((a,b)=>a.id-b.id).slice(-150);Board.last=Board.msgs[Board.msgs.length-1].id;}}else Board.ok=false;}
   catch(e){Board.ok=false;}
   if(Board.open){if(Board.last>Board.seen){Board.seen=Board.last;store.set('se-board-seen',Board.seen);}renderBoard();}boardBadge();
   $('boardSend').disabled=!Board.ok;clearTimeout(Board.timer);Board.timer=setTimeout(pollBoard,Board.open?3000:15000);}
-function boardOpen(v){Board.open=v;$('boardPanel').hidden=!v;$('boardBtn').setAttribute('aria-expanded',String(v));if(v){Board.justOpened=true;renderBoard();boardBadge();pollBoard();setTimeout(()=>$('boardText').focus(),50);}}
+function boardOpen(v){Board.open=v;document.body.classList.toggle('board-open',v);$('boardPanel').hidden=!v;$('boardBtn').setAttribute('aria-expanded',String(v));if(v){Board.justOpened=true;renderBoard();boardBadge();pollBoard();setTimeout(()=>$('boardText').focus(),50);}}
 $('boardBtn').addEventListener('click',e=>{e.stopPropagation();const v=!Board.open;openMenu(null);boardOpen(v);});
 $('boardClose').addEventListener('click',e=>{e.stopPropagation();boardOpen(false);});
 $('boardPanel').addEventListener('click',e=>e.stopPropagation());$('boardPanel').addEventListener('pointerdown',e=>e.stopPropagation());
 document.addEventListener('click',()=>{if(Board.open)boardOpen(false);});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&Board.open)boardOpen(false);});
-$('boardText').addEventListener('input',()=>{$('boardCount').textContent=`${$('boardText').value.length}/200`;});
+$('boardText').addEventListener('input',()=>{$('boardCount').textContent=$('boardText').value.length>150?`${$('boardText').value.length}/200`:'';});
 $('boardForm').addEventListener('submit',async e=>{e.preventDefault();const text=$('boardText').value.trim();if(!text)return;
   const name=$('boardName').value.trim().slice(0,16);try{localStorage.setItem('se-nick',name);}catch(_){}
   const st=$('boardStatus');st.className='';st.textContent='등록 중…';$('boardSend').disabled=true;
   try{const r=await fetch(BOARD_URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,text,tab:Sync.tab})});const j=await r.json().catch(()=>({}));
-    if(r.ok&&j.message){Board.mine.add(j.message.id);store.set('se-board-mine',[...Board.mine].slice(-200));$('boardText').value='';$('boardCount').textContent='0/200';st.textContent='등록했어요';Snd.init();Snd.drip();Board.justOpened=true;await pollBoard();}
+    if(r.ok&&j.message){Board.mine.add(j.message.id);store.set('se-board-mine',[...Board.mine].slice(-200));$('boardText').value='';$('boardCount').textContent='';st.textContent='등록했어요';Snd.init();Snd.drip();Board.justOpened=true;await pollBoard();}
     else{st.className='err';st.textContent=j.error||'등록하지 못했어요';}}
   catch(_){st.className='err';st.textContent='서버에 연결할 수 없어요';}
   $('boardSend').disabled=!Board.ok;setTimeout(()=>{if(st.textContent==='등록했어요')st.textContent='';},2000);});
