@@ -562,15 +562,22 @@ const Sync={
         if(!res.ok)return false;const j=await res.json();if(typeof j.total==='number')this.base=j.total;}catch(e){return false;}}
     else this.base=Math.max(0,this.base-this.mineE);
     this.mine=0;this.mineE=0;this.silent=true;this.save();return true;},
-  // 처음 한 번 서버에 접속해 보고, 안 되면 로컬 모드로 전환
+  // 서버에 접속해 보고, 안 되면 로컬 모드로 동작하면서 10초마다 다시 시도 (연결되면 공유 모드로 전환)
+  why:'',
   async init(){
-    if(!this.endpoint){this.ready=true;return;}
-    try{const res=await fetch(this.endpoint,{cache:'no-store'});const j=res.ok?await res.json():null;
-      if(j&&typeof j.total==='number'){this.base=j.total;this.online=j.online??null;this.ok=true;}else throw 0;}
-    catch(e){this.endpoint='';this.base=this.localTotal;}
-    this.ready=true;this.silent=true;
-    if(this.endpoint)setInterval(()=>this.tick(),CONFIG.sync.pushIntervalMs);
+    const ep=this.endpoint;if(!ep){this.ready=true;return;}
+    let j=null;
+    try{const res=await fetch(ep,{cache:'no-store'});if(res.ok)j=await res.json().catch(()=>null);else this.why='서버 응답 '+res.status;
+      if(!(j&&typeof j.total==='number')){j=null;if(!this.why)this.why='서버 응답 형식 오류';}}
+    catch(e){this.why='서버에 연결할 수 없음';}
+    if(j){this.endpoint=ep;this.base=j.total;this.pending=0;this.online=j.online??null;this.ok=true;this.why='';this.silent=true;this.ready=true;
+      if(!this.timer)this.timer=setInterval(()=>this.tick(),CONFIG.sync.pushIntervalMs);return;}
+    if(!this.ready){this.endpoint='';this.base=this.localTotal;this.ready=true;this.silent=true;}
+    setTimeout(()=>{this.endpoint='';this.init2(ep);},10000);
   },
+  init2(ep){this.endpoint=ep;const keepBase=this.base;this.endpoint='';this._retry=ep;
+    fetch(ep,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&typeof j.total==='number'){this.localTotal=keepBase;this.endpoint=ep;this.base=j.total;this.pending=0;this.online=j.online??null;this.ok=true;this.why='';this.silent=true;
+      if(!this.timer)this.timer=setInterval(()=>this.tick(),CONFIG.sync.pushIntervalMs);}else setTimeout(()=>this.init2(ep),10000);}).catch(()=>setTimeout(()=>this.init2(ep),10000));},
   async tick(){
     if(!this.endpoint||this.busy)return;this.busy=true;
     try{
@@ -1890,7 +1897,7 @@ function updateHUD(total){
   const rl=$('rpmLine');rl.textContent='RPM '+Math.round(rpm);const danger=mode==='play'&&(rpm>CONFIG.breakage.rpm||stress>.02);
   rl.style.color=danger?css(mixC(0xff9c8a,0xff1f1f,clamp(stress,0,1))):'';rl.classList.toggle('danger',danger&&stress>.6);
   $('onlineLine').textContent=Sync.endpoint&&Sync.ok&&Sync.online?`지금 ${Sync.online}명이 젓는 중`:'';
-  $('syncState').textContent=Sync.endpoint?(Sync.ok?(Sync.online?`온라인 ${Sync.online}명`:'공유 모드'):'연결 끊김'):'로컬 모드';
+  $('syncState').textContent=Sync.endpoint?(Sync.ok?(Sync.online?`공유 모드 · 온라인 ${Sync.online}명`:'공유 모드'):'연결 끊김'):('로컬 모드'+(Sync.why?` · ${Sync.why}`:''));
   const mb=$('mutBadge');mb.classList.toggle('on',!!mut.active);if(mut.active)mb.textContent=`돌연변이 진행 중 · ${Math.ceil(mut.time)}초`;
 }
 
