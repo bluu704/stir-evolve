@@ -18,7 +18,7 @@
 const SAVE_EVERY_MS = 5000;      // 저장소에 합계를 기록하는 최소 간격
 const ONLINE_WINDOW_MS = 15000;  // 이 시간 안에 요청한 사람을 '접속 중'으로 셈
 const MAX_RATE = 10;             // 탭당 초당 최대 인정 젓기 수 (사람 손 최대치 ≈ 6회/초)
-const BURST = 15;                // 탭당 순간 허용 여유분
+const BURST = 25;                // 탭당 순간 허용 여유분 (브라우저는 2초마다 최대 ~15씩 보냄)
 // ---- 치트 방지: 탭 id는 조작할 수 있으므로 접속 IP 기준으로도 제한 ----
 const IP_RATE = 12;              // IP당 초당 최대 인정 젓기 수 (같은 집·학교에서 여럿이 하는 경우 감안)
 const IP_BURST = 40;             // IP당 순간 허용 여유분
@@ -137,7 +137,7 @@ export class Counter {
     const qtab = url.searchParams.get('tab');
     if (request.method === 'GET' && qtab && ID_RE.test(qtab)) {
       const c = this.clients.get(qtab);
-      this.clients.set(qtab, { t: now, post: c ? c.post : 0, ip }); // 속도 제한 기준(post)은 POST 때만 갱신
+      this.clients.set(qtab, { t: now, post: c ? c.post : 0, tok: c ? c.tok : undefined, ip }); // 속도 제한 기준(post)은 POST 때만 갱신
     }
 
     if (request.method === 'POST') {
@@ -158,16 +158,17 @@ export class Counter {
       let delta = Number(body.delta);
       if (!Number.isFinite(delta) || delta < 0) delta = 0;
       // 1) 탭 기준: 마지막 요청 이후 지난 시간에 비례한 만큼만 인정
+      // (토큰 버킷: 연달아 보내도 여유분이 매번 새로 생기지 않음)
       const c = this.clients.get(tab);
-      const tabAllowed = (c && c.post ? Math.min(30, (now - c.post) / 1000) : 2) * MAX_RATE + BURST;
+      const tabTok = c && c.post ? Math.min(BURST, (c.tok ?? BURST) + (now - c.post) / 1000 * MAX_RATE) : BURST;
       // 2) IP 기준: 탭 id를 바꿔가며 보내도 IP당 초당·시간당 상한을 넘을 수 없음
       const { b, max } = this.ipAllow(ip, now);
-      delta = Math.min(delta, tabAllowed, max);
+      delta = Math.min(delta, tabTok, max);
       b.tok -= delta; b.hour += delta;
       this.total += delta;
       this.contrib.set(id, (await this.getContrib(id)) + delta);
       this.dirty.add(id);
-      this.clients.set(tab, { t: now, post: now, ip });
+      this.clients.set(tab, { t: now, post: now, tok: tabTok - delta, ip });
       if (now - this.lastSave > SAVE_EVERY_MS) {
         await this.save();
       } else {
