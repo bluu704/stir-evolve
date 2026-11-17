@@ -629,8 +629,8 @@ const CYCLE=CUM[STAGES.length-1]+STAGES[STAGES.length-1].need;   // 한 세대(1
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 const Sync={
   endpoint:CONFIG.sync.endpoint, base:0, pending:0, mine:0, mineE:0, localTotal:0, online:null, ok:true, busy:false, ready:false, silent:false,
-  tab:Math.random().toString(36).slice(2,12),
-  client:(()=>{try{let id=localStorage.getItem('se-client');if(!id){id=Math.random().toString(36).slice(2,12);localStorage.setItem('se-client',id);}return id;}catch(e){return Math.random().toString(36).slice(2,12);}})(),
+  tab:(Math.random().toString(36).slice(2)+'0000000000').slice(0,10),
+  client:(()=>{const mk=()=>(Math.random().toString(36).slice(2)+'0000000000').slice(0,10);try{let id=localStorage.getItem('se-client');if(!id||!/^[a-z0-9]{4,16}$/.test(id)){id=mk();localStorage.setItem('se-client',id);}return id;}catch(e){return mk();}})(),
   load(){const d=store.get(CONFIG.sync.storageKey,{});this.mine=d.mine||0;this.mineE=d.mineE||0;this.localTotal=d.total||0;if(!this.endpoint)this.base=this.localTotal;},
   save(){store.set(CONFIG.sync.storageKey,{total:this.endpoint?this.localTotal:this.base,mine:this.mine,mineE:this.mineE,found:[...found]});},
   add(e,stirs){this.mine+=stirs;this.mineE+=e;if(this.endpoint)this.pending+=e;else this.base+=e;},
