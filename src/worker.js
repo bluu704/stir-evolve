@@ -24,6 +24,20 @@ const BURST = 25;                // 탭당 순간 허용 여유분 (브라우저
 const IP_RATE = 12;              // IP당 초당 최대 인정 젓기 수 (같은 집·학교에서 여럿이 하는 경우 감안)
 const IP_BURST = 40;             // IP당 순간 허용 여유분
 const IP_HOUR = 15000;           // IP당 1시간 최대 인정 젓기 수 (자동 스크립트를 켜 둬도 이 이상 못 올림)
+// ---- 프록시(IP 바꿔치기) 대비 ----
+const NEW_IP_RATE = 5;           // 처음 보는 IP의 초당 인정 젓기 수 (점점 늘어남)
+const TRUST_MS = 5 * 60000;      // 이 시간 동안 꾸준히 접속하면 IP당 정상 속도까지 올라감
+const NET_RATE = 30;             // 같은 대역(IPv4 /24, IPv6 /48) 전체의 초당 상한 (프록시 묶음 대비)
+const NET_BURST = 80;
+const NET_HOUR = 40000;          // 같은 대역 1시간 상한
+const CLIENT_HOUR = 15000;       // 연구원(client id) 1명의 1시간 상한 (여러 IP로 한 사람 순위 올리기 방지)
+// ---- 전역 소프트캡: 사이트 전체 합계가 늘어나는 속도 자체를 제한 ----
+const G_RATE = 300;              // 사이트 전체 초당 인정 젓기 수
+const G_BURST = 3000;            // 전체 순간 여유분
+const G_SOFT = 0.5;              // 여유분이 이 비율 아래로 떨어지면 모두의 인정량을 점점 줄임
+const G_HOUR = 600000;           // 사이트 전체 1시간 상한
+const BOARD_GLOBAL_PER_MIN = 40; // 게시판 전체 1분 글 수 (여러 IP로 도배 방지)
+const BOARD_NEW_IP_MS = 15000;   // 처음 보는 IP는 이 시간이 지나야 글을 쓸 수 있음
 const MAX_BODY = 2048;           // 요청 본문 최대 크기
 const BOARD_KEEP = 150;          // 게시판에 보관하는 최근 글 수
 const BOARD_GAP_MS = 4000;       // 같은 사람(IP)이 글을 연달아 쓸 수 있는 최소 간격
@@ -35,6 +49,17 @@ const RANK_KEEP = 100;           // 기여도 순위표에 보관하는 연구�
 const RANK_SHOW = 30;            // 한 번에 보여 주는 순위 수
 const cleanText = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 const ipOf = req => req.headers.get('cf-connecting-ip') || 'local';
+// IP가 속한 대역: IPv4는 앞 3칸(/24), IPv6는 앞 3블록(/48)
+const netOf = ip => ip.includes(':') ? ip.split(':').slice(0, 3).join(':') + '::/48' : ip.split('.').slice(0, 3).join('.') + '.0/24';
+// 토큰 버킷 + 시간당 상한
+function bucket(map, key, now, rate, burst, hourCap) {
+  let b = map.get(key);
+  if (!b) { b = { tok: burst, t: now, hour: 0, hourStart: now, born: now }; map.set(key, b); }
+  b.tok = Math.min(burst, b.tok + (now - b.t) / 1000 * rate);
+  b.t = now;
+  if (now - b.hourStart > 3600000) { b.hour = 0; b.hourStart = now; }
+  return b;
+}
 async function readJson(request) {
   const len = Number(request.headers.get('content-length') || 0);
   if (len > MAX_BODY) return null;
@@ -57,6 +82,10 @@ export class Counter {
     this.lbDirty = false;
     this.msgs = null;           // 게시판 글 (최근 BOARD_KEEP개)
     this.posters = new Map();   // IP → { last, times:[], lastText } (게시판 도배 방지)
+    this.nets = new Map();      // IP 대역 → 버킷 (프록시 묶음 제한)
+    this.cHour = new Map();     // client id → { hour, hourStart } (연구원당 시간 상한)
+    this.g = { tok: G_BURST, t: Date.now(), hour: 0, hourStart: Date.now() }; // 사이트 전체 버킷
+    this.boardTimes = [];       // 게시판 전체 최근 1분 글 시각
   }
 
   async board(request, url, now, ip) {
@@ -76,8 +105,12 @@ export class Counter {
     const p = this.posters.get(ip) || { last: 0, times: [], lastText: '' };
     p.times = p.times.filter(t => now - t < 60000);
     if (now - p.last < BOARD_GAP_MS || p.times.length >= BOARD_PER_MIN) return json({ error: '조금 뒤에 다시 써 주세요' }, 429);
+    this.boardTimes = this.boardTimes.filter(t => now - t < 60000);
+    if (this.boardTimes.length >= BOARD_GLOBAL_PER_MIN) return json({ error: '지금 게시판이 붐벼요. 조금 뒤에 써 주세요' }, 429);
+    const ib = this.ips.get(ip);
+    if (!ib || now - ib.born < BOARD_NEW_IP_MS) return json({ error: '접속 직후에는 잠시 뒤에 쓸 수 있어요' }, 429);
     if (text === p.lastText && now - p.last < 60000) return json({ error: '같은 글은 잠시 뒤에 다시 쓸 수 있어요' }, 429);
-    p.last = now; p.times.push(now); p.lastText = text; this.posters.set(ip, p);
+    p.last = now; p.times.push(now); this.boardTimes.push(now); p.lastText = text; this.posters.set(ip, p);
     const last = this.msgs[this.msgs.length - 1];
     const message = { id: (last ? last.id : 0) + 1, name, text, t: now };
     this.msgs.push(message);
@@ -167,17 +200,31 @@ export class Counter {
     for (const [k, c] of this.clients) if (now - c.t > 120000) this.clients.delete(k);
     for (const [k, v] of this.ips) if (now - v.t > 3600000) this.ips.delete(k);
     for (const [k, v] of this.posters) if (now - v.last > 120000) this.posters.delete(k);
+    for (const [k, v] of this.nets) if (now - v.t > 3600000) this.nets.delete(k);
+    for (const [k, v] of this.cHour) if (now - v.hourStart > 3600000) this.cHour.delete(k);
     if (this.contrib.size > 5000) for (const k of this.contrib.keys()) if (!this.dirty.has(k)) this.contrib.delete(k);
   }
 
-  // 이 IP가 지금 인정받을 수 있는 최대 젓기 수 (토큰 버킷 + 시간당 상한)
+  // 이 IP가 지금 인정받을 수 있는 최대 젓기 수
+  // 처음 보는 IP는 느리게 시작해 TRUST_MS 동안 꾸준히 쓰면 정상 속도가 됨 → 일회용 프록시는 효율이 낮음
   ipAllow(ip, now) {
-    let b = this.ips.get(ip);
-    if (!b) { b = { tok: IP_BURST, t: now, hour: 0, hourStart: now }; this.ips.set(ip, b); }
-    b.tok = Math.min(IP_BURST, b.tok + (now - b.t) / 1000 * IP_RATE);
-    b.t = now;
-    if (now - b.hourStart > 3600000) { b.hour = 0; b.hourStart = now; }
+    const pre = this.ips.get(ip);
+    const age = pre ? now - pre.born : 0;
+    const trust = Math.min(1, age / TRUST_MS);
+    const rate = NEW_IP_RATE + (IP_RATE - NEW_IP_RATE) * trust;
+    const burst = Math.round(10 + (IP_BURST - 10) * trust);
+    const b = bucket(this.ips, ip, now, rate, burst, IP_HOUR);
     return { b, max: Math.max(0, Math.min(b.tok, IP_HOUR - b.hour)) };
+  }
+
+  // 사이트 전체 소프트캡: 여유분이 줄면 모두의 인정 비율을 부드럽게 낮추고, 바닥나면 0
+  globalAllow(now) {
+    const g = this.g;
+    g.tok = Math.min(G_BURST, g.tok + (now - g.t) / 1000 * G_RATE);
+    g.t = now;
+    if (now - g.hourStart > 3600000) { g.hour = 0; g.hourStart = now; }
+    const soft = Math.min(1, g.tok / (G_BURST * G_SOFT));
+    return { soft, max: Math.max(0, Math.min(g.tok, G_HOUR - g.hour)) };
   }
 
   async fetch(request) {
@@ -185,6 +232,7 @@ export class Counter {
     const now = Date.now();
     const ip = ipOf(request);
     this.sweep(now);
+    if (!this.ips.has(ip)) this.ipAllow(ip, now); // 처음 본 시각 기록 (게시판 대기 시간용)
     const url = new URL(request.url);
     if (url.pathname === '/api/board') return this.board(request, url, now, ip);
     if (url.pathname === '/api/rank') {
@@ -223,8 +271,21 @@ export class Counter {
       const tabTok = c && c.post ? Math.min(BURST, (c.tok ?? BURST) + (now - c.post) / 1000 * MAX_RATE) : BURST;
       // 2) IP 기준: 탭 id를 바꿔가며 보내도 IP당 초당·시간당 상한을 넘을 수 없음
       const { b, max } = this.ipAllow(ip, now);
-      delta = Math.min(delta, tabTok, max);
+      // 3) IP 대역 기준: 같은 데이터센터 프록시를 여러 개 써도 대역 전체 상한
+      const nb = bucket(this.nets, netOf(ip), now, NET_RATE, NET_BURST, NET_HOUR);
+      const netMax = Math.max(0, Math.min(nb.tok, NET_HOUR - nb.hour));
+      // 4) 연구원 기준: 한 사람 id로 여러 IP에서 보내도 시간당 상한
+      let ch = this.cHour.get(id);
+      if (!ch || now - ch.hourStart > 3600000) { ch = { hour: 0, hourStart: now }; this.cHour.set(id, ch); }
+      const cMax = Math.max(0, CLIENT_HOUR - ch.hour);
+      // 5) 전역 소프트캡
+      const gl = this.globalAllow(now);
+      delta = Math.min(delta * gl.soft, tabTok, max, netMax, cMax, gl.max);
+      delta = Math.max(0, delta);
       b.tok -= delta; b.hour += delta;
+      nb.tok -= delta; nb.hour += delta;
+      ch.hour += delta;
+      this.g.tok -= delta; this.g.hour += delta;
       this.total += delta;
       const myC = (await this.getContrib(id)) + delta;
       this.contrib.set(id, myC);
