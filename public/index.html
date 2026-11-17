@@ -315,7 +315,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
   <div id="setMenu" class="panel" hidden>
     <div class="set-row"><button id="muteBtn" class="icon-btn" type="button" aria-label="소리 켜기/끄기"></button><span id="muteLabel">소리 켜짐</span></div>
     <div class="set-row"><button id="resetBtn" class="icon-btn" type="button" aria-label="내 젓기 초기화"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <div class="set-txt"><span>내 젓기 <b id="mineVal">0</b></span><small id="resetHint">누르면 내 젓기만 0으로 돌아가요</small></div></div>
+      <div class="set-txt"><span>내 젓기 <b id="mineVal">0</b></span><small id="resetHint">누르면 내가 저은 만큼 전체에서도 빠져요</small></div></div>
     <div class="set-foot" id="syncState">로컬 모드</div>
   </div>
 </div>
@@ -548,13 +548,20 @@ const CYCLE=CUM[STAGES.length-1]+STAGES[STAGES.length-1].need;   // 한 세대(1
    ===================================================================== */
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 const Sync={
-  endpoint:CONFIG.sync.endpoint, base:0, pending:0, mine:0, localTotal:0, online:null, ok:true, busy:false, ready:false, silent:false,
+  endpoint:CONFIG.sync.endpoint, base:0, pending:0, mine:0, mineE:0, localTotal:0, online:null, ok:true, busy:false, ready:false, silent:false,
   client:(()=>{try{let id=localStorage.getItem('se-client');if(!id){id=Math.random().toString(36).slice(2,12);localStorage.setItem('se-client',id);}return id;}catch(e){return Math.random().toString(36).slice(2,12);}})(),
-  load(){const d=store.get(CONFIG.sync.storageKey,{});this.mine=d.mine||0;this.localTotal=d.total||0;if(!this.endpoint)this.base=this.localTotal;},
-  save(){store.set(CONFIG.sync.storageKey,{total:this.endpoint?this.localTotal:this.base,mine:this.mine,found:[...found]});},
-  add(e,stirs){this.mine+=stirs;if(this.endpoint)this.pending+=e;else this.base+=e;},
+  load(){const d=store.get(CONFIG.sync.storageKey,{});this.mine=d.mine||0;this.mineE=d.mineE||0;this.localTotal=d.total||0;if(!this.endpoint)this.base=this.localTotal;},
+  save(){store.set(CONFIG.sync.storageKey,{total:this.endpoint?this.localTotal:this.base,mine:this.mine,mineE:this.mineE,found:[...found]});},
+  add(e,stirs){this.mine+=stirs;this.mineE+=e;if(this.endpoint)this.pending+=e;else this.base+=e;},
   total(){return this.base+this.pending;},
   reset(){if(this.endpoint)return false;this.base=0;this.save();return true;},
+  // 내 젓기 초기화: 내가 보탠 만큼 전체에서도 뺌 (공유 모드는 서버가 기록한 내 기여분 기준)
+  async resetMine(){
+    if(this.endpoint){this.pending=0;
+      try{const res=await fetch(this.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({reset:true,client:this.client})});
+        if(!res.ok)return false;const j=await res.json();if(typeof j.total==='number')this.base=j.total;}catch(e){return false;}}
+    else this.base=Math.max(0,this.base-this.mineE);
+    this.mine=0;this.mineE=0;this.silent=true;this.save();return true;},
   // 처음 한 번 서버에 접속해 보고, 안 되면 로컬 모드로 전환
   async init(){
     if(!this.endpoint){this.ready=true;return;}
@@ -1185,8 +1192,8 @@ $('pourBack').addEventListener('click',e=>{e.stopPropagation();pourSample(null);
 $('dexList').addEventListener('click',e=>{const b=e.target.closest('[data-pour]');if(b&&!b.disabled)pourSample(+b.dataset.pour);});
 let resetArm=0;
 $('resetBtn').addEventListener('click',()=>{Snd.init();const b=$('resetBtn');
-  if(!resetArm){resetArm=setTimeout(()=>{resetArm=0;b.classList.remove('armed');$('resetHint').textContent='누르면 내 젓기만 0으로 돌아가요';},3000);b.classList.add('armed');$('resetHint').textContent='한 번 더 누르면 초기화돼요';return;}
-  clearTimeout(resetArm);resetArm=0;b.classList.remove('armed');Sync.mine=0;Sync.save();$('mineVal').textContent='0';$('resetHint').textContent='내 젓기를 0으로 초기화했어요';toast('RESET','내 젓기 초기화');});
+  if(!resetArm){resetArm=setTimeout(()=>{resetArm=0;b.classList.remove('armed');$('resetHint').textContent='누르면 내가 저은 만큼 전체에서도 빠져요';},3000);b.classList.add('armed');$('resetHint').textContent='한 번 더 누르면 초기화돼요';return;}
+  clearTimeout(resetArm);resetArm=0;b.classList.remove('armed');Sync.resetMine().then(ok=>{$('mineVal').textContent=Math.floor(Sync.mine).toLocaleString('ko-KR');$('resetHint').textContent=ok?'내 젓기를 전체에서도 뺐어요':'서버에 연결할 수 없어 초기화하지 못했어요';});toast('RESET','내 젓기 초기화');});
 const SPK=on=>`<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>${on?'<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>':'<path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'}</svg>`;
 const paintMute=()=>{$('muteBtn').innerHTML=SPK(!Snd.muted).replace(/width="15" height="15"/,'width="20" height="20"');$('muteLabel').textContent=Snd.muted?'소리 꺼짐':'소리 켜짐';};paintMute();
 $('muteBtn').addEventListener('click',()=>{Snd.init();Snd.setMute(!Snd.muted);paintMute();});

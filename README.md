@@ -22,6 +22,7 @@ Pages 프로젝트가 아니라 **Worker**로 만들어야 합니다(Durable Obj
 ## 공유 카운터 API
 - `GET /api/stir` → `{ total, online }`
 - `POST /api/stir` body `{ delta, client }` → `{ total, online }`
+- `POST /api/stir` body `{ reset: true, client }` → 그 클라이언트가 보탠 만큼 전체에서 뺌 (`removed` 포함)
 
 조작 방지를 위해 클라이언트당 초당 약 6회까지만 인정하고, 저장소 기록은 5초에 한 번으로 묶습니다.
 서버에 연결할 수 없으면(예: index.html만 따로 열었을 때) 게임은 자동으로 로컬 모드로 동작합니다.
