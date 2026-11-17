@@ -129,30 +129,29 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 #boardBtn{position:relative}
 #boardBtn[aria-expanded="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25)}
 #boardBadge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#ff6b57;color:#fff;font:700 10.5px/18px var(--font-data);font-style:normal}
-/* 게시판: 바깥 상자 없이 게임 채팅창처럼 가볍게 */
-#hud{transition:opacity .25s}body.board-open #hud{opacity:.1;pointer-events:none}
-#boardPanel{position:absolute;top:52px;left:0;width:min(320px,calc(100vw - 24px));height:min(340px,calc(100vh - 140px));display:flex;flex-direction:column;gap:6px;animation:rise .2s cubic-bezier(.2,.9,.3,1)}
+/* 게시판: 게임 채팅창 — 반투명 네모 안에 [닉네임]: 메시지 */
+#hud{transition:opacity .25s}body.board-open #hud{opacity:.12;pointer-events:none}
+#boardPanel{position:absolute;top:52px;left:0;width:min(360px,calc(100vw - 24px));height:min(300px,calc(100vh - 140px));display:flex;flex-direction:column;
+  background:rgba(6,8,12,.58);border:1px solid rgba(255,255,255,.12);border-radius:8px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:0 10px 30px -12px rgba(0,0,0,.7);animation:rise .2s cubic-bezier(.2,.9,.3,1)}
 .bd-head{display:none}
-#boardList{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:4px;padding:2px 2px 4px;scrollbar-width:none;overscroll-behavior:contain;
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38px);mask-image:linear-gradient(180deg,transparent 0,#000 38px)}
-#boardList::-webkit-scrollbar{display:none}
+#boardList{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:1px;padding:8px 10px 6px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent}
 #boardList>:first-child{margin-top:auto}
-.bd-item{align-self:flex-start;max-width:92%;padding:5px 10px 6px;border-radius:12px 12px 12px 4px;background:rgba(10,12,16,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-size:13px;line-height:1.45}
-.bd-item.mine{align-self:flex-end;border-radius:12px 12px 4px 12px;background:color-mix(in srgb,var(--liq) 22%,rgba(10,12,16,.62))}
-.bd-meta{display:inline}.bd-name{font-weight:700;font-size:12.5px;margin-right:6px}.bd-time{display:none}
-.bd-item:hover .bd-time{display:inline;font:500 10px var(--font-data);color:#9aa4b4;margin-left:6px}
-.bd-text{display:inline;color:#eef2f7;word-break:break-word;white-space:pre-wrap}
-.bd-empty{margin:auto 0 0;padding:6px 10px;border-radius:10px;background:rgba(10,12,16,.55);color:#c9d1dc;font-size:12px;line-height:1.5}
-#boardForm{display:flex;flex-direction:column;gap:4px}
+.bd-item{font-size:13.5px;line-height:1.5;color:#ffffff;word-break:break-word;text-shadow:0 0 2px #000,1px 1px 0 #000,-1px -1px 0 rgba(0,0,0,.7);padding:1px 0}
+.bd-meta{display:inline}
+.bd-name{font-weight:700}.bd-name::before{content:"["}.bd-name::after{content:"]: "}
+.bd-time{display:none}.bd-item:hover .bd-time{display:inline;font:500 10px var(--font-data);color:#b8c0cc;margin-left:6px;text-shadow:none}
+.bd-text{display:inline;white-space:pre-wrap}
+.bd-item.mine .bd-text{color:#fff6c2}
+.bd-empty{margin-top:auto;color:#c9d1dc;font-size:12.5px;text-shadow:1px 1px 0 #000}
+#boardForm{display:flex;flex-direction:column;gap:5px;padding:6px 8px 7px;border-top:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25)}
 .bd-row{display:flex;align-items:center;gap:6px}.bd-row label{display:none}
-#boardForm input{min-width:0;background:rgba(10,12,16,.7);border:1px solid rgba(255,255,255,.14);border-radius:999px;color:var(--ink);padding:8px 13px;font:inherit;font-size:13.5px;outline:none;backdrop-filter:blur(6px)}
-#boardForm input:focus{border-color:var(--liq)}
-#boardName{width:110px;flex:none;padding:5px 11px!important;font-size:12px!important}
+#boardForm input{min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:var(--ink);padding:6px 9px;font:inherit;font-size:13px;outline:none}
+#boardForm input:focus{border-color:var(--liq);background:rgba(255,255,255,.1)}
+#boardName{width:104px;flex:none;font-size:12px!important;padding:4px 8px!important}
 #boardText{flex:1}
-#boardSend{flex:none;width:36px;height:36px;border:0;border-radius:50%;padding:0;font-size:0;background:var(--liq);color:#0b0f14;cursor:pointer;display:grid;place-items:center}
-#boardSend::before{content:"";width:14px;height:14px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%,22% 50%)}
+#boardSend{flex:none;border:0;border-radius:6px;padding:6px 12px;font-weight:700;font-size:12.5px;background:var(--liq);color:#0b0f14;cursor:pointer}
 #boardSend:disabled{opacity:.45;cursor:default}
-.bd-foot{display:flex;justify-content:space-between;padding:0 6px;font:500 10.5px var(--font-data);color:#a9b2c1;min-height:12px}#boardStatus.err{color:#ff8a75}
+.bd-foot{display:flex;justify-content:space-between;padding:0 2px;font:500 10.5px var(--font-data);color:#a9b2c1;min-height:0}.bd-foot:has(#boardStatus:empty):has(#boardCount:empty){display:none}#boardStatus.err{color:#ff8a75}
 #settings{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:calc(18px + env(safe-area-inset-right,0px));z-index:12;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .btnrow{display:flex;gap:8px}
 #dexBtn[aria-expanded="true"],#gearBtn[aria-expanded="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25)}
@@ -286,7 +285,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 @media (max-width:760px){
   #counter{top:calc(6px + env(safe-area-inset-top,0px))}
   #bigCount{font-size:40px}#rpmLine{font-size:12px}
-  #boardPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:44vh}
+  #boardPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:40vh}
   #hud{left:8px;right:8px;width:auto;top:96px;padding:10px 12px;gap:8px;border-radius:14px;display:grid;grid-template-columns:1fr auto;align-items:start}
   .hud-head{gap:3px;grid-column:1/2}
   #stageName{font-size:19px}
@@ -343,8 +342,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
     <header class="bd-head"><div><span class="eyebrow">LAB BOARD</span><h3>연구실 게시판</h3></div><button id="boardClose" class="icon-btn" type="button" aria-label="게시판 닫기"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></header>
     <div id="boardList" aria-live="polite"></div>
     <form id="boardForm" autocomplete="off">
-      <div class="bd-row"><label for="boardName">닉네임</label><input id="boardName" maxlength="16" placeholder="닉네임"></div>
-      <div class="bd-row bd-msg"><input id="boardText" maxlength="200" placeholder="메시지 보내기"><button id="boardSend" type="submit">등록</button></div>
+      <div class="bd-row"><label for="boardName">닉네임</label><input id="boardName" maxlength="16" placeholder="닉네임"><input id="boardText" maxlength="200" placeholder="메시지 입력" aria-label="메시지"><button id="boardSend" type="submit">전송</button></div>
       <div class="bd-foot"><span id="boardStatus"></span><span id="boardCount"></span></div>
     </form>
   </section>
