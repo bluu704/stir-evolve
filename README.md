@@ -9,15 +9,25 @@
 | `public/index.html` | 게임 전체 (PixiJS 7 · Matter.js 0.19 CDN, 사운드는 Web Audio 합성) |
 | `src/worker.js` | 모두의 젓기 합계를 관리하는 Cloudflare Worker + Durable Object |
 | `wrangler.jsonc` | Worker 설정 (정적 파일 + Durable Object) |
+| `functions/api/stir.js` | Pages에서 `/api/stir`를 Worker로 전달하는 함수 |
 
-## Cloudflare에 배포 (Workers, Git 연결)
-1. Cloudflare 대시보드 → **Workers & Pages → Create → Import a repository**
-2. 이 저장소 선택. 빌드 설정은 기본값 그대로 두면 됩니다.
-   - Build command: 비움
-   - Deploy command: `npx wrangler deploy`
-3. 배포 후 `https://stir-evolve.<계정>.workers.dev` 주소로 접속합니다. `main`에 push할 때마다 자동 재배포됩니다.
+## Cloudflare에 배포
+공유 카운터는 **Worker**(Durable Object)가 담당하고, 화면은 **Pages**(`stir-evolve.pages.dev`)로도 제공합니다.
+두 주소 모두 같은 카운터를 씁니다.
 
-Pages 프로젝트가 아니라 **Worker**로 만들어야 합니다(Durable Object를 쓰기 때문). 무료 플랜에서 동작합니다.
+### 1) 카운터 Worker (이미 배포됨)
+- Workers & Pages → Create → Import a repository → 이 저장소
+- 빌드 설정 기본값 (Deploy command: `npx wrangler deploy`)
+
+### 2) Pages (계정 이름 없는 주소)
+1. Workers & Pages → Create → **Pages** → Connect to Git → 이 저장소
+2. Framework preset: None · Build command: 비움 · **Build output directory: `public`**
+3. 배포 후 프로젝트 **Settings → Bindings → Add → Service binding**
+   - Variable name: `STIR_API`
+   - Service: `stir-evolve`
+4. **Deployments**에서 최신 배포를 **Retry deployment**(재배포)해야 바인딩이 적용됩니다.
+
+`functions/api/stir.js`가 `/api/stir` 요청을 Worker로 전달합니다.
 
 ## 공유 카운터 API
 - `GET /api/stir` → `{ total, online }`
