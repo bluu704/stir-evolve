@@ -2,7 +2,8 @@
  * Stir & Evolve — 모두의 젓기 횟수를 합산하는 Cloudflare Worker
  *
  *  GET  /api/stir                     → { total, online }
- *  POST /api/stir  { delta, client }  → { total, online }
+ *  POST /api/stir  { delta, client, tab, name }  → { total, online }
+ *  GET  /api/rank?client=ID          → { top:[{name,c,me?}], me:{rank,c} }  (연구원별 기여도 순위)
  *  POST /api/stir  { reset: true, client } → 그 클라이언트가 보탠 만큼 전체에서 빼고 { total, online, removed }
  *
  *  GET  /api/board?since=ID          → { messages:[{id,name,text,t}] }   (게시판)
@@ -30,6 +31,9 @@ const BOARD_PER_MIN = 6;         // 같은 사람(IP)이 1분에 쓸 수 있는 
 const NAME_MAX = 16, TEXT_MAX = 200;
 const ID_RE = /^[a-z0-9]{4,16}$/; // 클라이언트·탭 id 형식 (임의 문자열로 저장소를 채우는 것 방지)
 
+const RANK_KEEP = 100;           // 기여도 순위표에 보관하는 연구원 수
+const RANK_SHOW = 30;            // 한 번에 보여 주는 순위 수
+const cleanText = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 const ipOf = req => req.headers.get('cf-connecting-ip') || 'local';
 async function readJson(request) {
   const len = Number(request.headers.get('content-length') || 0);
@@ -49,6 +53,8 @@ export class Counter {
     this.ips = new Map();     // IP → { tok, t, hour, hourStart } (IP당 속도·시간당 상한)
     this.contrib = new Map(); // client id → 지금까지 보탠 젓기 합계 (초기화 시 빼기 위해 기록)
     this.dirty = new Set();
+    this.lb = null;             // 기여도 순위표 { client id → { n: 닉네임, c: 기여 } } (상위 RANK_KEEP명)
+    this.lbDirty = false;
     this.msgs = null;           // 게시판 글 (최근 BOARD_KEEP개)
     this.posters = new Map();   // IP → { last, times:[], lastText } (게시판 도배 방지)
   }
@@ -63,7 +69,7 @@ export class Counter {
     }
     const body = await readJson(request);
     if (!body) return json({ error: '잘못된 요청' }, 400);
-    const clean = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+    const clean = cleanText;
     const name = clean(body.name, NAME_MAX) || '익명 연구원';
     const text = clean(body.text, TEXT_MAX);
     if (!text) return json({ error: '내용을 입력해 주세요' }, 400);
@@ -88,6 +94,7 @@ export class Counter {
   async save() {
     const batch = { total: this.total };
     for (const id of this.dirty) batch['c:' + id] = this.contrib.get(id) || 0;
+    if (this.lbDirty && this.lb) { batch.lb = this.lb; this.lbDirty = false; }
     this.dirty.clear();
     this.lastSave = Date.now();
     await this.ctx.storage.put(batch);
@@ -95,6 +102,53 @@ export class Counter {
 
   async ensureLoaded() {
     if (this.total === null) this.total = (await this.ctx.storage.get('total')) || 0;
+    if (this.lb === null) {
+      this.lb = await this.ctx.storage.get('lb');
+      if (!this.lb) {
+        // 순위표가 생기기 전의 기여 기록으로 처음 한 번 채움
+        this.lb = {};
+        const all = await this.ctx.storage.list({ prefix: 'c:' });
+        for (const [k, v] of all) if (v > 0) this.lb[k.slice(2)] = { n: '', c: v };
+        this.trimRank();
+        this.lbDirty = true;
+      }
+    }
+  }
+
+  trimRank() {
+    const ids = Object.keys(this.lb);
+    if (ids.length <= RANK_KEEP) return;
+    ids.sort((a, b) => this.lb[b].c - this.lb[a].c);
+    for (const id of ids.slice(RANK_KEEP)) delete this.lb[id];
+  }
+
+  // 기여가 늘 때 순위표 갱신 (상위권이거나 상위권에 새로 들 때만 기록)
+  updateRank(id, c, name) {
+    const e = this.lb[id];
+    if (e) { e.c = c; if (name) e.n = name; this.lbDirty = true; return; }
+    const ids = Object.keys(this.lb);
+    if (ids.length >= RANK_KEEP) {
+      let minId = null, min = Infinity;
+      for (const k of ids) if (this.lb[k].c < min) { min = this.lb[k].c; minId = k; }
+      if (c <= min) return;
+      delete this.lb[minId];
+    }
+    this.lb[id] = { n: name || '', c };
+    this.lbDirty = true;
+  }
+
+  rank(url) {
+    const me = String(url.searchParams.get('client') || '');
+    const ids = Object.keys(this.lb).filter(k => this.lb[k].c >= 1).sort((a, b) => this.lb[b].c - this.lb[a].c);
+    const top = ids.slice(0, RANK_SHOW).map(k => {
+      const o = { name: this.lb[k].n || '익명 연구원', c: Math.floor(this.lb[k].c) };
+      if (k === me) o.me = true;
+      return o;
+    });
+    const i = ids.indexOf(me);
+    const mine = ID_RE.test(me) ? (this.contrib.get(me) ?? this.lb[me]?.c ?? null) : null;
+    return Response.json({ top, me: { rank: i >= 0 ? i + 1 : null, c: mine == null ? null : Math.floor(mine) }, n: ids.length },
+      { headers: { 'cache-control': 'no-store' } });
   }
 
   // 접속자 수: 같은 IP에서 탭을 여러 개 열어도 1명으로 셈
@@ -133,6 +187,11 @@ export class Counter {
     this.sweep(now);
     const url = new URL(request.url);
     if (url.pathname === '/api/board') return this.board(request, url, now, ip);
+    if (url.pathname === '/api/rank') {
+      const me = String(url.searchParams.get('client') || '');
+      if (ID_RE.test(me) && !this.contrib.has(me)) await this.getContrib(me);
+      return this.rank(url);
+    }
     const res = (o, st = 200) => Response.json(o, { status: st, headers: { 'cache-control': 'no-store' } });
     const qtab = url.searchParams.get('tab');
     if (request.method === 'GET' && qtab && ID_RE.test(qtab)) {
@@ -152,6 +211,7 @@ export class Counter {
         this.total = Math.max(0, this.total - mine);
         this.contrib.set(id, 0);
         this.dirty.add(id);
+        if (this.lb[id]) { delete this.lb[id]; this.lbDirty = true; }
         await this.save();
         return res({ total: this.total, online: this.online(now), removed: mine });
       }
@@ -166,8 +226,11 @@ export class Counter {
       delta = Math.min(delta, tabTok, max);
       b.tok -= delta; b.hour += delta;
       this.total += delta;
-      this.contrib.set(id, (await this.getContrib(id)) + delta);
+      const myC = (await this.getContrib(id)) + delta;
+      this.contrib.set(id, myC);
       this.dirty.add(id);
+      const name = cleanText(body.name, NAME_MAX);
+      if (delta > 0 || (name && this.lb[id])) this.updateRank(id, myC, name);
       this.clients.set(tab, { t: now, post: now, tok: tabTok - delta, ip });
       if (now - this.lastSave > SAVE_EVERY_MS) {
         await this.save();
@@ -190,7 +253,7 @@ export class Counter {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/stir' || url.pathname === '/api/board') {
+    if (url.pathname === '/api/stir' || url.pathname === '/api/board' || url.pathname === '/api/rank') {
       if (request.method !== 'GET' && request.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 });
       }

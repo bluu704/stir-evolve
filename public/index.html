@@ -125,15 +125,32 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 .shelf-row.mut{flex-wrap:nowrap;gap:3px}
 .dex .flask{width:16px;height:16px}.dex .flask::before{left:4px;width:6px;top:-5px;height:6px}
 .dex .shelf-row + .dex-head{margin-top:4px}
-#boardWrap{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:calc(18px + env(safe-area-inset-left,0px));z-index:13}
+#boardWrap{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:calc(18px + env(safe-area-inset-left,0px));z-index:13;display:flex;gap:8px}
+#rankBtn[aria-expanded="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25)}
 #boardBtn{position:relative}
 #boardBtn[aria-expanded="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25)}
 #boardBadge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#ff6b57;color:#fff;font:700 10.5px/18px var(--font-data);font-style:normal}
 /* 게시판: 게임 채팅창 — 반투명 네모 안에 [닉네임]: 메시지 */
 #hud{transition:opacity .25s}body.board-open #hud{opacity:.12;pointer-events:none}
-#boardPanel{position:absolute;top:52px;left:0;width:min(360px,calc(100vw - 24px));height:min(300px,calc(100vh - 140px));display:flex;flex-direction:column;
+#boardPanel,#rankPanel{position:absolute;top:52px;left:0;width:min(360px,calc(100vw - 24px));height:min(300px,calc(100vh - 140px));display:flex;flex-direction:column;
   background:rgba(6,8,12,.58);border:1px solid rgba(255,255,255,.12);border-radius:8px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:0 10px 30px -12px rgba(0,0,0,.7);animation:rise .2s cubic-bezier(.2,.9,.3,1)}
 .bd-head{display:none}
+/* 기여도 순위: 채팅창과 같은 반투명 네모 */
+#rankPanel{height:auto;max-height:min(420px,calc(100vh - 140px))}
+.rk-head{display:flex;justify-content:space-between;align-items:baseline;padding:9px 12px 6px;border-bottom:1px solid rgba(255,255,255,.1);font-weight:700;font-size:13.5px;text-shadow:1px 1px 0 #000}
+.rk-head small{font:500 11px var(--font-data);color:#c9d1dc}
+#rankList{flex:1;min-height:0;overflow:auto;margin:0;padding:4px 6px;list-style:none;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent}
+#rankList li{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;font-size:13.5px;text-shadow:0 0 2px #000,1px 1px 0 #000}
+#rankList li b{font:600 12.5px var(--font-data);text-align:center;color:#c9d1dc}
+#rankList li:nth-child(1) b{color:#ffd76b}#rankList li:nth-child(2) b{color:#dfe6ee}#rankList li:nth-child(3) b{color:#e0a46e}
+#rankList li span{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rankList li em{font:600 12.5px var(--font-data);font-style:normal;font-variant-numeric:tabular-nums;color:#fff}
+#rankList li.me{background:rgba(255,246,194,.13);box-shadow:inset 0 0 0 1px rgba(255,246,194,.3)}
+.rk-empty{padding:12px 8px;color:#c9d1dc;font-size:12.5px;text-shadow:1px 1px 0 #000}
+.rk-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;border-top:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25);font-size:12.5px}
+.rk-foot b{font-family:var(--font-data)}
+#rankName{width:110px;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:var(--ink);padding:4px 8px;font:inherit;font-size:12px;outline:none}
+#rankName:focus{border-color:var(--liq)}
 #boardList{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:1px;padding:8px 10px 6px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent}
 #boardList>:first-child{margin-top:auto}
 .bd-item{font-size:13.5px;line-height:1.5;color:#ffffff;word-break:break-word;text-shadow:0 0 2px #000,1px 1px 0 #000,-1px -1px 0 rgba(0,0,0,.7);padding:1px 0}
@@ -215,6 +232,15 @@ button:focus-visible,.item:focus-visible{outline:2px solid var(--liq);outline-of
 .set-row{display:flex;align-items:center;gap:12px;font-size:14px}
 .set-txt{display:flex;flex-direction:column;gap:2px}.set-txt b{font-family:var(--font-data)}
 .set-txt small{font-size:11.5px;color:#c9d1dc}
+#setMenu{max-width:min(300px,calc(100vw - 24px))}
+.set-code{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.set-code b{font-family:var(--font-data);letter-spacing:.06em;user-select:text;-webkit-user-select:text}
+.code-row{display:flex;gap:6px}
+.code-row input{flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:var(--ink);padding:6px 8px;font:500 12.5px var(--font-data);outline:none}
+.code-row input:focus{border-color:var(--liq)}
+.code-row button{flex:none;border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:6px 10px;font-size:12.5px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.1)}
+.code-row button:hover{background:rgba(255,255,255,.18)}
+#codeMsg{font-size:11.5px;color:#c9d1dc}#codeMsg:empty{display:none}#codeMsg.err{color:#ff8a75}
 #resetBtn.armed{background:rgba(255,122,92,.22);border-color:var(--warn);color:#ffd3c8}
 .set-foot{border-top:1px solid var(--line);padding-top:8px;font:500 12px var(--font-data);color:#c9d1dc}
 #stressRow{display:none;flex-direction:column;gap:6px}
@@ -285,7 +311,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 @media (max-width:760px), (orientation:portrait) and (max-width:1100px){
   #counter{top:calc(6px + env(safe-area-inset-top,0px))}
   #bigCount{font-size:40px}#rpmLine{font-size:12px}
-  #boardPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:40vh}
+  #boardPanel,#rankPanel{position:fixed;left:10px;right:10px;width:auto;top:calc(66px + env(safe-area-inset-top,0px));height:40vh}#rankPanel{height:auto;max-height:60vh}
   #hud{left:8px;right:8px;width:auto;top:96px;padding:10px 12px;gap:8px;border-radius:14px;display:grid;grid-template-columns:1fr auto;align-items:start}
   .hud-head{gap:3px;grid-column:1/2}
   #stageName{font-size:19px}
@@ -328,7 +354,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
   .dish{width:32px;height:32px}.item img{width:26px;height:26px}.item .nm{font-size:9.5px}
   #actions{bottom:calc(4px + env(safe-area-inset-bottom,0px))}.act{width:56px;height:46px;gap:2px;border-radius:12px}.act svg{width:18px;height:18px}.act .an{font-size:9px}
   .icon-btn{width:36px;height:36px}#settings,#boardWrap{top:calc(8px + env(safe-area-inset-top,0px))}
-  #boardPanel{top:44px;height:calc(100vh - 110px)}
+  #boardPanel,#rankPanel{top:44px;height:calc(100vh - 110px)}#rankPanel{height:auto;max-height:calc(100vh - 60px)}
   #hint{display:none}
 }
 /* PC지만 화면이 낮을 때(가로 태블릿·작은 노트북): 재료 트레이가 작용 버튼과 겹치지 않게 스크롤 */
@@ -367,6 +393,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 
 <div id="boardWrap">
   <button id="boardBtn" class="icon-btn" type="button" aria-label="연구실 게시판" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 5h16v10H9l-5 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><i id="boardBadge" hidden></i></button>
+  <button id="rankBtn" class="icon-btn" type="button" aria-label="연구원 기여도 순위" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <section id="boardPanel" hidden aria-label="연구실 게시판">
     <header class="bd-head"><div><span class="eyebrow">LAB BOARD</span><h3>연구실 게시판</h3></div><button id="boardClose" class="icon-btn" type="button" aria-label="게시판 닫기"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></header>
     <div id="boardList" aria-live="polite"></div>
@@ -374,6 +401,11 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
       <div class="bd-row"><label for="boardName">닉네임</label><input id="boardName" maxlength="16" placeholder="닉네임"><input id="boardText" maxlength="200" placeholder="메시지 입력" aria-label="메시지"><button id="boardSend" type="submit">전송</button></div>
       <div class="bd-foot"><span id="boardStatus"></span><span id="boardCount"></span></div>
     </form>
+  </section>
+  <section id="rankPanel" hidden aria-label="연구원 기여도 순위">
+    <div class="rk-head">기여도 순위<small id="rankCount"></small></div>
+    <ol id="rankList"></ol>
+    <div class="rk-foot"><span id="rankMe">내 기여 -</span><input id="rankName" maxlength="16" placeholder="닉네임" aria-label="닉네임"></div>
   </section>
 </div>
 
@@ -384,6 +416,11 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
     <div class="set-row"><button id="muteBtn" class="icon-btn" type="button" aria-label="소리 켜기/끄기"></button><span id="muteLabel">소리 켜짐</span></div>
     <div class="set-row"><button id="resetBtn" class="icon-btn" type="button" aria-label="내 젓기 초기화"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="set-txt"><span>내 젓기 <b id="mineVal">0</b></span><small id="resetHint">누르면 내가 저은 만큼 전체에서도 빠져요</small></div></div>
+    <div class="set-code">
+      <div class="set-txt"><span>내 연구원 코드 <b id="myCode"></b></span><small>다른 기기에 이 코드를 넣으면 같은 연구원으로 기여가 이어져요. 남에게 알려 주지 마세요.</small></div>
+      <div class="code-row"><button id="codeCopy" type="button">복사</button><input id="codeIn" maxlength="16" placeholder="다른 기기의 코드 입력" aria-label="연구원 코드 입력" autocomplete="off" spellcheck="false"><button id="codeUse" type="button">적용</button></div>
+      <small id="codeMsg"></small>
+    </div>
     <div class="set-foot" id="syncState">로컬 모드</div>
   </div>
 </div>
@@ -664,7 +701,7 @@ const Sync={
     try{
       let res;
       if(this.pending>0.01){const sent=this.pending;
-        res=await fetch(this.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({delta:sent,client:this.client,tab:this.tab})});
+        res=await fetch(this.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({delta:sent,client:this.client,tab:this.tab,name:(()=>{try{return localStorage.getItem('se-nick')||'';}catch(e){return '';}})()})});
         if(res.ok){this.pending-=sent;}
       }else res=await fetch(this.endpoint+'?tab='+this.tab,{cache:'no-store'});
       if(res.ok){const j=await res.json();if(typeof j.total==='number')this.base=j.total;this.online=j.online??null;this.ok=true;}else this.ok=false;
@@ -1279,7 +1316,7 @@ function showTip(el,html,side){tooltip.innerHTML=html;const r=el.getBoundingClie
   tooltip.style.left=clamp(r.left+r.width/2-tw/2,8,innerWidth-tw-8)+'px';tooltip.style.top=(side==='left'?Math.max(8,r.top-th-10):r.bottom+10)+'px';}
 function hideTip(){tooltip.classList.remove('on');}
 document.addEventListener('click',hideTip);
-function openMenu(which){if(which!=='board'&&typeof boardOpen==='function')boardOpen(false);const sm=$('setMenu'),dm=$('dexOverlay');const openS=which==='set'&&sm.hidden,openD=which==='dex'&&dm.hidden;
+function openMenu(which){if(which!=='board'&&typeof boardOpen==='function')boardOpen(false);if(typeof rankOpen==='function')rankOpen(false);const sm=$('setMenu'),dm=$('dexOverlay');const openS=which==='set'&&sm.hidden,openD=which==='dex'&&dm.hidden;
   sm.hidden=!openS;dm.hidden=!openD;$('gearBtn').setAttribute('aria-expanded',String(openS));$('dexBtn').setAttribute('aria-expanded',String(openD));if(openD){renderDex();$('dexClose').focus();}}
 $('gearBtn').addEventListener('click',e=>{e.stopPropagation();openMenu('set');});
 $('dexBtn').addEventListener('click',e=>{e.stopPropagation();openMenu('dex');});
@@ -1471,7 +1508,7 @@ function shatter(o){o=o||{};
   setTimeout(startSweep,450);}
   setTimeout(()=>modal(o.tag||'ACCIDENT REPORT',o.title||'비커 파손',o.body||'교반 속도가 유리의 허용 응력을 초과했다. 용액이 실험실 바닥과 장비 일체를 휩쓸었다. 비커값은 연구비에서 차감된다.',o.btn||'새 비커 지급받기',restoreBeaker),o.delay||4200);
 }
-function startSweep(){sweep.length=0;document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn').forEach(el=>{const r=el.getBoundingClientRect();
+function startSweep(){sweep.length=0;document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn,#rankBtn').forEach(el=>{const r=el.getBoundingClientRect();
   sweep.push({el,r,x:0,y:0,vx:rand(-50,70),vy:rand(-240,-30),rot:0,vr:rand(-140,140),float:false,cur:rand(60,170),ph:rand(0,6),delay:rand(0,.35)});el.style.transition='none';});}
 function waterY(x){return innerHeight*.7+Math.sin(x*.012+T*2.2)*10+Math.sin(x*.031-T*1.5)*4;}
 function updateSweep(dt){if(!sweep.length)return;for(const s of sweep){
@@ -2170,7 +2207,7 @@ function triggerSpecial(id){if(mode!=='play')return;const m=MUTATIONS.find(q=>q.
   if(id==='evaporate'){evapOn=true;}
   if(id==='dinoAbsorb'){found.add(id);Sync.save();refreshFlasks();Snd.mutation();shake=1.6;
     const d=items.find(i=>!i.dead&&i.giant);if(d){d.rampage={dir:Math.random()<.5?-1:1,wait:.9,step:0,lastStep:0};}
-    rampTargets=[...document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn')];
+    rampTargets=[...document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn,#rankBtn')];
     shatter({tag:'DINO · 히든 엔딩',title:m.name,body:m.log,btn:'새 비커 지급받기',noFlood:true,dry:true,delay:6500});return;}
   triggerMutation(m);}
 function startEnding(m){mode='ending';const after={
@@ -2184,7 +2221,6 @@ const BOARD_URL='/api/board';
 const Board={msgs:[],last:0,seen:+(store.get('se-board-seen',0)||0),open:false,mine:new Set(store.get('se-board-mine',[])),ok:false,timer:0,
   name(){try{return localStorage.getItem('se-nick')||'';}catch(e){return '';}}};
 $('boardName').value=Board.name();
-$('boardName').addEventListener('change',()=>{try{localStorage.setItem('se-nick',$('boardName').value.trim().slice(0,16));}catch(e){}});
 const nickColor=n=>{let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 80% 72%)`;};
 const ago=t=>{const d=(Date.now()-t)/1000;return d<60?'방금':d<3600?`${Math.floor(d/60)}분 전`:d<86400?`${Math.floor(d/3600)}시간 전`:`${Math.floor(d/86400)}일 전`;};
 function renderBoard(){const L3=$('boardList');const atBottom=L3.scrollHeight-L3.scrollTop-L3.clientHeight<40;L3.textContent='';
@@ -2201,7 +2237,7 @@ async function pollBoard(){try{const r=await fetch(BOARD_URL+(Board.last?`?since
   catch(e){Board.ok=false;}
   if(Board.open){if(Board.last>Board.seen){Board.seen=Board.last;store.set('se-board-seen',Board.seen);}renderBoard();}boardBadge();
   $('boardSend').disabled=!Board.ok;clearTimeout(Board.timer);Board.timer=setTimeout(pollBoard,Board.open?3000:15000);}
-function boardOpen(v){Board.open=v;document.body.classList.toggle('board-open',v);$('boardPanel').hidden=!v;$('boardBtn').setAttribute('aria-expanded',String(v));if(v){Board.justOpened=true;renderBoard();boardBadge();pollBoard();setTimeout(()=>$('boardText').focus(),50);}}
+function boardOpen(v){Board.open=v;document.body.classList.toggle('board-open',v||!!(window.__rk&&__rk.open));$('boardPanel').hidden=!v;$('boardBtn').setAttribute('aria-expanded',String(v));if(v){Board.justOpened=true;renderBoard();boardBadge();pollBoard();setTimeout(()=>$('boardText').focus(),50);}}
 $('boardBtn').addEventListener('click',e=>{e.stopPropagation();const v=!Board.open;openMenu(null);boardOpen(v);});
 $('boardClose').addEventListener('click',e=>{e.stopPropagation();boardOpen(false);});
 $('boardPanel').addEventListener('click',e=>e.stopPropagation());$('boardPanel').addEventListener('pointerdown',e=>e.stopPropagation());
@@ -2219,6 +2255,46 @@ $('boardForm').addEventListener('submit',async e=>{e.preventDefault();const text
 // 게시판 입력 중에는 키 입력이 게임 단축키로 새지 않게
 ['boardText','boardName'].forEach(id=>$(id).addEventListener('keydown',e=>e.stopPropagation()));
 pollBoard();
+/* 연구원별 기여도 순위 (서버에 브라우저 id별로 기록된 기여를 닉네임과 함께 표시) */
+const Rank={open:false,timer:0};
+function nickSet(v){v=v.trim().slice(0,16);try{localStorage.setItem('se-nick',v);}catch(e){}$('boardName').value=v;$('rankName').value=v;
+  if(Sync.endpoint)fetch(Sync.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({delta:0,client:Sync.client,tab:Sync.tab,name:v})}).then(()=>Rank.open&&pollRank()).catch(()=>{});}
+$('boardName').addEventListener('change',()=>nickSet($('boardName').value));
+$('rankName').addEventListener('change',()=>nickSet($('rankName').value));
+$('rankName').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')e.target.blur();});
+const fmtN=n=>Math.floor(n).toLocaleString('ko-KR');
+async function pollRank(){clearTimeout(Rank.timer);const L4=$('rankList');
+  try{const r=await fetch('/api/rank?client='+encodeURIComponent(Sync.client),{cache:'no-store'});const j=r.ok?await r.json().catch(()=>null):null;
+    if(!j||!Array.isArray(j.top))throw 0;L4.textContent='';
+    if(!j.top.length){const e=document.createElement('li');e.className='rk-empty';e.textContent='아직 기록이 없어요. 먼저 저어 보세요!';L4.appendChild(e);}
+    j.top.forEach((t,i)=>{const li=document.createElement('li');if(t.me)li.className='me';const b=document.createElement('b');b.textContent=i+1;
+      const nm=document.createElement('span');nm.textContent=t.name;nm.style.color=nickColor(t.name);const c=document.createElement('em');c.textContent=fmtN(t.c);li.append(b,nm,c);L4.appendChild(li);});
+    $('rankCount').textContent=j.n?`연구원 ${j.n}명`:'';
+    $('rankMe').innerHTML='';const me=$('rankMe');me.append('내 기여 ');const mb=document.createElement('b');mb.textContent=fmtN(j.me.c||0);me.append(mb,'회'+(j.me.rank?` · ${j.me.rank}위`:''));}
+  catch(e){L4.textContent='';const x=document.createElement('li');x.className='rk-empty';x.textContent='공유 서버에 연결되면 연구원별 기여도를 볼 수 있어요.';L4.appendChild(x);$('rankMe').textContent='내 기여 -';$('rankCount').textContent='';}
+  if(Rank.open)Rank.timer=setTimeout(pollRank,5000);}
+function rankOpen(v){if(Rank.open===v)return;Rank.open=v;window.__rk=Rank;$('rankPanel').hidden=!v;$('rankBtn').setAttribute('aria-expanded',String(v));
+  document.body.classList.toggle('board-open',v||Board.open);if(v){$('rankName').value=Board.name();pollRank();}else clearTimeout(Rank.timer);}
+$('rankBtn').addEventListener('click',e=>{e.stopPropagation();const v=!Rank.open;openMenu(null);boardOpen(false);rankOpen(v);});
+$('rankPanel').addEventListener('click',e=>e.stopPropagation());$('rankPanel').addEventListener('pointerdown',e=>e.stopPropagation());
+document.addEventListener('click',()=>{if(Rank.open)rankOpen(false);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&Rank.open)rankOpen(false);});
+// 내 젓기 표시는 서버에 기록된 내 기여로 맞춤 (다른 기기·코드 이어받기 반영)
+async function syncMine(){if(!Sync.endpoint)return;try{const r=await fetch('/api/rank?client='+encodeURIComponent(Sync.client),{cache:'no-store'});const j=r.ok?await r.json():null;
+  if(j&&j.me&&typeof j.me.c==='number'){Sync.mine=Math.max(j.me.c,0);Sync.mineE=Sync.mine;}}catch(e){}}
+setTimeout(syncMine,2500);$('gearBtn').addEventListener('click',()=>{if(!$('setMenu').hidden)syncMine();});
+/* 연구원 코드: 다른 기기에서도 같은 연구원(기여도)으로 이어서 하기 */
+$('myCode').textContent=Sync.client;
+$('codeCopy').addEventListener('click',async()=>{const m=$('codeMsg');m.className='';
+  try{await navigator.clipboard.writeText(Sync.client);m.textContent='코드를 복사했어요';}catch(e){m.textContent='코드를 길게 눌러 직접 복사해 주세요';}});
+$('codeIn').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')$('codeUse').click();});
+$('codeUse').addEventListener('click',()=>{const v=$('codeIn').value.trim().toLowerCase(),m=$('codeMsg');
+  if(!/^[a-z0-9]{4,16}$/.test(v)){m.className='err';m.textContent='코드 형식이 올바르지 않아요 (영문 소문자·숫자)';return;}
+  if(v===Sync.client){m.className='';m.textContent='이미 이 코드를 쓰고 있어요';return;}
+  if(!$('codeUse').dataset.arm){$('codeUse').dataset.arm=1;$('codeUse').textContent='확인';m.className='';m.textContent='한 번 더 누르면 이 기기의 연구원이 바뀌고 새로고침돼요';
+    setTimeout(()=>{delete $('codeUse').dataset.arm;$('codeUse').textContent='적용';},4000);return;}
+  try{localStorage.setItem('se-client',v);const d=store.get(CONFIG.sync.storageKey,{});d.mine=0;d.mineE=0;store.set(CONFIG.sync.storageKey,d);}catch(e){}
+  location.reload();});
 /* 시작 */
 refreshFlasks();layout();setTimeout(layout,200);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
