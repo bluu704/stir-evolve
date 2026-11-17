@@ -11,15 +11,15 @@
  */
 const SAVE_EVERY_MS = 5000;      // 저장소에 합계를 기록하는 최소 간격
 const ONLINE_WINDOW_MS = 15000;  // 이 시간 안에 요청한 클라이언트를 '접속 중'으로 셈
-const MAX_RATE = 6;              // 클라이언트당 초당 최대 인정 젓기 수 (조작 방지)
-const BURST = 8;                 // 순간 허용 여유분
+const MAX_RATE = 10;             // 탭(접속)당 초당 최대 인정 젓기 수 (조작 방지)
+const BURST = 15;                // 순간 허용 여유분
 
 export class Counter {
   constructor(ctx, env) {
     this.ctx = ctx;
     this.total = null;
     this.lastSave = 0;
-    this.clients = new Map(); // client id → 마지막 요청 시각
+    this.clients = new Map(); // 탭 id → 마지막 요청 시각 (접속자 수·속도 제한용)
     this.contrib = new Map(); // client id → 지금까지 보탠 젓기 합계 (초기화 시 빼기 위해 기록)
     this.dirty = new Set();
   }
@@ -53,11 +53,15 @@ export class Counter {
   async fetch(request) {
     await this.ensureLoaded();
     const now = Date.now();
+    const url = new URL(request.url);
+    const qtab = url.searchParams.get('tab');
+    if (request.method === 'GET' && qtab) this.clients.set(String(qtab).slice(0, 32), now);
 
     if (request.method === 'POST') {
       let body = {};
       try { body = await request.json(); } catch {}
-      const id = String(body.client || 'anon').slice(0, 32);
+      const id = String(body.client || 'anon').slice(0, 32);           // 브라우저 고정 id: 내 기여분(초기화용)
+      const tab = String(body.tab || body.client || 'anon').slice(0, 32); // 탭 id: 접속자 수·속도 제한
       // 내 젓기 초기화: 이 클라이언트가 보탠 만큼만 전체에서 뺌
       if (body.reset === true) {
         const mine = await this.getContrib(id);
@@ -70,13 +74,13 @@ export class Counter {
       let delta = Number(body.delta);
       if (!Number.isFinite(delta) || delta < 0) delta = 0;
       // 마지막 요청 이후 지난 시간에 비례한 만큼만 인정
-      const last = this.clients.get(id);
+      const last = this.clients.get(tab);
       const allowed = (last ? Math.min(30, (now - last) / 1000) : 2) * MAX_RATE + BURST;
       delta = Math.min(delta, allowed);
       this.total += delta;
       this.contrib.set(id, (await this.getContrib(id)) + delta);
       this.dirty.add(id);
-      this.clients.set(id, now);
+      this.clients.set(tab, now);
       if (now - this.lastSave > SAVE_EVERY_MS) {
         await this.save();
       } else {
