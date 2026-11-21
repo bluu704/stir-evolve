@@ -422,7 +422,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
     <div class="set-row"><button id="resetBtn" class="icon-btn" type="button" aria-label="내 젓기 초기화"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="set-txt"><span>내 젓기 <b id="mineVal">0</b></span><small id="resetHint">누르면 내가 저은 만큼 전체에서도 빠져요</small></div></div>
     <div class="set-code">
-      <div class="set-txt"><span class="code-line">내 연구원 코드 <b id="myCode"></b><button id="codeCopy" type="button">복사</button></span><small>다른 기기에 이 코드를 넣으면 같은 연구원으로 기여가 이어져요. 남에게 알려 주지 마세요.</small></div>
+      <div class="set-txt"><span class="code-line">내 연구원 코드 <b id="myCode"></b><button id="codeCopy" type="button">복사</button></span><small>다른 기기에 이 코드를 넣으면 같은 연구원으로 기여와 도감이 이어져요. 남에게 알려 주지 마세요.</small></div>
       <div class="code-row"><input id="codeIn" maxlength="16" placeholder="다른 기기의 코드 입력" aria-label="연구원 코드 입력" autocomplete="off" spellcheck="false"><button id="codeUse" type="button">적용</button></div>
       <small id="codeMsg"></small>
     </div>
@@ -1698,7 +1698,7 @@ function setStage(i,announce){
   const s=STAGES[i].look;$('gaugeFill').style.setProperty('--g1',css(s.bottom));$('gaugeFill').style.setProperty('--g2',css(STAGES[Math.min(i+1,STAGES.length-1)].look.top));
 }
 function refreshFlasks(){flasks.forEach((f,k)=>{const m=MUTATIONS[k],on=found.has(m.id);f.classList.toggle('on',on);f.firstChild.style.background=m.color;f.children[1].style.display=on?'none':'';});
-  $('recipeCount').textContent=`${found.size} / ${MUTATIONS.length}`;renderDex();}
+  $('recipeCount').textContent=`${found.size} / ${MUTATIONS.length}`;renderDex();if(window.DexSync)DexSync.changed();}
 function triggerMutation(m){
   found.add(m.id);Sync.save();refreshFlasks();Snd.mutation();glitch();flash();toast('MUTATION · 히든 레시피',m.name,m.color);
   if(m.ending){if(m.id==='geyser')startGeyser();else startEnding(m);return;}
@@ -2657,6 +2657,17 @@ function setTray(on,save){document.body.classList.toggle('tray-off',!on);$('tray
   if(save)try{localStorage.setItem('se-tray',on?'1':'0');}catch(e){}layout();setTimeout(layout,60);}
 {let v=null;try{v=localStorage.getItem('se-tray');}catch(e){}setTray(v==='1',false);if(v===null)$('trayBtn').classList.add('nudge');}
 $('trayBtn').addEventListener('click',e=>{e.stopPropagation();Snd.init();Snd.click();setTray(document.body.classList.contains('tray-off'),true);});
+/* 도감 동기화: 같은 연구원 코드를 쓰는 기기끼리 발견한 레시피를 서버에서 합침 */
+window.DexSync={sent:-1,timer:0,
+  url(){return Sync.endpoint?Sync.endpoint.replace(/stir$/,'dex'):null;},
+  async pull(){const u=this.url();if(!u)return;try{const r=await fetch(u+'?client='+encodeURIComponent(Sync.client),{cache:'no-store'});const j=r.ok?await r.json():null;if(!j||!Array.isArray(j.found))return;
+    const ids=new Set(MUTATIONS.map(m=>m.id)),srv=new Set(j.found);let add=0;for(const v of srv)if(ids.has(v)&&!found.has(v)){found.add(v);add++;}
+    this.sent=[...found].every(v=>srv.has(v))?found.size:-1;if(add){Sync.save();refreshFlasks();}else this.changed();}catch(e){}},
+  changed(){if(this.sent===found.size||!this.url())return;clearTimeout(this.timer);this.timer=setTimeout(()=>this.push(),1200);},
+  async push(){const n=found.size;try{const r=await fetch(this.url(),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({client:Sync.client,found:[...found]})});
+    if(r.ok)this.sent=n;else if(r.status===429)setTimeout(()=>this.changed(),15000);}catch(e){setTimeout(()=>this.changed(),15000);}}};
+setTimeout(()=>DexSync.pull(),1500);setInterval(()=>{if(!document.hidden)DexSync.pull();},120000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)DexSync.pull();});
 /* 연구원 코드: 다른 기기에서도 같은 연구원(기여도)으로 이어서 하기 */
 $('myCode').textContent=Sync.client;
 $('codeCopy').addEventListener('click',async()=>{const m=$('codeMsg');m.className='';

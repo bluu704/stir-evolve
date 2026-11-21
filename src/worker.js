@@ -9,6 +9,9 @@
  *  GET  /api/board?since=ID          → { messages:[{id,name,text,t}] }   (게시판)
  *  POST /api/board { name, text } → { message } | { error }
  *
+ *  GET  /api/dex?client=ID           → { found:[레시피 id] }   (연구원 코드별 도감)
+ *  POST /api/dex { client, found }   → { found }  (합집합으로 저장, 지워지지 않음)
+ *
  * 치트 방지: 탭 id·클라이언트 id는 브라우저가 만든 값이라 조작할 수 있으므로,
  * 젓기 인정량과 게시판 도배는 접속 IP(cf-connecting-ip) 기준으로도 제한합니다.
  *
@@ -49,6 +52,10 @@ const BOARD_PER_MIN = 6;         // 같은 사람(IP)이 1분에 쓸 수 있는 
 const NAME_MAX = 16, TEXT_MAX = 200;
 const ID_RE = /^[a-z0-9]{4,16}$/; // 클라이언트·탭 id 형식 (임의 문자열로 저장소를 채우는 것 방지)
 
+const DEX_ID_RE = /^[A-Za-z0-9_]{1,24}$/; // 도감 레시피 id 형식
+const DEX_MAX = 120;             // 연구원 한 명이 저장할 수 있는 도감 항목 수
+const DEX_IP_RATE = 0.2, DEX_IP_BURST = 20, DEX_IP_HOUR = 300; // IP당 도감 저장 횟수 제한
+
 const RANK_KEEP = 100;           // 기여도 순위표에 보관하는 연구원 수
 const RANK_SHOW = 30;            // 한 번에 보여 주는 순위 수
 const cleanText = (v, max) => String(v || '').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
@@ -87,6 +94,7 @@ export class Counter {
     this.lb = null;             // 기여도 순위표 { client id → { n: 닉네임, c: 기여 } } (상위 RANK_KEEP명)
     this.lbDirty = false;
     this.msgs = null;           // 게시판 글 (최근 BOARD_KEEP개)
+    this.dexW = new Map();      // IP → 도감 저장 횟수 버킷
     this.posters = new Map();   // IP → { last, times:[], lastText } (게시판 도배 방지)
     this.nets = new Map();      // IP 대역 → 버킷 (프록시 묶음 제한)
     this.cHour = new Map();     // client id → { hour, hourStart } (연구원당 시간 상한)
@@ -206,6 +214,7 @@ export class Counter {
     this.lastSweep = now;
     for (const [k, c] of this.clients) if (now - c.t > 120000) this.clients.delete(k);
     for (const [k, v] of this.ips) if (now - v.t > 3600000) this.ips.delete(k);
+    for (const [k, v] of this.dexW) if (now - v.t > 3600000) this.dexW.delete(k);
     for (const [k, v] of this.posters) if (now - v.last > 120000) this.posters.delete(k);
     for (const [k, t] of this.human) if (now - t > HUMAN_MS) this.human.delete(k);
     for (const [k, v] of this.nets) if (now - v.t > 3600000) this.nets.delete(k);
@@ -270,6 +279,7 @@ export class Counter {
     const url = new URL(request.url);
     if (url.pathname === '/api/verify') return request.method === 'POST' ? this.verify(request, now, ip) : Response.json(this.botInfo(ip, now));
     if (url.pathname === '/api/board') return this.board(request, url, now, ip);
+    if (url.pathname === '/api/dex') return this.dex(request, url, now, ip);
     if (url.pathname === '/api/rank') {
       const me = String(url.searchParams.get('client') || '');
       if (ID_RE.test(me) && !this.contrib.has(me)) await this.getContrib(me);
@@ -342,6 +352,30 @@ export class Counter {
     return res({ total: this.total, online: this.online(now), ...this.botInfo(ip, now) });
   }
 
+  // 연구원 코드별 도감: 같은 코드를 쓰는 기기끼리 발견한 레시피를 합쳐서 공유
+  async dex(request, url, now, ip) {
+    const res = (o, st = 200) => Response.json(o, { status: st, headers: { 'cache-control': 'no-store' } });
+    if (request.method === 'GET') {
+      const id = String(url.searchParams.get('client') || '');
+      if (!ID_RE.test(id)) return res({ error: 'bad client' }, 400);
+      return res({ found: (await this.ctx.storage.get('d:' + id)) || [] });
+    }
+    const body = await readJson(request);
+    if (!body || !Array.isArray(body.found)) return res({ error: 'bad request' }, 400);
+    const id = String(body.client || '');
+    if (!ID_RE.test(id)) return res({ error: 'bad client' }, 400);
+    const cur = (await this.ctx.storage.get('d:' + id)) || [];
+    const set = new Set(cur);
+    for (const v of body.found.slice(0, DEX_MAX)) if (typeof v === 'string' && DEX_ID_RE.test(v) && set.size < DEX_MAX) set.add(v);
+    if (set.size === cur.length) return res({ found: cur });
+    const b = bucket(this.dexW, ip, now, DEX_IP_RATE, DEX_IP_BURST, DEX_IP_HOUR);
+    if (b.tok < 1 || b.hour >= DEX_IP_HOUR) return res({ error: 'slow down', found: cur }, 429);
+    b.tok -= 1; b.hour += 1;
+    const out = [...set];
+    await this.ctx.storage.put('d:' + id, out);
+    return res({ found: out });
+  }
+
   async alarm() {
     await this.ensureLoaded();
     await this.save();
@@ -351,7 +385,7 @@ export class Counter {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/stir' || url.pathname === '/api/board' || url.pathname === '/api/rank' || url.pathname === '/api/verify') {
+    if (url.pathname === '/api/stir' || url.pathname === '/api/board' || url.pathname === '/api/rank' || url.pathname === '/api/verify' || url.pathname === '/api/dex') {
       if (request.method !== 'GET' && request.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 });
       }
