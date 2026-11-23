@@ -796,8 +796,8 @@ const MUTATIONS = [
   { id:'shaken', special:true, act:'quake', stage:0, rpm:0, name:'셰이큰 칵테일', how:['지진','소주','얼음'], color:'#9ff0d8',
     look:{ top:'#e0fff4', bottom:'#3aa88a', glitter:1.4, bubbles:.8, sheen:.6 },
     hint:'초록 병 + 차가운 덩어리 + 땅이 흔들리는 것', log:'젓지 말고 흔들어서. 지진이 만든 칵테일은 의외로 완벽했다. 바텐더 자격증 시험에 지진은 출제되지 않는다.' },
-  { id:'megaQuake', special:true, ending:true, act:'quake', stage:0, rpm:0, name:'대지진', how:['지진','규모 8.0 이상'], color:'#c99a5a',
-    hint:'땅이 흔들리는 동안 계속 흔들기', log:'지진을 연달아 일으키자 규모가 8을 넘어섰다. 비커는 물론 연구동 내진 설계 보고서도 함께 무너졌다.' },
+  { id:'megaQuake', special:true, ending:true, act:'quake', stage:0, rpm:0, name:'대지진', how:['지진','규모 10.0 이상'], color:'#c99a5a',
+    hint:'땅이 흔들리는 동안 계속 흔들기', log:'지진을 연달아 일으키자 규모가 10을 넘어섰다. 비커는 물론 연구동 내진 설계 보고서도 함께 무너졌다.' },
   { id:'deepSea', special:true, item:'plankton', stage:0, rpm:0, name:'심해 빛 축제', how:['플랑크톤','형광 해파리'], color:'#5fe8ff',
     look:{ top:'#0a3050', bottom:'#010612', glow:1.4, glitter:1.8, stars:.8, aurora:.5, accent:'#5fe8ff' },
     hint:'떠다니는 작은 생물 + 빛나는 헤엄꾼', log:'해파리가 지나갈 때마다 플랑크톤이 파도처럼 빛났다. 심해 탐사팀이 비커를 빌려 가겠다고 공문을 보냈다.' },
@@ -2784,13 +2784,13 @@ let burnSnd=0;function actBurner(){burnerT=12;Snd.igniteS();}
 /* 지진 */
 let quakeLv=0,quakeGap=0,quakeMag=0,aftT=0,aftQ=false,butterT=0;
 function actQuake(after){if(after){quakeT=1.6;quakeLv=1;quakeMag=rand(3.2,4.2);aftQ=true;Snd.quakeRumble(1.6);toast('AFTERSHOCK',`여진 · 규모 ${quakeMag.toFixed(1)}`,'#e2c9a0');return;}
-  aftQ=false;quakeLv=(quakeT>0||quakeGap>0)?Math.min(5,quakeLv+1):1;quakeMag=Math.min(9.5,3.8+quakeLv*1.05+rand(0,.6));quakeT=3+quakeLv*.8;Snd.quakeRumble(quakeT);
-  toast('EARTHQUAKE',`규모 ${quakeMag.toFixed(1)}${quakeLv>=4?' · 강진!':''}`,quakeLv>=4?'#ff9a5a':'#e2c9a0');
-  if(quakeLv>=3)addCrack();if(quakeLv>=4){addCrack();hullDmg+=.08;}
+  aftQ=false;quakeLv=(quakeT>0||quakeGap>0)?Math.min(12,quakeLv+1):1;quakeMag=Math.min(12,3.6+quakeLv*.68+rand(0,.5));quakeT=3+Math.min(quakeLv,6)*.6;Snd.quakeRumble(quakeT);
+  toast('EARTHQUAKE',`규모 ${quakeMag.toFixed(1)}${quakeMag>=9?' · 초거대 지진!':quakeMag>=7?' · 강진!':''}`,quakeMag>=9?'#ff5a3a':quakeMag>=7?'#ff9a5a':'#e2c9a0');
+  if(quakeLv>=4)addCrack();if(quakeLv>=7){addCrack();hullDmg+=.05;}
   if(quakeLv>=3)aftT=quakeT+rand(1.5,3.5);
   if(hasGrownDino())setTimeout(()=>triggerSpecial('dinoStomp'),600);
   if(items.some(i=>!i.dead&&i.type==='sand'&&i.sub>.2)){saltD=Math.max(0,saltD-.3);tint.color=0xc8a870;tint.amt=Math.min(.7,tint.amt+.4);burstPlume(CX,BB-30,0xd8b880,60,120);setTimeout(()=>triggerSpecial('liquefaction'),800);}
-  if(quakeMag>=8&&mode==='play'){const m=MUTATIONS.find(q=>q.id==='megaQuake');found.add(m.id);Sync.save();refreshFlasks();Snd.mutation();toast('MUTATION · 히든 엔딩',m.name,m.color);
+  if(quakeMag>=10&&mode==='play'){const m=MUTATIONS.find(q=>q.id==='megaQuake');found.add(m.id);Sync.save();refreshFlasks();Snd.mutation();toast('MUTATION · 히든 엔딩',m.name,m.color);
     setTimeout(()=>{if(mode==='play')shatter({tag:'EARTHQUAKE · 히든 엔딩',title:m.name,body:m.log,btn:'내진 비커 지급받기'});},1600);}}
 /* 중력 반전 */
 function actGravity(){gravT=7;engine.gravity.y=-.6;Snd.gravityS();toast('ANTI-GRAVITY','중력이 뒤집혔어요','#c9a2ff');
@@ -2848,7 +2848,7 @@ function updateActions(dt){
   // 증발 연출
   if(evapOn){evapDrain=Math.min(BB-LEVEL+6,evapDrain+dt*70);if(Math.random()<dt*25)spawnFog(rand(BX+10,BR-10),surfaceAt(CX)-2,true);}else evapDrain=Math.max(0,evapDrain-dt*90);
   // 지진
-  if(quakeT>0){quakeT-=dt;quakeGap=1.5;const qk=aftQ?.5:.6+.4*quakeLv;shake=Math.max(shake,1.1+.25*qk);sloshV+=rand(-1,1)*1600*qk*dt;if(Math.random()<dt*10*qk)spawnDroplet(Math.random()<.5?BX+6:BR-6,BY,rand(-160,160)*qk,-rand(150,380)*qk,look.top);for(let i=0;i<N;i++)sv[i]+=rand(-1,1)*.9*qk;stress=Math.min(.98,stress+dt*.3*qk);
+  if(quakeT>0){quakeT-=dt;quakeGap=1.5;const qk=aftQ?.5:Math.min(2.8,.6+.3*quakeLv);shake=Math.max(shake,1.1+.25*qk);sloshV+=rand(-1,1)*1600*qk*dt;if(Math.random()<dt*10*qk)spawnDroplet(Math.random()<.5?BX+6:BR-6,BY,rand(-160,160)*qk,-rand(150,380)*qk,look.top);for(let i=0;i<N;i++)sv[i]+=rand(-1,1)*.9*qk;stress=Math.min(.98,stress+dt*.3*qk);
     items.forEach(i=>{if(!i.dead&&!i.giant&&Math.random()<dt*6)Body.applyForce(i.body,i.body.position,{x:rand(-1,1)*i.body.mass*.004*qk,y:-rand(0,1)*i.body.mass*.005*qk*(i.type==='pingpong'?2.5:1)});});
     // 천장 먼지
     if(qk>=1.4&&Math.random()<dt*30*qk)spawnEmber(rand(BX-200,BR+200),topY()+60,rand(-20,20),rand(20,80),Math.random()<.5?0x9a8f80:0xc8bca8,rand(1.5,2.5),rand(.08,.16),260);
