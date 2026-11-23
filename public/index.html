@@ -781,6 +781,26 @@ const MUTATIONS = [
     hint:'초록 병 + 차가운 덩어리 + 땅이 흔들리는 것', log:'젓지 말고 흔들어서. 지진이 만든 칵테일은 의외로 완벽했다. 바텐더 자격증 시험에 지진은 출제되지 않는다.' },
   { id:'megaQuake', special:true, ending:true, act:'quake', stage:0, rpm:0, name:'대지진', how:['지진','규모 8.0 이상'], color:'#c99a5a',
     hint:'땅이 흔들리는 동안 계속 흔들기', log:'지진을 연달아 일으키자 규모가 8을 넘어섰다. 비커는 물론 연구동 내진 설계 보고서도 함께 무너졌다.' },
+  { id:'deepSea', special:true, item:'plankton', stage:0, rpm:0, name:'심해 빛 축제', how:['플랑크톤','형광 해파리'], color:'#5fe8ff',
+    look:{ top:'#0a3050', bottom:'#010612', glow:1.4, glitter:1.8, stars:.8, aurora:.5, accent:'#5fe8ff' },
+    hint:'떠다니는 작은 생물 + 빛나는 헤엄꾼', log:'해파리가 지나갈 때마다 플랑크톤이 파도처럼 빛났다. 심해 탐사팀이 비커를 빌려 가겠다고 공문을 보냈다.' },
+  { id:'panspermia', special:true, act:'meteor', stage:0, rpm:0, name:'판스페르미아', how:['메테오','플랑크톤'], color:'#9affc8',
+    look:{ top:'#c8ffe0', bottom:'#0a3a2a', glow:1, stars:1, glitter:1.2, embers:.4 },
+    hint:'떠다니는 작은 생물 + 하늘에서 떨어지는 것', log:'운석이 떨어지자 플랑크톤이 두 배로 불어났다. 생명은 우주에서 왔다는 가설에 연구원 한 명이 조용히 한 표를 던졌다.' },
+  { id:'moneyRain', special:true, act:'gravity', stage:0, rpm:0, name:'돈비', how:['중력 반전','10원 동전 10개 이상'], color:'#ffe08a',
+    look:{ top:'#fff4c8', bottom:'#a07a18', sheen:1, glitter:1.6 },
+    hint:'동전 여러 닢 + 뒤집힌 하늘', log:'중력이 뒤집히자 동전이 천장으로 쏟아져 올라갔다. 다시 내려올 때 연구원들은 우산을 거꾸로 들고 있었다.' },
+  { id:'milkSkin', special:true, act:'burner', stage:0, rpm:0, name:'우유 막', how:['가열','우유'], color:'#fff6e0',
+    look:{ top:'#fffaf0', bottom:'#e8dcc4', opacity:.92, foam:.7, crust:.6 },
+    hint:'하얀 방울 + 불', log:'데운 우유 위에 얇은 막이 생겼다. 막을 먹는 파와 버리는 파로 연구실이 둘로 나뉘었다.' },
+  { id:'caramel', special:true, act:'burner', stage:0, rpm:0, name:'캐러멜', how:['가열','각설탕','100°C 이상'], color:'#c8782a',
+    look:{ top:'#f0b060', bottom:'#6a3410', opacity:.9, viscosity:.12, sheen:.8, glitter:.6 },
+    hint:'하얀 각 + 아주 뜨겁게', log:'설탕이 녹아 갈색으로 변하며 달콤한 냄새가 퍼졌다. 복도를 지나던 사람들이 하나둘 실험실 문을 두드렸다.' },
+  { id:'lemonSlush', special:true, act:'freeze', stage:0, rpm:0, name:'레몬 슬러시', how:['냉동 빔','레몬 조각'], color:'#f6ffb0',
+    look:{ top:'#fbffd8', bottom:'#c8d850', glitter:1.4, opacity:.8 },
+    hint:'신 과일 + 얼리기', log:'레몬 용액이 사각사각 얼어 슬러시가 되었다. 연구원 C는 머리가 띵하다며 10분간 연구를 중단했다.' },
+  { id:'dinoStomp', special:true, act:'quake', stage:0, rpm:0, name:'공룡 쿵쾅', how:['지진','다 자란 공룡'], color:'#b0e07a',
+    hint:'다 자란 공룡 + 땅이 흔들리는 것', log:'땅이 흔들리자 공룡 스펀지가 맞춰서 발을 굴렀다. 지진계 기록을 보면 진원지는 비커 안이었다.' },
 ];
 
 /* =====================================================================
@@ -2510,6 +2530,7 @@ function meteorImpact(x){items.forEach(o=>{if(!o.dead&&o.type==='sodium')o.naT=9
   splashFx(x+rand(-30,30),1,true);for(let k=0;k<6;k++)rings.push({x,r:20,life:1.2,delay:k*.08,sp:260});shockwave(0xffd27a);
   for(let k=0;k<150;k++)spawnEmber(x,y,rand(-480,480),rand(-820,-160),Math.random()<.5?0xffb35c:0xff5a1f,rand(.8,1.6),rand(.2,.45),700);
   spawnItem('meteorite',x,y-10);const it=items[items.length-1];if(it&&it.type==='meteorite'){Body.setVelocity(it.body,{x:0,y:12});it.entered=true;it.heat=1;}
+  if(plank.length){addPlankton(x,y+20,Math.min(150,plank.length));plankGlow=1;setTimeout(()=>triggerSpecial('panspermia'),300);}
   if(hasGrownDino())setTimeout(()=>triggerSpecial('extinction'),500);else if(curStage()===8)triggerSpecial('starBirth');}
 /* 번개 */
 const bigBolts=[],boltG=new PIXI.Graphics();boltG.blendMode=ADD;L.fx.addChild(boltG);
@@ -2531,7 +2552,7 @@ function actFreeze(){const was=freeze>=.95,tx=CX+rand(-70,70),ty=surfaceAt(tx);b
   heatBoost-=150;chill=Math.min(1,chill+.5);freeze=Math.min(1,freeze+.12);Snd.freezeS();
   shockwave(0xbff0ff);flash();shake=Math.max(shake,.7);for(let k=0;k<80;k++)spawnEmber(tx,ty,rand(-380,380),rand(-420,60),0xc8f4ff,rand(.6,1.3),rand(.18,.4),300);
   for(let k=0;k<30;k++){const q=P.grain.get();q.scale.set(rand(.06,.14));q.alpha=.95;q.tint=0xffffff;const cc=cyl(tx+rand(-40,40));grains.push({s:q,R:cc.R,th:cc.th,y:ty+rand(5,60),vy:rand(-10,25),life:rand(1.5,3),max:3});}
-  if(was)triggerSpecial('iceAge');}
+  if(was)triggerSpecial('iceAge');else if(items.some(i=>!i.dead&&i.type==='lemon'&&i.sub>.2))triggerSpecial('lemonSlush');}
 /* 가열 (비커 아래 버너) */
 const flameC=new PIXI.Container();L.glowL.addChild(flameC);const flames=[];
 for(let i=0;i<11;i++){const f=new PIXI.Sprite(TX.soft);f.anchor.set(.5,1);f.blendMode=ADD;flameC.addChild(f);flames.push({s:f,x:BX-10+i*(BW+20)/10,ph:rand(0,6)});}
@@ -2544,10 +2565,12 @@ function actQuake(after){if(after){quakeT=1.6;quakeLv=1;quakeMag=rand(3.2,4.2);a
   toast('EARTHQUAKE',`규모 ${quakeMag.toFixed(1)}${quakeLv>=4?' · 강진!':''}`,quakeLv>=4?'#ff9a5a':'#e2c9a0');
   if(quakeLv>=3)addCrack();if(quakeLv>=4){addCrack();hullDmg+=.08;}
   if(quakeLv>=3)aftT=quakeT+rand(1.5,3.5);
+  if(hasGrownDino())setTimeout(()=>triggerSpecial('dinoStomp'),600);
   if(quakeMag>=8&&mode==='play'){const m=MUTATIONS.find(q=>q.id==='megaQuake');found.add(m.id);Sync.save();refreshFlasks();Snd.mutation();toast('MUTATION · 히든 엔딩',m.name,m.color);
     setTimeout(()=>{if(mode==='play')shatter({tag:'EARTHQUAKE · 히든 엔딩',title:m.name,body:m.log,btn:'내진 비커 지급받기'});},1600);}}
 /* 중력 반전 */
 function actGravity(){gravT=7;engine.gravity.y=-.6;Snd.gravityS();toast('ANTI-GRAVITY','중력이 뒤집혔어요','#c9a2ff');
+  if(items.filter(i=>!i.dead&&i.type==='coin').length>=10){Snd.coinShine();setTimeout(()=>triggerSpecial('moneyRain'),900);for(let k=0;k<80;k++)spawnEmber(rand(BX-150,BR+150),topY()+70,rand(-40,40),rand(60,200),k%2?0xffd76b:0xfff1a8,rand(1.5,2.5),rand(.12,.22),200);}
   if(items.some(i=>!i.dead&&i.type==='fish'))setTimeout(()=>triggerSpecial('skyAquarium'),1200);}
 /* 핵폭탄 */
 TX.bomb=ctex(28*S,46*S,(x,w,h)=>{x.fillStyle=LG(x,0,0,w,0,[[0,'#2a2e33'],[.4,'#7c848e'],[1,'#22262b']]);x.beginPath();x.ellipse(w/2,h*.48,w*.36,h*.36,0,0,7);x.fill();
@@ -2626,13 +2649,15 @@ function updateActions(dt){
 function addPlankton(x,y,n){for(let k=0;k<n&&plank.length<300;k++){const s2=new PIXI.Sprite(TX.star);s2.anchor.set(.5);s2.blendMode=ADD;lc.stars.addChild(s2);
   const cc=cyl(clamp(x+rand(-40,40),BX+8,BR-8));plank.push({s:s2,R:cc.R,th:cc.th,y:clamp(y+rand(-10,80),LEVEL+4,BB-6),vy:rand(-8,8),f:.6,life:1,ph:rand(0,6)});}}
 function clearPlankton(){plank.forEach(q=>q.s.destroy());plank.length=0;plankGlow=0;}
-function updatePlankton(dt){plankGlow=Math.max(0,plankGlow-dt/22);
+const plankAmb=new PIXI.Sprite(TX.glow);plankAmb.anchor.set(.5);plankAmb.blendMode=ADD;plankAmb.tint=0x2fd8ff;plankAmb.visible=false;lc.stars.addChild(plankAmb);
+function updatePlankton(dt){plankGlow=Math.max(0,plankGlow-dt/22);let sum=0;
   for(let i=plank.length-1;i>=0;i--){const q=plank[i];
     q.th+=omega*dt*(.7+(1-q.R/RMAX)*.6)+.12*dt;if(Math.random()<dt)q.vy=rand(-10,10);q.y+=q.vy*dt*(1+rpmN*2);if(q.y<LEVEL+4||q.y>BB-6){q.vy*=-1;q.y=clamp(q.y,LEVEL+4,BB-6);}
     const x=vcx+q.R*Math.sin(q.th),z=Math.cos(q.th),y=Math.max(q.y,surfaceAt(x)+4);
     if(Math.hypot(x-tip.x,y-tip.y)<46&&rodIn)q.f=Math.max(q.f,.9);q.f=Math.max(0,q.f-dt*1.1);
     const lum=clamp(plankGlow*.95+q.f+rpmN*.35+Math.max(0,Math.sin(T*2+q.ph))*.08,0,1.3),l1=Math.min(1,lum);
-    q.s.visible=mode!=='broken';q.s.position.set(x,y);q.s.tint=mixC(0x2f6a48,0x4ff2ff,l1);q.s.scale.set(.1+.28*lum);q.s.alpha=(.3+.7*l1)*(.6+.4*z)*q.life;}}
+    q.s.visible=mode!=='broken';q.s.position.set(x,y);q.s.tint=mixC(0x3f9a68,0x7ff8ff,l1);q.s.scale.set(.14+.42*lum);q.s.alpha=Math.min(1,(.45+.75*l1)*(.7+.3*z));sum+=lum;}
+  const avg=plank.length?sum/plank.length:0;plankAmb.visible=plank.length>0&&mode!=='broken';plankAmb.position.set(CX,(LEVEL+BB)/2);plankAmb.width=BW*1.8;plankAmb.height=(BB-LEVEL)*1.8;plankAmb.alpha=Math.min(.55,avg*.45*Math.min(1,plank.length/60));}
 
 /* 신룡: 벡터(PIXI.Graphics)로 매 프레임 다시 그려서 커져도 깨지지 않음 */
 const dimG=new PIXI.Graphics();dimG.beginFill(0x03040a,1).drawRect(-4000,-4000,8000,8000).endFill();dimG.alpha=0;L.fx.addChild(dimG);
@@ -2706,6 +2731,10 @@ function updateExtras(dt){
   // 별 탁구공 7종 → 신룡
   if(!dragon){const balls=items.filter(i=>!i.dead&&!i.fading&&i.type==='pingpong'&&i.stars&&i.body.position.x>BX&&i.body.position.x<BR&&i.body.position.y>BY-20);const kinds=new Set(balls.map(b=>b.stars));
     if(kinds.size>=DRAGON_NEED){const pick=[];kinds.forEach(n=>pick.push(balls.find(b=>b.stars===n)));summonDragon(pick);}}
+  if(plank.length&&!onceFx.deepSea&&items.some(i=>!i.dead&&i.type==='jelly'&&i.sub>.2)){onceFx.deepSea=1;plankGlow=1;triggerSpecial('deepSea');}
+  {const jl=items.filter(i=>!i.dead&&i.type==='jelly'&&i.sub>.2);if(jl.length)plank.forEach(q=>{const x=vcx+q.R*Math.sin(q.th);jl.forEach(j=>{const P2=j.body.position;if(Math.abs(x-P2.x)<60&&Math.abs(q.y-P2.y)<60)q.f=1;});});}
+  if(burnerT>0){if(!onceFx.milkSkin&&cream>.25){onceFx.milkSkin=1;triggerSpecial('milkSkin');}
+    if(!onceFx.caramel&&curTemp>100&&items.some(i=>!i.dead&&i.type==='sugar'&&i.sub>.3)){onceFx.caramel=1;tint.color=0x8a4a14;tint.amt=Math.min(1,tint.amt+.7);triggerSpecial('caramel');}}
   // 레몬 전지
   {const le=items.find(i=>!i.dead&&i.type==='lemon'&&i.sub>.2),co=items.find(i=>!i.dead&&i.type==='coin'&&i.sub>.2),ba=items.find(i=>!i.dead&&i.type==='battery'&&i.sub>.2);
     if(le&&co&&ba){if(!onceFx.lemonBat){onceFx.lemonBat=1;Snd.zap();triggerSpecial('lemonBattery');}
