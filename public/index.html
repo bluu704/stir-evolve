@@ -1556,7 +1556,8 @@ function spawnItem(type,x,y,opt2){
   const it={dv,type,body,up,dn,size:1,age:0,entered:false,sub:0,r:Math.hypot(sz.w,sz.h)*.42,th:rand(0,6.28),orbitR:rand(30,RMAX),dyeColor,life:1,dead:false,alpha:1};
   body.plugin={item:true,type,rel:c.rel,sub:0,born:performance.now()};items.push(it);Composite.add(engine.world,body);
   if(opt2&&opt2.interest)it.interest=true;
-  if(type==='pingpong'){it.stars=1+(Math.random()*7|0);up.texture=dn.texture=TX.pp[it.stars];const kinds=new Set(items.filter(i=>!i.dead&&i.type==='pingpong'&&i.stars).map(i=>i.stars));
+  if(type==='pingpong'){const have=new Set(items.filter(i=>!i.dead&&!i.fading&&i!==it&&i.type==='pingpong'&&i.stars).map(i=>i.stars)),miss=[1,2,3,4,5,6,7].filter(n=>!have.has(n));
+    it.stars=miss.length&&Math.random()<.65?miss[Math.random()*miss.length|0]:1+(Math.random()*7|0);up.texture=dn.texture=TX.pp[it.stars];const kinds=new Set(items.filter(i=>!i.dead&&i.type==='pingpong'&&i.stars).map(i=>i.stars));
     toast('STAR BALL',`${it.stars}성 탁구공 · ${kinds.size}/${DRAGON_NEED}종`,'#ffb35e');}
   {const live=items.filter(i=>!i.dead&&!i.interest&&!(dragon&&i.type==='pingpong'));if(live.length>CONFIG.physics.maxItems){const old=live.find(i=>!(i.type==='pingpong'&&i.stars))||live.find(i=>live.some(o=>o!==i&&o.type==='pingpong'&&o.stars===i.stars));(old||live[0]).fading=true;}}
   hideHint();
@@ -2627,7 +2628,6 @@ function addPlankton(x,y,n){for(let k=0;k<n&&plank.length<300;k++){const s2=new 
 function clearPlankton(){plank.forEach(q=>q.s.destroy());plank.length=0;plankGlow=0;}
 function updatePlankton(dt){plankGlow=Math.max(0,plankGlow-dt/22);
   for(let i=plank.length-1;i>=0;i--){const q=plank[i];
-    if(curTemp>95){q.life-=dt*.4;if(q.life<=0){q.s.destroy();plank.splice(i,1);continue;}}
     q.th+=omega*dt*(.7+(1-q.R/RMAX)*.6)+.12*dt;if(Math.random()<dt)q.vy=rand(-10,10);q.y+=q.vy*dt*(1+rpmN*2);if(q.y<LEVEL+4||q.y>BB-6){q.vy*=-1;q.y=clamp(q.y,LEVEL+4,BB-6);}
     const x=vcx+q.R*Math.sin(q.th),z=Math.cos(q.th),y=Math.max(q.y,surfaceAt(x)+4);
     if(Math.hypot(x-tip.x,y-tip.y)<46&&rodIn)q.f=Math.max(q.f,.9);q.f=Math.max(0,q.f-dt*1.1);
