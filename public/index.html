@@ -1558,7 +1558,7 @@ function spawnItem(type,x,y,opt2){
   if(opt2&&opt2.interest)it.interest=true;
   if(type==='pingpong'){it.stars=1+(Math.random()*7|0);up.texture=dn.texture=TX.pp[it.stars];const kinds=new Set(items.filter(i=>!i.dead&&i.type==='pingpong'&&i.stars).map(i=>i.stars));
     toast('STAR BALL',`${it.stars}성 탁구공 · ${kinds.size}/${DRAGON_NEED}종`,'#ffb35e');}
-  {const live=items.filter(i=>!i.dead&&!i.interest&&!(dragon&&i.type==='pingpong'));if(live.length>CONFIG.physics.maxItems){const old=live.find(i=>!(i.type==='pingpong'&&i.stars));(old||live[0]).fading=true;}}
+  {const live=items.filter(i=>!i.dead&&!i.interest&&!(dragon&&i.type==='pingpong'));if(live.length>CONFIG.physics.maxItems){const old=live.find(i=>!(i.type==='pingpong'&&i.stars))||live.find(i=>live.some(o=>o!==i&&o.type==='pingpong'&&o.stars===i.stars));(old||live[0]).fading=true;}}
   hideHint();
 }
 function removeItem(it){if(it.light)it.light.destroy();if(it.puddle&&it.puddle.life<0)it.puddle.life=20;it.dead=true;Composite.remove(engine.world,it.body);it.up.destroy();it.dn.destroy();}
