@@ -268,6 +268,7 @@ body.tray-off #tray{display:none}
 #tray{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);padding:12px 10px;display:grid;grid-template-columns:repeat(4,76px);gap:6px;z-index:4;max-height:calc(100vh - 150px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
 .tray-title{grid-column:1/-1;display:flex;justify-content:space-between;padding:0 4px 6px}
 .tray-title span:last-child{color:#d5dce6}
+.tray-h{grid-column:1/-1;font:700 10px/1.2 var(--font-data,monospace);color:rgba(220,228,240,.5);letter-spacing:.06em;padding:9px 4px 3px;border-top:1px solid rgba(255,255,255,.07);margin-top:2px}.tray-h.first{border-top:0;margin-top:0;padding-top:2px}
 .item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 2px 8px;border-radius:12px;border:1px solid transparent;background:transparent;cursor:grab;touch-action:none;transition:background .15s,transform .15s,border-color .15s}
 .item:hover{background:var(--panel-hi);border-color:var(--line);transform:translateY(-2px)}
 .item:active{cursor:grabbing}
@@ -331,6 +332,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
   #tray{top:auto;bottom:calc(6px + env(safe-area-inset-bottom,0px));left:8px;right:8px;transform:none;grid-template-columns:none;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:minmax(56px,1fr);overflow-x:auto;overflow-y:hidden;padding:4px 6px;gap:0;border-radius:14px;scrollbar-width:none;overscroll-behavior-x:contain}
   #tray::-webkit-scrollbar{display:none}
   .item{touch-action:pan-x}
+  .tray-h{grid-column:auto;grid-row:1/-1;writing-mode:vertical-rl;padding:4px 3px;margin:2px 3px;border-top:0;border-left:1px solid rgba(255,255,255,.1);font-size:9px;letter-spacing:.02em}.tray-h.first{border-left:0;margin-left:0}
   .tray-title{display:none}
   .dish{width:32px;height:32px}.item img{width:27px;height:27px}
   .item{padding:4px 0;gap:2px}.item .nm{font-size:9px}
@@ -1387,9 +1389,16 @@ const DRAW={
   cheese(x,W,H){pad(x,W,H,.04,(w,h)=>{x.fillStyle=LG(x,0,0,0,h,[[0,'#ffe680'],[1,'#f0b820']]);x.beginPath();x.moveTo(0,h*.35);x.lineTo(w,0);x.lineTo(w,h);x.lineTo(0,h);x.closePath();x.fill();
     x.fillStyle='#ffd040';x.beginPath();x.moveTo(0,h*.35);x.lineTo(w,0);x.lineTo(w,h*.18);x.lineTo(0,h*.5);x.closePath();x.fill();
     x.fillStyle='#d89a10';[[.3,.7,.09],[.6,.55,.12],[.8,.8,.07],[.5,.86,.06]].forEach(([a,b,r])=>{x.beginPath();x.arc(w*a,h*b,w*r,0,7);x.fill();});});},
-  melon(x,w,h){x.fillStyle='#2a8a2a';x.beginPath();x.moveTo(1,1);x.lineTo(w-1,1);x.lineTo(w/2,h-1);x.closePath();x.fill();x.fillStyle='#e8ffd0';x.beginPath();x.moveTo(w*.08,h*.1);x.lineTo(w*.92,h*.1);x.lineTo(w/2,h*.92);x.closePath();x.fill();
-    x.fillStyle=LG(x,0,0,0,h,[[0,'#ff3a50'],[1,'#ff7080']]);x.beginPath();x.moveTo(w*.13,h*.16);x.lineTo(w*.87,h*.16);x.lineTo(w/2,h*.84);x.closePath();x.fill();
-    x.fillStyle='#1a1a1a';[[.35,.35],[.55,.3],[.45,.52],[.62,.48],[.3,.25]].forEach(([a,b])=>{x.beginPath();x.ellipse(w*a,h*b,w*.025,h*.05,.3,0,7);x.fill();});},
+  melon(x,w,h){const cx=w/2,cy=h*.06,R=w*.5-1;   // 반달 모양 수박 한 조각 (위가 평평한 단면)
+    x.save();x.translate(cx,cy);x.scale(1,(h*.92)/R);
+    x.fillStyle=LG(x,0,0,0,R,[[0,'#3a8a2a'],[.5,'#1e6a1a'],[1,'#164f12']]);x.beginPath();x.moveTo(-R,0);x.arc(0,0,R,0,Math.PI);x.closePath();x.fill();
+    x.strokeStyle='rgba(10,40,8,.55)';x.lineWidth=R*.05;for(let k=-3;k<=3;k++){x.beginPath();const a=Math.PI/2+k*.38;x.moveTo(Math.cos(a)*R*.9,Math.sin(a)*R*.9);x.lineTo(Math.cos(a+.06)*R*.99,Math.sin(a+.06)*R*.99);x.stroke();}
+    x.fillStyle='#eef8d8';x.beginPath();x.moveTo(-R*.92,0);x.arc(0,0,R*.92,0,Math.PI);x.closePath();x.fill();
+    x.fillStyle=RG(x,0,0,R*.1,0,0,R*.86,[[0,'#ff4a5e'],[.75,'#f0344a'],[1,'#ff8a8a']]);x.beginPath();x.moveTo(-R*.86,0);x.arc(0,0,R*.86,0,Math.PI);x.closePath();x.fill();
+    x.fillStyle='rgba(255,220,220,.35)';x.fillRect(-R*.86,0,R*1.72,R*.05);
+    [[-.5,.25],[-.25,.45],[0,.3],[.25,.45],[.5,.25],[-.12,.62],[.14,.62],[-.38,.12],[.38,.12]].forEach(([a,b])=>{const px=a*R,py=b*R,ang=Math.atan2(py,px);x.save();x.translate(px,py);x.rotate(ang-Math.PI/2);
+      x.fillStyle='#1a1210';x.beginPath();x.moveTo(0,-R*.06);x.quadraticCurveTo(R*.045,0,0,R*.05);x.quadraticCurveTo(-R*.045,0,0,-R*.06);x.fill();x.fillStyle='rgba(255,255,255,.4)';x.fillRect(-R*.008,-R*.03,R*.012,R*.03);x.restore();});
+    x.restore();},
   crayon(x,w,h){x.fillStyle='#e8344a';x.beginPath();x.moveTo(w/2,1);x.lineTo(w-1,h*.18);x.lineTo(w-1,h-1);x.lineTo(1,h-1);x.lineTo(1,h*.18);x.closePath();x.fill();
     x.fillStyle='#fff4e0';x.fillRect(1,h*.3,w-2,h*.5);x.fillStyle='#e8344a';x.fillRect(1,h*.42,w-2,h*.06);x.fillRect(1,h*.62,w-2,h*.06);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(w*.2,h*.18,w*.15,h*.8);},
   shark(x,w,h){x.fillStyle=LG(x,0,0,0,h,[[0,'#7a90a8'],[.55,'#90a8c0'],[.6,'#f0f4f8'],[1,'#dfe6ee']]);x.beginPath();x.moveTo(w-1,h*.55);x.quadraticCurveTo(w*.8,h*.15,w*.45,h*.28);x.lineTo(w*.4,1);x.lineTo(w*.3,h*.32);
@@ -1576,11 +1585,16 @@ Object.assign(DRAW,{
       x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=w*.02;x.stroke();x.restore();});},
 });
 Object.assign(DRAW,{
-  banana(x,w,h){x.fillStyle=LG(x,0,0,0,h,[[0,'#fff59a'],[.5,'#f7d21a'],[1,'#c08f00']]);x.beginPath();x.moveTo(w*.05,h*.22);x.bezierCurveTo(w*.2,h*1.08,w*.8,h*1.08,w*.95,h*.14);
-    x.bezierCurveTo(w*.74,h*.2,w*.26,h*.2,w*.05,h*.22);x.closePath();x.fill();
-    x.fillStyle='rgba(255,255,255,.4)';x.beginPath();x.moveTo(w*.16,h*.3);x.bezierCurveTo(w*.35,h*.46,w*.65,h*.46,w*.84,h*.26);x.bezierCurveTo(w*.65,h*.38,w*.35,h*.38,w*.16,h*.3);x.fill();
-    x.strokeStyle='rgba(150,100,0,.45)';x.lineWidth=h*.04;x.beginPath();x.moveTo(w*.1,h*.3);x.bezierCurveTo(w*.28,h*.92,w*.72,h*.92,w*.9,h*.24);x.stroke();
-    x.fillStyle='#4a2e0c';x.beginPath();x.ellipse(w*.05,h*.22,w*.03,h*.07,0,0,7);x.fill();x.fillStyle='#7a9a1a';rr(x,w*.9,h*.02,w*.08,h*.18,w*.02);x.fill();},
+  banana(x,w,h){   // 휘어진 바나나 한 개: 꼭지·몸통 모서리·끝의 갈색 점
+    const c=w*.42,sg=h*.4,R=(c*c+sg*sg)/(2*sg),cy=h*.7-R,a0=Math.asin(c/R);const P=t=>{const a=Math.PI/2+a0-2*a0*t;return [w/2+Math.cos(a)*R,cy+Math.sin(a)*R];};
+    const top=[],bot=[];for(let i=0;i<=24;i++){const t=i/24,[px,py]=P(t),th=Math.sin(Math.PI*Math.min(1,Math.max(0,(t-.02)/.96)))*h*.36+h*.02;top.push([px,py-th*.45]);bot.push([px,py+th*.55]);}
+    x.beginPath();top.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));for(let i=bot.length-1;i>=0;i--)x.lineTo(bot[i][0],bot[i][1]);x.closePath();
+    x.fillStyle=LG(x,0,h*.1,0,h*.95,[[0,'#fff3a0'],[.35,'#ffd92a'],[.75,'#f0b800'],[1,'#b88400']]);x.fill();x.strokeStyle='rgba(140,100,0,.55)';x.lineWidth=w*.008;x.stroke();
+    x.strokeStyle='rgba(170,120,0,.4)';x.lineWidth=w*.01;x.beginPath();for(let i=2;i<=22;i++){const t=i/24,[px,py]=P(t);i>2?x.lineTo(px,py+h*.03):x.moveTo(px,py+h*.03);}x.stroke();
+    x.strokeStyle='rgba(255,255,220,.6)';x.lineWidth=w*.014;x.beginPath();for(let i=4;i<=18;i++){const [a,b]=top[i];i>4?x.lineTo(a,b+h*.04):x.moveTo(a,b+h*.04);}x.stroke();
+    const [sx,sy]=top[0];x.fillStyle='#7a8a2a';x.beginPath();x.moveTo(sx+w*.02,sy+h*.02);x.lineTo(sx-w*.05,sy-h*.08);x.lineTo(sx-w*.015,sy-h*.1);x.lineTo(sx+w*.045,sy+h*.0);x.closePath();x.fill();x.fillStyle='#4a3a1a';x.fillRect(sx-w*.06,sy-h*.12,w*.04,h*.04);
+    const [ex,ey]=P(1);x.fillStyle='#3a2a10';x.beginPath();x.ellipse(ex,ey+h*.01,w*.018,h*.03,.6,0,7);x.fill();
+    x.fillStyle='rgba(120,80,10,.45)';[[.3,.5],[.62,.42],[.5,.6],[.78,.3]].forEach(([t,o])=>{const [px,py]=P(t);x.beginPath();x.arc(px+w*.01,py+h*o*.1,w*.008,0,7);x.fill();});},
   jelly(x,w,h){const c=w/2;x.fillStyle=RG(x,c,h*.3,1,c,h*.38,w*.5,[[0,'rgba(255,255,255,.95)'],[.45,'rgba(140,240,255,.85)'],[1,'rgba(200,120,255,.6)']]);
     x.strokeStyle='rgba(190,150,255,.85)';x.lineWidth=w*.07;x.lineCap='round';for(let i=0;i<5;i++){const sx=w*(.18+i*.16);x.beginPath();x.moveTo(sx,h*.55);x.bezierCurveTo(sx-w*.08,h*.72,sx+w*.08,h*.84,sx,h*.98);x.stroke();}
     x.beginPath();x.moveTo(w*.02,h*.58);x.bezierCurveTo(w*.0,h*-.02,w*1,h*-.02,w*.98,h*.58);x.quadraticCurveTo(w*.75,h*.66,c,h*.6);x.quadraticCurveTo(w*.25,h*.66,w*.02,h*.58);x.fill();
@@ -1866,7 +1880,17 @@ const tubes=STAGES.map((s,i)=>{const b=document.createElement('button');b.classN
 const flasks=MUTATIONS.map(m=>{const b=document.createElement('button');b.className='flask';b.type='button';b.setAttribute('aria-label','돌연변이 '+m.name);b.innerHTML='<div class="fill"></div><div class="q">?</div>';
   hoverTip(b,()=>found.has(m.id)?`<div class="no">MUTANT</div><h4>${m.name}</h4>${m.log}`:`<div class="no">MUTANT · 미발견</div><h4>???</h4>힌트: ${m.hint}`);
   flaskRow.appendChild(b);return b;});
-for(const type in ITEMS){if(ITEMS[type].hidden)continue;const b=document.createElement('button');b.className='item';b.type='button';b.innerHTML=`<span class="dish"><img alt="" src="${ITEMS[type].icon}"></span><span class="nm">${ITEMS[type].label}</span>`;
+const TRAY_GROUPS=[['방울·액체',['dye','milk','honey','cola','soju','vinegar','ink','glitter','gold','plankton']],
+  ['가루·알갱이',['sugar','salt','soda','yeast','ramen','tablet','rice','sand','iron']],
+  ['과일·채소',['lemon','banana','melon','chili','seed','clover']],
+  ['간식·음식',['mentos','gummy','popcorn','poprock','cotton','marsh','choco','cheese','icecream','mint','coffee','teabag','noodle','egg','laver']],
+  ['차갑고 뜨거운 것',['ice','dryice','sodium','sparkler','candle','pumice']],
+  ['전기·자석·빛',['battery','magnet','bulb','glowstick']],
+  ['장난감·물건',['duck','pingpong','balloon','coin','soap','lego','crayon','feather','watch','rocket','pearl','crystal']],
+  ['헤엄치는 것',['fish','sub','shark','jelly','dino']]];
+{const used=new Set(TRAY_GROUPS.flatMap(g=>g[1]));const rest=Object.keys(ITEMS).filter(k=>!used.has(k)&&!ITEMS[k].hidden);if(rest.length)TRAY_GROUPS.push(['기타',rest]);}
+const TRAY_ORDER=[];TRAY_GROUPS.forEach(([g,ks],gi)=>{TRAY_ORDER.push({head:g,first:gi===0});ks.forEach(k=>{if(ITEMS[k]&&!ITEMS[k].hidden)TRAY_ORDER.push(k);});});
+for(const ent of TRAY_ORDER){if(typeof ent==='object'){const hd=document.createElement('div');hd.className='tray-h'+(ent.first?' first':'');hd.textContent=ent.head;tray.appendChild(hd);continue;}const type=ent;const b=document.createElement('button');b.className='item';b.type='button';b.innerHTML=`<span class="dish"><img alt="" src="${ITEMS[type].icon}"></span><span class="nm">${ITEMS[type].label}</span>`;
   b.addEventListener('pointerdown',e=>{e.preventDefault();Snd.init();hideTip();drag={type,sx:e.clientX,sy:e.clientY,moved:false};});
   b.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'&&!drag)showTip(b,`<div class="no">${ITEMS[type].tag}</div><h4>${ITEMS[type].label}</h4>${DESC[type]}`,'left');});
   b.addEventListener('pointerleave',hideTip);
