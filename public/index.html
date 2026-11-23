@@ -586,7 +586,7 @@ const MAGNETIC={battery:1,magnet:1};
 const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ice:'물에 뜨고, 녹으면서 용액을 맑고 차갑게 만듦',battery:'묵직하게 가라앉아 전기 스파크를 일으킴',
   dye:'떨어지는 순간 형광색이 용액에 번짐',ramen:'녹으면서 용액을 국물색으로 물들임',mentos:'탄산 속에서 기포를 폭발적으로 만들어냄',
   duck:'어디서든 동동 뜸. 막대 끝으로 건져낼 수 있음',coin:'바닥으로 가라앉음. 수은에서는 뜸',dryice:'하얀 안개가 비커 밖으로 흘러넘침',
-  magnet:'근처의 건전지를 끌어당김',pingpong:'아주 가볍고 잘 튕김. 별이 1~7개 무작위로 그려져 있음. 서로 다른 별 4종을 모으면…',lemon:'살짝 뜸. 탄산수에서는 기포가 더 남',
+  magnet:'근처의 건전지를 끌어당김',pingpong:'아주 가볍고 잘 튕김. 별이 1~7개 무작위로 그려져 있음. 1~7성을 모두 모으면…',lemon:'살짝 뜸. 탄산수에서는 기포가 더 남',
   noodle:'70°C 이상의 뜨거운 용액에서 꼬불꼬불 면이 풀림. 라면 스프와 함께라면…',snow:'수면에 떠서 녹으며 용액을 차갑고 반짝이게 만듦',balloon:'수면에 닿는 순간 터지며 큰 물보라와 색을 퍼뜨림',
   marble:'유리끼리 부딪히며 맑은 소리를 냄',soju:'콸콸 부어지며 용액이 맑아지고 어지러워짐. 어는점도 낮아짐',soap:'떠다니며 녹아 수면에 거품을 만듦',glitter:'떨어지는 순간 용액 전체가 반짝임',gummy:'천천히 녹으며 용액을 분홍빛으로 물들임',
   popcorn:'뜨거운 용액에서 펑 하고 터져 튀어오름',salt:'녹으면 용액이 무거워져 물건들이 더 잘 뜸',tablet:'쉬익 소리와 함께 거품을 뿜으며 이리저리 움직임',
@@ -759,9 +759,9 @@ const MUTATIONS = [
   { id:'bioPlankton', special:true, act:'lightning', stage:0, rpm:0, name:'발광 플랑크톤', how:['번개','플랑크톤'], color:'#4ff2ff',
     look:{ top:'#0b3a5a', bottom:'#020b1c', glow:1.3, glitter:1.6, stars:.6, accent:'#4ff2ff' },
     hint:'떠다니는 작은 생물 + 하늘에서 내리치는 것', log:'번개를 맞은 플랑크톤이 일제히 푸른빛을 내기 시작했다. 연구원들은 불을 끄고 비커 앞에 돗자리를 폈다.' },
-  { id:'shenron', special:true, item:'pingpong', stage:0, rpm:0, name:'신룡 강림', how:['별 탁구공','서로 다른 별 4종'], color:'#7dff9a',
+  { id:'shenron', special:true, item:'pingpong', stage:0, rpm:0, name:'신룡 강림', how:['별 탁구공','1~7성 7종 모두'], color:'#7dff9a',
     look:{ top:'#c8ffd8', bottom:'#0c3a1e', glow:1.4, halo:1.4, glitter:1.8, sparks:.6, accent:'#ffd76b' },
-    hint:'별이 그려진 공을 종류별로', log:'별 탁구공 네 개가 모이자 하늘이 어두워지고 비커에서 용이 솟아올랐다. 연구원 A는 연구비 증액을 빌었으나 용은 \'그건 내 권한 밖이다\'라고 답했다.' },
+    hint:'별이 그려진 공을 종류별로', log:'별 탁구공 일곱 개가 모두 모이자 하늘이 어두워지고 비커에서 용이 솟아올랐다. 연구원 A는 연구비 증액을 빌었으나 용은 \'그건 내 권한 밖이다\'라고 답했다.' },
   { id:'lemonBattery', special:true, item:'lemon', stage:0, rpm:0, name:'레몬 전지', how:['레몬 조각','10원 동전','AA 건전지'], color:'#e8ff6a',
     look:{ top:'#f6ff9a', bottom:'#6a8a10', sparks:1.1, glow:.7, glitter:.8 },
     hint:'신 과일 + 동전 한 닢 + 원통형 전기', log:'레몬산 속에서 동전과 건전지가 전극이 되어 전류가 흐르기 시작했다. 꼬마전구 하나를 켜는 데 레몬 400개가 필요하다는 계산이 나왔다.' },
@@ -1508,7 +1508,7 @@ let rpm=0,rpmN=0,swirlDir=1,dirAcc=0,omega=0,heat=0,vcx=CX;
 let boostTime=0,clarity=0,previewKick=0,foamLevel=0,rise=0,beat=0,beatPrev=0,drain=0,drainTarget=0,shake=0,glitchT=0;
 let cream=0,honeyV=0,coffeeAmt=0,dalgonaT=0,naBooms=[],onceFx={},fountainT=0,colaFizz=0,teaAmt=0;
 let lemonadeDone=false,drunkT=0,sojuN=0,hullDmg=0,rampTargets=[],nicholasDone=false,freeze=0,heatBoost=0,sparkBoost=0,burnerT=0,quakeT=0,gravT=0,evapOn=false,evapDrain=0,dinoDrain=0,evapT=0,curTemp=20,meltF=1,dissolveF=1,gen=1,pour=null,cycT=0,spilled=0,spillL=0,spillR=0,pudL=null,pudR=null,saltD=0,glitBoost=0,extraFoam=0,rodIn=true,rodTouch=0,lastRodClink=0,tint={color:0,amt:0},chill=0,swirlPh=0,vortD=0,sloshA=0,sloshV=0;let stress=0,cracks=[],nextCrack=.22;
-let plank=[],plankGlow=0,electroT=0,interestT=0,interestN=0,dragon=null;const DRAGON_NEED=4;   // 서로 다른 별 탁구공 4종이면 신룡
+let plank=[],plankGlow=0,electroT=0,interestT=0,interestN=0,dragon=null;const DRAGON_NEED=7;   // 별 1~7개 탁구공을 모두 모으면 신룡
 let mode='play';// play | broken | geyser
 let mut={active:null,amt:0,time:0,holds:{}};
 const pointer={x:CX,y:LEVEL+150,has:false};
@@ -2703,7 +2703,7 @@ function updateDragon(dt){if(!dragon)return;const d=dragon;d.t+=dt;const t=d.t;
 function updateExtras(dt){
   updatePlankton(dt);updateDragon(dt);
   if(mode!=='play')return;
-  // 별 탁구공 4종 → 신룡
+  // 별 탁구공 7종 → 신룡
   if(!dragon){const balls=items.filter(i=>!i.dead&&!i.fading&&i.type==='pingpong'&&i.stars&&i.body.position.x>BX&&i.body.position.x<BR&&i.body.position.y>BY-20);const kinds=new Set(balls.map(b=>b.stars));
     if(kinds.size>=DRAGON_NEED){const pick=[];kinds.forEach(n=>pick.push(balls.find(b=>b.stars===n)));summonDragon(pick);}}
   // 레몬 전지
