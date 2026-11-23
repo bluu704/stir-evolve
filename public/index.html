@@ -2695,7 +2695,7 @@ const WISHES=[['황금빛 반짝임',()=>{glitBoost=2.2;}],['비커의 금이 �
   ['젤리곰 파티',()=>{for(let k=0;k<6;k++)spawnItem('gummy',BX+40+k*45,BY-40-k*15);}],
   ['한여름의 눈',()=>{for(let k=0;k<8;k++)spawnItem('snow',rand(BX+30,BR-30),BY-40-k*20);}],
   ['밤하늘 불꽃놀이',()=>{for(let r=0;r<5;r++)setTimeout(()=>{const x=rand(BX-100,BR+100),y=BY-rand(120,260),c=hueShift(0xff5050,rand(0,360));Snd.boom&&Snd.boom();for(let k=0;k<40;k++){const a=k/40*6.28;spawnEmber(x,y,Math.cos(a)*rand(150,260),Math.sin(a)*rand(150,260),c,rand(.8,1.3),rand(.15,.28),120);}},r*400);}],
-  ['연구비 증액 (거절됨)',()=>{toast('SHENRON','그건 내 권한 밖이다','#7dff9a');}],
+  ['연구비 증액 (거절됨)',()=>{setTimeout(()=>toast('SHENRON','그건 내 권한 밖이다','#7dff9a'),1800);}],
   ['해파리 친구',()=>{spawnItem('jelly',CX,BY-40);}]];
 function updateDragon(dt){if(!dragon)return;const d=dragon;d.t+=dt;const t=d.t;
   const vl=-world.x/world.scale.x,vw=innerWidth/world.scale.x,Ax=Math.max(120,Math.min(260,vw/2-100)),yHi=Math.max(topY()+170,BY-380),Ay=(BY+60-yHi)/2,ym=yHi+Ay;
