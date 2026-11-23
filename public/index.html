@@ -2722,8 +2722,8 @@ function updateParticles(dt){
     if(f.ph==='steam'){f.y+=f.vy*dt;f.x+=(f.vx+Math.sin(T*3+f.y*.05)*15)*dt;f.vy*=.99;}
     else if(f.ph==='rise'){f.y+=f.vy*dt;f.x+=f.vx*dt;if(f.y>BY-6&&(f.x<BX+10||f.x>BR-10))f.vx*=-1;
       if(f.peak&&f.y<BY-6){f.ph='billow';f.vy=-rand(18,38);f.vx=rand(-25,25);}else if(f.y<BY-6){f.ph='spill';f.vx=(f.x<CX?-1:1)*rand(30,60);}}
-    else if(f.ph==='billow'){f.vy*=.995;f.y+=f.vy*dt;f.x+=(f.vx+Math.sin(T*1.3+f.peak)*22)*dt;if(f.y<f.peak){f.ph='spill';f.vy=0;f.vx=(f.x<CX?-1:1)*rand(25,50);}}
-    else if(f.ph==='spill'){f.x+=f.vx*dt*(f.dry?1.5:1);if(f.dry)f.y+=Math.sin(T*1.4+f.vx)*6*dt;if(f.x<BX-GT-10||f.x>BR+GT+10)f.ph='fall';}
+    else if(f.ph==='billow'){f.vy*=.995;f.y+=f.vy*dt;f.x+=(f.vx+Math.sin(T*1.3+f.peak)*22)*dt;if(f.y<f.peak||f.vy>-4){f.ph='spill';f.vy=0;f.vx=(f.x<CX?-1:1)*rand(18,34);}}
+    else if(f.ph==='spill'){f.x+=f.vx*dt*(f.dry?1.5:1);if(f.dry){if(f.y<BY-8){f.vy=Math.min(34,f.vy+22*dt);f.y=Math.min(BY-8,f.y+f.vy*dt);}else f.y+=Math.sin(T*1.4+f.vx)*6*dt;}if(f.x<BX-GT-10||f.x>BR+GT+10)f.ph='fall';}
     else if(f.ph==='fall'){if(f.dry){f.vy=Math.min(62,Math.max(0,f.vy)+40*dt);f.y+=f.vy*dt;f.x+=(f.vx*.22+Math.sin(T*1.6+f.y*.03+f.vx)*16)*dt;}else{f.vy=Math.min(70,Math.max(0,f.vy)+60*dt);f.y+=f.vy*dt;f.x+=f.vx*.3*dt;}if(f.y>TABLE_Y-8){f.y=TABLE_Y-8;f.ph='pool';if(f.dry){f.pf=1;f.vy=-rand(2,6);f.ph2=rand(0,6);}}}
     else if(f.dry){f.vy=Math.max(-26,f.vy-dt*2.2);f.y+=f.vy*dt;f.x+=(f.vx*1.1+Math.sin(T*.8+f.ph2)*12)*dt;f.vx*=.993;f.pf-=dt/rand(16,20);if(f.pf<=0){f.life=0;}}
     else{f.x+=f.vx*dt;f.vx*=.995;}
