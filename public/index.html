@@ -1227,7 +1227,10 @@ Object.assign(Snd,{
   whisk(){if(!this.ok('whisk',180))return;this.burst({dur:.16,vol:.05,type:'bandpass',f:2400,q:1.2});},
   coinShine(){if(!this.ctx||this.muted)return;[2093,2637,3136].forEach((f,i)=>this.tone({f,dur:.5,vol:.03,when:i*.07,rev:.5}));},
   snore(){if(!this.ctx||this.muted)return;this.burst({dur:1.1,vol:.08,f:260,q:.6,rev:.2});this.tone({f:95,slide:70,dur:1,vol:.06,att:.3});},
-  sonar(){if(!this.ctx||this.muted)return;this.tone({f:1180,dur:1.4,vol:.05,att:.004,rev:.8});this.tone({f:2360,dur:.5,vol:.012,rev:.6});},
+  sonar(){if(!this.ctx||this.muted)return;   // 액티브 소나: 짧고 맑은 핑 → 긴 수중 잔향 → 멀리서 돌아오는 약한 메아리
+    this.tone({f:1480,slide:1440,dur:2.6,vol:.07,att:.003,rev:.95});this.tone({f:2960,slide:2880,dur:.9,vol:.012,att:.003,rev:.9});this.tone({f:740,dur:1.2,vol:.015,att:.01,rev:.9});
+    this.burst({dur:.06,vol:.03,type:'bandpass',f:1500,q:8,rev:.6});
+    this.tone({f:1450,slide:1420,dur:1.6,vol:.018,att:.04,rev:1,when:1.1});this.tone({f:1440,dur:1.2,vol:.007,att:.05,rev:1,when:2.1});},
   squish(){if(!this.ok('squish',150))return;this.tone({f:200,slide:320,dur:.14,vol:.05,rev:.1});this.burst({dur:.08,vol:.03,f:600});},
   chime(){if(!this.ok('chime',250))return;const f=[2637,3136,3520,4186][Math.random()*4|0];this.tone({f,dur:.9,vol:.03,rev:.7});this.tone({f:f*1.5,dur:.4,vol:.01,rev:.6});},
   colaPour(){if(!this.ctx||this.muted)return;this.pour();for(let i=0;i<10;i++)this.burst({dur:.04,vol:.04,type:'highpass',f:5000,when:.1+i*.06+Math.random()*.04});},
@@ -1906,14 +1909,15 @@ const tubes=STAGES.map((s,i)=>{const b=document.createElement('button');b.classN
 const flasks=MUTATIONS.map(m=>{const b=document.createElement('button');b.className='flask';b.type='button';b.setAttribute('aria-label','돌연변이 '+m.name);b.innerHTML='<div class="fill"></div><div class="q">?</div>';
   hoverTip(b,()=>found.has(m.id)?`<div class="no">MUTANT</div><h4>${m.name}</h4>${m.log}`:`<div class="no">MUTANT · 미발견</div><h4>???</h4>힌트: ${m.hint}`);
   flaskRow.appendChild(b);return b;});
-const TRAY_GROUPS=[['방울·액체',['dye','milk','honey','cola','soju','vinegar','ink','glitter','gold','plankton']],
+const TRAY_GROUPS=[['방울·액체',['dye','milk','honey','cola','soju','vinegar','ink','glitter','gold']],
   ['가루·알갱이',['sugar','salt','soda','yeast','ramen','tablet','rice','sand','iron']],
   ['과일·채소',['lemon','banana','melon','chili','seed','clover']],
   ['간식·음식',['mentos','gummy','popcorn','poprock','cotton','marsh','choco','cheese','icecream','mint','coffee','teabag','noodle','egg','laver']],
   ['차갑고 뜨거운 것',['ice','dryice','sodium','sparkler','candle','pumice']],
   ['전기·자석·빛',['battery','magnet','bulb','glowstick']],
-  ['장난감·물건',['duck','warship','pingpong','balloon','coin','soap','lego','crayon','feather','watch','rocket','pearl','crystal']],
-  ['헤엄치는 것',['fish','sub','shark','jelly','dino']]];
+  ['움직이는 장난감',['fish','sub','shark','warship','rocket','duck','dino']],
+  ['생물',['jelly','plankton']],
+  ['물건',['pingpong','balloon','coin','soap','lego','crayon','feather','watch','pearl','crystal']]];
 {const used=new Set(TRAY_GROUPS.flatMap(g=>g[1]));const rest=Object.keys(ITEMS).filter(k=>!used.has(k)&&!ITEMS[k].hidden);if(rest.length)TRAY_GROUPS.push(['기타',rest]);}
 const TRAY_ORDER=[];TRAY_GROUPS.forEach(([g,ks],gi)=>{TRAY_ORDER.push({head:g,first:gi===0});ks.forEach(k=>{if(ITEMS[k]&&!ITEMS[k].hidden)TRAY_ORDER.push(k);});});
 for(const ent of TRAY_ORDER){if(typeof ent==='object'){const hd=document.createElement('div');hd.className='tray-h'+(ent.first?' first':'');hd.textContent=ent.head;tray.appendChild(hd);continue;}const type=ent;const b=document.createElement('button');b.className='item';b.type='button';b.innerHTML=`<span class="dish"><img alt="" src="${ITEMS[type].icon}"></span><span class="nm">${ITEMS[type].label}</span>`;
@@ -2399,6 +2403,7 @@ function updateItems(dt){
         for(let k=0;k<30;k++)spawnBubble(p.x+rand(-30,30),p.y+rand(0,60),rand(1.5,3.5));
         if(items.some(o=>!o.dead&&o.type==='mentos'&&o.sub>.2)){fountainT=3.2;Snd.fountain();shake=Math.max(shake,1);triggerSpecial('colaFountain');}removeItem(it);continue;}
       if(it.type==='sodium'&&freeze<.5)Snd.naFizz();
+      if(it.type==='sub')Snd.sonar();
       if(it.type==='marsh')Snd.squish();
       if(it.type==='coffee')Snd.bean();
       if(it.type==='dye'||it.type==='lemon')Snd.drip();
@@ -2539,7 +2544,7 @@ function updateItems(dt){
     if(it.type==='sub'){it.life-=dt/ITEMS.sub.life;if(it.sub>.3&&it.life>0){if(!it.dir)it.dir=Math.random()<.5?-1:1;if(p.x<BX+40)it.dir=1;else if(p.x>BR-40)it.dir=-1;
         it.cyc=(it.cyc||0)+dt;const deep=Math.sin(it.cyc*.8)>0,ty=deep?BB-30:surfaceAt(p.x)+12;
         Body.applyForce(b,p,{x:it.dir*b.mass*4e-4,y:(ty-p.y)*b.mass*6e-6});Body.setAngle(b,clamp((ty-p.y)*.002,-.25,.25));Body.setAngularVelocity(b,0);
-        if(Math.random()<dt*6)spawnBubble(p.x-it.dir*22,p.y,rand(1,2.4));if((it.ping=(it.ping||0)-dt)<=0){it.ping=4;rings.push({x:p.x,r:8,life:.8,delay:0,sp:120});}}}
+        if(Math.random()<dt*6)spawnBubble(p.x-it.dir*22,p.y,rand(1,2.4));if((it.ping=(it.ping||0)-dt)<=0){it.ping=5.5;Snd.sonar();rings.push({x:p.x,r:8,life:.8,delay:0,sp:120});}}}
     // ---- 수정 씨앗: 소금물·차가운 용액에서 자라남 ----
     if(it.type==='crystal'&&it.sub>.3){const grow=(saltD>.15?saltD*.5:0)+(curTemp<5?.15:0)+(freeze>.2?.2:0);
       if(grow>0&&it.size<2.4){it.size=Math.min(2.4,it.size+dt*grow*.12);if(Math.random()<dt*2)Snd.chime();if(Math.random()<dt*8)spawnEmber(p.x+rand(-14,14)*it.size,p.y+rand(-14,10)*it.size,0,-8,0xe8deff,rand(.4,.8),rand(.1,.18),0);}
