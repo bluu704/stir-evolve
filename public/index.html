@@ -459,7 +459,7 @@ body.glitch #stage canvas{animation:glitch .45s steps(2)}
 <div id="tooltip" role="tooltip"></div>
 <div id="toast"><small id="toastSmall"></small><b id="toastBig"></b></div>
 <div id="flash"></div>
-<div id="flood"></div>
+<canvas id="flood"></canvas>
 <canvas id="ceiling"></canvas>
 <div id="hint">유리막대로 비커를 휘저어 보세요 · 재료는 끌어다 넣으세요</div>
 <div id="modal"><div class="card"><small id="modalTag">ENDING</small><h2 id="modalTitle"></h2><p id="modalBody"></p><button id="modalBtn" type="button">계속</button></div></div>
@@ -596,8 +596,12 @@ const ITEMS = {
   melon:   { label:'수박 조각', tag:'뜸·달콤',       w:38, h:26, rel:.92, chamfer:6, dissolve:40 },
   crayon:  { label:'크레용',    tag:'뜨거우면 녹음',  w:10, h:38, rel:1.05, chamfer:4, dissolve:14 },
   shark:   { label:'장난감 상어', tag:'헤엄·사냥',    w:52, h:24, rel:1.0, chamfer:10 },
+  rice:    { label:'쌀',        tag:'익으면 밥',      w:26, h:16, rel:1.4, chamfer:6 },
+  sand:    { label:'모래',      tag:'가라앉음·녹으면 유리', w:30, h:16, rel:2.6, chamfer:7 },
+  feather: { label:'깃털',      tag:'살랑살랑',       w:14, h:44, rel:.1, chamfer:6 },
+  ink:     { label:'오징어 먹물', tag:'새까맣게 번짐',  r:9, rel:1.02 },
 };
-const DROPS={dye:1,milk:1,honey:1,cola:1,plankton:1,vinegar:1,gold:1};   // 떨어지는 순간 용액에 섞이는 방울형 재료
+const DROPS={dye:1,milk:1,honey:1,cola:1,plankton:1,vinegar:1,gold:1,ink:1};   // 떨어지는 순간 용액에 섞이는 방울형 재료
 const MAGNETIC={battery:1,magnet:1};
 const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ice:'물에 뜨고, 녹으면서 용액을 맑고 차갑게 만듦',battery:'묵직하게 가라앉아 전기 스파크를 일으킴',
   dye:'떨어지는 순간 형광색이 용액에 번짐',ramen:'녹으면서 용액을 국물색으로 물들임',mentos:'탄산 속에서 기포를 폭발적으로 만들어냄',
@@ -612,7 +616,7 @@ const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ic
   cola:'쏟아지며 갈색 거품을 일으킴. 멘토스와 만나면…',poprock:'녹으면서 탁탁 튀는 작은 폭죽을 터뜨림',chili:'천천히 매운맛이 우러나며 용액이 뜨거워지고 붉어짐',
   marsh:'떠다니다 뜨거우면 부풀어 녹고, 불꽃에 닿으면 노릇하게 구워짐',sub:'태엽이 다할 때까지 잠수했다 떠올랐다를 반복하며 소나를 울림',crystal:'바닥에 가라앉아 소금물이나 차가운 용액에서 결정이 자라남',
   banana:'둥둥 뜨고, 뜨거우면 노릇하게 익음. 우유와 만나면…',jelly:'몸을 오므렸다 펴며 위로 헤엄치고 은은하게 빛남',teabag:'초록빛으로 천천히 우러남. 뜨거울수록 빨리 우러남',
-  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님'};
+  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님',rice:'가라앉아 있다가 뜨거운 용액에서 밥이 됨',sand:'바닥에 깔림. 아주 뜨거우면 녹아 유리가 되고, 흔들리면…',feather:'살랑살랑 천천히 떨어지고 물에 뜸. 아주 뜨거우면…',ink:'떨어지는 순간 용액을 새까맣게 물들임'};
 
 /* 히든 조합: 재료가 잠긴 상태로 해당 단계에서 rpm 이상으로 저으면 발동 */
 const MUTATIONS = [
@@ -911,6 +915,30 @@ const MUTATIONS = [
   { id:'sharkAlert', special:true, item:'shark', stage:0, rpm:0, name:'상어 경보', how:['장난감 상어','러버덕'], color:'#ff6a5a',
     look:{ top:'#d8ecff', bottom:'#2a4a7a', bubbles:.6 },
     hint:'이빨 달린 헤엄꾼 + 노란 친구', log:'상어가 러버덕 주위를 빙글빙글 돌기 시작했다. 연구원들이 낮은 음으로 두 음을 번갈아 흥얼거렸다.' },
+  { id:'rice', special:true, item:'rice', stage:0, rpm:0, name:'비커 밥', how:['쌀','90°C 이상'], color:'#fffaf0',
+    look:{ top:'#fffdf8', bottom:'#e8e0d0', opacity:.9, haze:.6, foam:.3 },
+    hint:'작은 하얀 알갱이 + 아주 뜨겁게', log:'비커에서 밥이 지어졌다. 뜸 들이는 시간을 두고 연구원 사이에 격렬한 논쟁이 벌어졌다.' },
+  { id:'makgeolli', special:true, item:'rice', stage:0, rpm:0, name:'막걸리', how:['쌀','효모'], color:'#f4f0e0',
+    look:{ top:'#faf6ea', bottom:'#d8d0b8', opacity:.88, bubbles:.6, bubbleSize:.6 },
+    hint:'작은 하얀 알갱이 + 작은 생명 가루', log:'쌀과 효모가 만나 뽀얀 막걸리가 되었다. 비 오는 날 파전 냄새가 연구실 어디선가 났다.' },
+  { id:'glassBead', special:true, item:'sand', stage:0, rpm:0, name:'모래가 유리로', how:['모래','500°C 이상'], color:'#bff4ff',
+    look:{ top:'#e0faff', bottom:'#ff8a3c', hot:.8, embers:.6, sheen:1 },
+    hint:'고운 알갱이 + 아주아주 뜨겁게', log:'모래가 녹아 반짝이는 유리구슬이 되었다. 비커가 비커를 만든 셈이라 철학과에서 관심을 보였다.' },
+  { id:'liquefaction', special:true, act:'quake', stage:0, rpm:0, name:'액상화 현상', how:['지진','모래'], color:'#d8b880',
+    look:{ top:'#e8d4a8', bottom:'#8a6a3a', opacity:.95, sediment:1.4, viscosity:.1 },
+    hint:'고운 알갱이 + 땅이 흔들리는 것', log:'흔들린 모래가 물처럼 출렁였다. 무거운 것은 가라앉고 가벼운 것은 떠올라 토목공학과 교수가 강의 자료로 찍어 갔다.' },
+  { id:'featherFly', special:true, act:'gravity', stage:0, rpm:0, name:'깃털 비행', how:['중력 반전','깃털'], color:'#f0f4ff',
+    look:{ top:'#f4f8ff', bottom:'#8aa0c8', glitter:1, aurora:.4 },
+    hint:'가벼운 것 + 뒤집힌 하늘', log:'중력이 뒤집히자 깃털이 천장을 향해 춤추며 날아올랐다. 비둘기 한 마리가 창밖에서 부러운 듯 지켜봤다.' },
+  { id:'phoenix', special:true, item:'feather', stage:0, rpm:0, name:'불사조 깃털', how:['깃털','500°C 이상'], color:'#ff7a2a',
+    look:{ top:'#ffd27a', bottom:'#c02a0a', embers:1.6, glow:1.2, halo:1 },
+    hint:'가벼운 것 + 아주아주 뜨겁게', log:'깃털이 타지 않고 불꽃으로 빛나며 날아올랐다. 연구원들은 비커가 다시 태어나길 빌었지만 비커는 멀쩡했다.' },
+  { id:'inkScreen', special:true, item:'ink', stage:0, rpm:0, name:'먹물 연막', how:['오징어 먹물','헤엄치는 것'], color:'#3a3a4a',
+    look:{ top:'#3a3a48', bottom:'#08080c', opacity:.97, disp:14 },
+    hint:'새까만 방울 + 헤엄치는 것', log:'먹물이 퍼지자 헤엄치던 것들이 보이지 않게 되었다. 숨바꼭질 대회는 무승부로 끝났다.' },
+  { id:'inkPasta', special:true, item:'ink', stage:0, rpm:0, name:'먹물 파스타', how:['오징어 먹물','라면 사리'], color:'#2a2a30',
+    look:{ top:'#4a4a52', bottom:'#101014', opacity:.95, noodles:1, sheen:.4 },
+    hint:'새까만 방울 + 꼬불꼬불 면', log:'라면 사리가 먹물에 물들어 고급 파스타가 되었다. 먹고 웃은 연구원들의 이가 모두 까매졌다.' },
   { id:'dinoStomp', special:true, act:'quake', stage:0, rpm:0, name:'공룡 쿵쾅', how:['지진','다 자란 공룡'], color:'#b0e07a',
     hint:'다 자란 공룡 + 땅이 흔들리는 것', log:'땅이 흔들리자 공룡 스펀지가 맞춰서 발을 굴렀다. 지진계 기록을 보면 진원지는 비커 안이었다.' },
 ];
@@ -1350,6 +1378,15 @@ const DRAW={
     x.quadraticCurveTo(w*.15,h*.4,w*.1,h*.5);x.lineTo(1,h*.15);x.lineTo(w*.05,h*.55);x.lineTo(1,h*.95);x.lineTo(w*.12,h*.62);x.quadraticCurveTo(w*.5,h*.98,w*.85,h*.75);x.closePath();x.fill();
     x.fillStyle='#1a1a1a';x.beginPath();x.arc(w*.82,h*.45,w*.025,0,7);x.fill();x.strokeStyle='#ffffff';x.lineWidth=w*.015;x.beginPath();for(let k=0;k<4;k++){x.moveTo(w*(.78+k*.035),h*.66);x.lineTo(w*(.795+k*.035),h*.74);x.lineTo(w*(.81+k*.035),h*.66);}x.stroke();
     x.strokeStyle='rgba(40,60,80,.5)';x.beginPath();[.62,.66,.7].forEach(t=>{x.moveTo(w*t,h*.42);x.lineTo(w*(t-.02),h*.6);});x.stroke();},
+  rice(x,W,H){pad(x,W,H,.04,(w,h)=>{x.fillStyle='rgba(240,232,214,.9)';x.beginPath();x.ellipse(w/2,h*.62,w*.48,h*.36,0,0,7);x.fill();
+    for(let k=0;k<16;k++){const a=k*2.2,d=(k%4)/4;x.save();x.translate(w/2+Math.cos(a)*w*.36*d,h*.6+Math.sin(a)*h*.26*d);x.rotate(a);x.fillStyle=k%2?'#ffffff':'#f6f0e2';x.beginPath();x.ellipse(0,0,w*.07,h*.11,0,0,7);x.fill();x.restore();}});},
+  sand(x,w,h){x.fillStyle=LG(x,0,0,0,h,[[0,'#f0d8a0'],[1,'#c09858']]);x.beginPath();x.moveTo(1,h-1);x.quadraticCurveTo(w*.25,h*.2,w/2,h*.1);x.quadraticCurveTo(w*.75,h*.2,w-1,h-1);x.closePath();x.fill();
+    for(let k=0;k<30;k++){x.fillStyle=k%3?'rgba(140,100,50,.5)':'rgba(255,255,255,.6)';x.fillRect(w*(.15+.7*((k*13%17)/17)),h*(.35+.55*((k*7%11)/11)),w*.03,w*.03);}},
+  feather(x,w,h){x.strokeStyle='#d8d0c0';x.lineWidth=w*.08;x.beginPath();x.moveTo(w/2,h-1);x.quadraticCurveTo(w*.45,h*.5,w*.55,2);x.stroke();
+    x.fillStyle='rgba(250,250,255,.95)';x.beginPath();x.moveTo(w*.55,2);x.quadraticCurveTo(w,h*.25,w*.85,h*.7);x.lineTo(w*.5,h*.82);x.quadraticCurveTo(0,h*.6,w*.15,h*.25);x.closePath();x.fill();
+    x.strokeStyle='rgba(180,190,210,.6)';x.lineWidth=w*.03;for(let k=1;k<9;k++){const y=h*(.08+k*.08);x.beginPath();x.moveTo(w*.5,y);x.lineTo(w*.15,y+h*.06);x.moveTo(w*.5,y);x.lineTo(w*.85,y+h*.05);x.stroke();}},
+  ink(x,w,h){x.save();x.beginPath();x.moveTo(w/2,1);x.bezierCurveTo(w*.62,h*.28,w-1,h*.5,w-1,h*.68);x.arc(w/2,h*.68,w/2-1,0,Math.PI);x.bezierCurveTo(1,h*.5,w*.38,h*.28,w/2,1);x.closePath();
+    x.fillStyle=LG(x,0,0,0,h,[[0,'#3a3a48'],[1,'#050508']]);x.fill();x.restore();x.fillStyle='rgba(255,255,255,.5)';x.beginPath();x.ellipse(w*.38,h*.55,w*.08,h*.12,-.3,0,7);x.fill();},
   snow(x,w,h){const c=w/2,r=w/2-1;x.fillStyle=RG(x,c,c,0,c,c,r,[[0,'rgba(220,240,255,.55)'],[1,'rgba(220,240,255,0)']]);x.fillRect(0,0,w,h);
     x.strokeStyle='#ffffff';x.lineCap='round';for(let k=0;k<6;k++){const a=k*Math.PI/3;x.save();x.translate(c,c);x.rotate(a);x.lineWidth=w*.07;x.beginPath();x.moveTo(0,0);x.lineTo(0,-r*.92);x.stroke();
       x.lineWidth=w*.045;[.38,.62].forEach(t=>{x.beginPath();x.moveTo(0,-r*t);x.lineTo(-r*.2,-r*(t+.17));x.moveTo(0,-r*t);x.lineTo(r*.2,-r*(t+.17));x.stroke();});x.restore();}
@@ -1681,7 +1718,7 @@ let rpm=0,rpmN=0,swirlDir=1,dirAcc=0,omega=0,heat=0,vcx=CX;
 let boostTime=0,clarity=0,previewKick=0,foamLevel=0,rise=0,beat=0,beatPrev=0,drain=0,drainTarget=0,shake=0,glitchT=0;
 let cream=0,honeyV=0,coffeeAmt=0,dalgonaT=0,naBooms=[],onceFx={},fountainT=0,colaFizz=0,teaAmt=0;
 let lemonadeDone=false,drunkT=0,sojuN=0,hullDmg=0,rampTargets=[],nicholasDone=false,freeze=0,heatBoost=0,sparkBoost=0,burnerT=0,quakeT=0,gravT=0,evapOn=false,evapDrain=0,dinoDrain=0,evapT=0,curTemp=20,meltF=1,dissolveF=1,gen=1,pour=null,cycT=0,spilled=0,spillL=0,spillR=0,pudL=null,pudR=null,saltD=0,glitBoost=0,extraFoam=0,rodIn=true,rodTouch=0,lastRodClink=0,tint={color:0,amt:0},chill=0,swirlPh=0,vortD=0,sloshA=0,sloshV=0;let stress=0,cracks=[],nextCrack=.22;
-let crayonN=0,ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
+let inkT=0,crayonN=0,ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
 let plank=[],plankGlow=0,electroT=0,interestT=0,interestN=0,dragon=null;const DRAGON_NEED=7;   // 별 1~7개 탁구공을 모두 모으면 신룡
 let mode='play';// play | broken | geyser
 let mut={active:null,amt:0,time:0,holds:{}};
@@ -1975,13 +2012,40 @@ function shatter(o){o=o||{};
   Composite.remove(engine.world,walls);
   items.forEach(i=>{if(!i.dead)Body.setVelocity(i.body,{x:(i.body.position.x-CX)*.08+rand(-2,2),y:-rand(2,6)});});
   drainTarget=BB-LEVEL+30;
-  if(!o.noFlood){const fl=$('flood');fl.style.setProperty('--f1',css(look.top));fl.style.setProperty('--f2',css(look.bottom));fl.style.visibility='visible';setTimeout(()=>fl.style.height='30vh',250);
+  if(!o.noFlood){Flood.start(look.top,look.bottom);
   setTimeout(startSweep,450);}
   setTimeout(()=>modal(o.tag||'ACCIDENT REPORT',o.title||'비커 파손',o.body||'교반 속도가 유리의 허용 응력을 초과했다. 용액이 실험실 바닥과 장비 일체를 휩쓸었다. 비커값은 연구비에서 차감된다.',o.btn||'새 비커 지급받기',restoreBeaker),o.delay||4200);
 }
-function startSweep(){sweep.length=0;document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn,#rankBtn').forEach(el=>{const r=el.getBoundingClientRect();
+function startSweep(){sweep.length=0;const wl=innerHeight*(1-Flood.H);document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn,#rankBtn').forEach(el=>{const r=el.getBoundingClientRect();
+  if(r.bottom<wl+6||r.width===0)return;   // 물에 닿는 UI만 휩쓸림, 위쪽 UI는 그대로
   sweep.push({el,r,x:0,y:0,vx:rand(-50,70),vy:rand(-240,-30),rot:0,vr:rand(-140,140),float:false,cur:rand(60,170),ph:rand(0,6),delay:rand(0,.35)});el.style.transition='none';});}
-function waterY(x){return innerHeight*.7+Math.sin(x*.012+T*2.2)*10+Math.sin(x*.031-T*1.5)*4;}
+/* 넘친 물: 캔버스에 여러 겹의 파도로 그림 (오른쪽으로 흘러감) */
+const Flood={on:false,lv:0,tgt:0,H:.3,c1:0xbfe6ff,c2:0x5fb3e8,cv:null,x:null,bub:[],
+  start(a,b){this.c1=a;this.c2=b;this.on=true;this.tgt=1;this.cv=$('flood');this.cv.style.visibility='visible';this.x=this.cv.getContext('2d');this.bub.length=0;},
+  stop(){this.tgt=0;},
+  y(x,k=0){const A=Math.min(1,this.lv*1.4);return innerHeight-this.lv*innerHeight*this.H+A*(Math.sin(x*.011-T*2.1+k)*9+Math.sin(x*.027-T*3.3+k*2)*4+Math.sin(x*.0045-T*.9+k*.5)*12);},
+  draw(dt){if(!this.on)return;this.lv+=(this.tgt-this.lv)*Math.min(1,dt*(this.tgt?2.2:3));
+    if(!this.tgt&&this.lv<.01){this.on=false;this.lv=0;this.cv.style.visibility='hidden';return;}
+    const cv=this.cv,x=this.x,dpr=Math.min(2,devicePixelRatio||1),Wd=innerWidth,Hd=innerHeight;if(cv.width!==Math.round(Wd*dpr)||cv.height!==Math.round(Hd*dpr)){cv.width=Math.round(Wd*dpr);cv.height=Math.round(Hd*dpr);}
+    x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,Wd,Hd);const c1=css(this.c1),c2=css(this.c2),dark=css(mixC(this.c2,0x000000,.35)),top=Hd-this.lv*Hd*this.H-30,step=8;
+    const path=(k,off)=>{x.beginPath();x.moveTo(0,Hd);for(let px=0;px<=Wd+step;px+=step)x.lineTo(px,this.y(px,k)+off);x.lineTo(Wd,Hd);x.closePath();};
+    // 뒤쪽 파도
+    path(1.7,-10);x.globalAlpha=.45;x.fillStyle=dark;x.fill();
+    // 본체
+    path(0,0);let g=x.createLinearGradient(0,top,0,Hd);g.addColorStop(0,c1);g.addColorStop(.35,c2);g.addColorStop(1,dark);x.globalAlpha=.88;x.fillStyle=g;x.fill();
+    // 물결 결 (흐름 방향으로 이동하는 가는 줄)
+    x.save();path(0,0);x.clip();x.globalAlpha=.16;x.strokeStyle='#ffffff';x.lineWidth=1.5;
+    for(let r=0;r<14;r++){const d=(r*37%100)/100,yy=top+40+d*(Hd-top-40),len=40+(r*53%70),sp=30+(r*29%50),px0=((T*sp+r*173)%(Wd+300))-150;
+      x.beginPath();x.moveTo(px0,yy);x.quadraticCurveTo(px0+len/2,yy-3,px0+len,yy);x.stroke();}
+    // 기포
+    if(this.bub.length<40&&Math.random()<dt*25)this.bub.push({x:Math.random()*Wd,y:Hd,r:rand(1.5,4),v:rand(30,70)});
+    x.globalAlpha=.35;x.fillStyle='#ffffff';for(let i=this.bub.length-1;i>=0;i--){const b=this.bub[i];b.y-=b.v*dt;b.x+=dt*40;if(b.y<this.y(b.x)+4){this.bub.splice(i,1);continue;}x.beginPath();x.arc(b.x,b.y,b.r,0,7);x.fill();}
+    x.restore();
+    // 수면 하이라이트 + 물거품
+    x.globalAlpha=.55;x.strokeStyle='#ffffff';x.lineWidth=2;x.beginPath();for(let px=0;px<=Wd+step;px+=step){const yy=this.y(px)+1.5;px?x.lineTo(px,yy):x.moveTo(px,yy);}x.stroke();
+    x.globalAlpha=.5;x.fillStyle='#ffffff';for(let px=0;px<=Wd;px+=14){const s0=this.y(px+6)-this.y(px-6);if(s0<-2.2){const f=Math.min(1,(-s0-2.2)/4);x.beginPath();x.arc(px+rand(-2,2),this.y(px)+1,2+f*3.5,0,7);x.fill();}}
+    x.globalAlpha=1;}};
+function waterY(x){return Flood.y(x);}
 function updateSweep(dt){if(!sweep.length)return;for(const s of sweep){
   if(s.knock){s.vy+=1500*dt;s.x+=s.vx*dt;s.y+=s.vy*dt;s.rot+=s.vr*dt;s.el.style.transform=`translate(${s.x}px,${s.y}px) rotate(${s.rot}deg)`;continue;}
   if(s.delay>0){s.delay-=dt;continue;}
@@ -1995,9 +2059,9 @@ function restoreBeaker(){
   strands.length=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;aftT=0;onceFx.jolbu=0;onceFx.compound=0;onceFx.lemonBat=0;onceFx.shaken=0;mode='play';stress=0;hullDmg=0;cracks=[];nextCrack=.22;crackG.clear();remnantG.clear();L.front.children.forEach(c=>c.visible=true);backG.visible=true;gradText.forEach(t=>t.visible=true);
   Composite.add(engine.world,walls);items.slice().forEach(i=>{if(!i.dead)removeItem(i);});items.length=0;
   shards.forEach(s=>P.shard.put(s.s));shards.length=0;drainTarget=0;rpm=0;
-  $('flood').style.height='0';setTimeout(()=>{if(mode==='play')$('flood').style.visibility='hidden';},1100);sweep.forEach(s=>{s.el.style.transition='transform .9s cubic-bezier(.2,.9,.3,1.2)';s.el.style.transform='';});setTimeout(()=>sweep.forEach(s=>s.el.style.transition=''),1000);sweep.length=0;
+  Flood.stop();sweep.forEach(s=>{s.el.style.transition='transform .9s cubic-bezier(.2,.9,.3,1.2)';s.el.style.transform='';});setTimeout(()=>sweep.forEach(s=>s.el.style.transition=''),1000);sweep.length=0;
 }
-function resetAll(){strands.length=0;lemonadeDone=false;crayonN=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
+function resetAll(){strands.length=0;lemonadeDone=false;crayonN=0;inkT=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
   if(mode==='broken'){$('modal').classList.remove('on');restoreBeaker();}
   items.slice().forEach(i=>{if(!i.dead)removeItem(i);});items.length=0;mut.active=null;mut.amt=0;tint.amt=0;boostTime=0;clarity=0;rpm=0;stress=0;cracks=[];crackG.clear();
   for(let i=0;i<N;i++){sh[i]=0;sv[i]=0;}
@@ -2115,7 +2179,7 @@ app.ticker.add(()=>{
   drawLiquid();drawRod();
   updateParticles(dt);
   updateEyes(dt);
-  updateSweep(dt);
+  updateSweep(dt);Flood.draw(dt);
 
   // 굴절 일렁임
   dispSprite.x+=look.dispSpeed*30*dt*(1+rpmN*2);dispSprite.y+=look.dispSpeed*18*dt;
@@ -2230,6 +2294,9 @@ function updateItems(dt){
       if(it.type==='marsh')Snd.squish();
       if(it.type==='coffee')Snd.bean();
       if(it.type==='dye'||it.type==='lemon')Snd.drip();
+      if(it.type==='ink'){Snd.drip();burstPlume(p.x,p.y,0x101018,70,40);tint.color=0x0c0c12;tint.amt=Math.min(1,tint.amt+.75);inkT=30;
+        if(items.some(o=>!o.dead&&(o.type==='fish'||o.type==='shark'||o.type==='jelly'||o.type==='sub')&&o.sub>.2)&&!onceFx.inkScreen){onceFx.inkScreen=1;triggerSpecial('inkScreen');}
+        if(items.some(o=>!o.dead&&o.type==='noodle'&&o.sub>.2)&&!onceFx.inkPasta){onceFx.inkPasta=1;triggerSpecial('inkPasta');}removeItem(it);continue;}
       if(it.type==='vinegar'){Snd.drip();burstPlume(p.x,p.y,0xfff0b0,40,30);vinegarAmt=1;clarity=Math.min(1,clarity+.2);removeItem(it);continue;}
       if(it.type==='gold'){Snd.coinShine();goldAmt=1;glitBoost=Math.min(2.2,glitBoost+1);for(let k=0;k<50;k++){const q=P.grain.get();q.scale.set(rand(.1,.22));q.alpha=1;q.tint=k%2?0xffd76b:0xfff1a8;const cc=cyl(p.x+rand(-20,20));grains.push({s:q,R:cc.R,th:cc.th,y:p.y+rand(0,20),vy:rand(6,16),life:rand(6,10),max:10});}removeItem(it);continue;}
       if(it.type==='iron'){Snd.drip();burstPlume(p.x,p.y,0x2a2e34,50,30);ironAmt=Math.min(1,ironAmt+.7);for(let k=0;k<40;k++){const q=P.grain.get();q.scale.set(rand(.06,.12));q.alpha=.95;q.tint=0x2a2e34;const cc=cyl(p.x+rand(-14,14));grains.push({s:q,R:cc.R,th:cc.th,y:p.y+rand(0,20),vy:rand(30,70),life:rand(2,3.5),max:3.5});}removeItem(it);continue;}
@@ -2725,10 +2792,12 @@ function actQuake(after){if(after){quakeT=1.6;quakeLv=1;quakeMag=rand(3.2,4.2);a
   if(quakeLv>=3)addCrack();if(quakeLv>=4){addCrack();hullDmg+=.08;}
   if(quakeLv>=3)aftT=quakeT+rand(1.5,3.5);
   if(hasGrownDino())setTimeout(()=>triggerSpecial('dinoStomp'),600);
+  if(items.some(i=>!i.dead&&i.type==='sand'&&i.sub>.2)){saltD=Math.max(0,saltD-.3);tint.color=0xc8a870;tint.amt=Math.min(.7,tint.amt+.4);burstPlume(CX,BB-30,0xd8b880,60,120);setTimeout(()=>triggerSpecial('liquefaction'),800);}
   if(quakeMag>=8&&mode==='play'){const m=MUTATIONS.find(q=>q.id==='megaQuake');found.add(m.id);Sync.save();refreshFlasks();Snd.mutation();toast('MUTATION · 히든 엔딩',m.name,m.color);
     setTimeout(()=>{if(mode==='play')shatter({tag:'EARTHQUAKE · 히든 엔딩',title:m.name,body:m.log,btn:'내진 비커 지급받기'});},1600);}}
 /* 중력 반전 */
 function actGravity(){gravT=7;engine.gravity.y=-.6;Snd.gravityS();toast('ANTI-GRAVITY','중력이 뒤집혔어요','#c9a2ff');
+  if(items.some(i=>!i.dead&&i.type==='feather'))setTimeout(()=>triggerSpecial('featherFly'),1000);
   if(items.filter(i=>!i.dead&&i.type==='coin').length>=10){Snd.coinShine();setTimeout(()=>triggerSpecial('moneyRain'),900);for(let k=0;k<80;k++)spawnEmber(rand(BX-150,BR+150),topY()+70,rand(-40,40),rand(60,200),k%2?0xffd76b:0xfff1a8,rand(1.5,2.5),rand(.12,.22),200);}
   if(items.some(i=>!i.dead&&i.type==='fish'))setTimeout(()=>triggerSpecial('skyAquarium'),1200);}
 /* 핵폭탄 */
@@ -2989,6 +3058,16 @@ function updateExtras(dt){
       if(o.body.velocity.x<-.2)o.dir=-1;else if(o.body.velocity.x>.2)o.dir=1;Body.setAngle(o.body,clamp(o.body.velocity.y*.08,-.35,.35)*(o.dir||1));Body.setAngularVelocity(o.body,0);
       if(tgt&&tgt.type==='fish'&&bd<36){burstPlume(tgt.body.position.x,tgt.body.position.y,0xffffff,20,10);Snd.burp&&Snd.burp();removeItem(tgt);if(!onceFx.foodChain){onceFx.foodChain=1;triggerSpecial('foodChain');}}
       if(tgt&&tgt.type==='duck'&&!onceFx.sharkAlert){o.duckT=(o.duckT||0)+dt;if(o.duckT>2){onceFx.sharkAlert=1;triggerSpecial('sharkAlert');}}}});
+  // 쌀 / 모래 / 깃털 / 먹물
+  inkT=Math.max(0,inkT-dt);
+  items.forEach(o=>{if(o.dead)return;const P2=o.body.position;
+    if(o.type==='rice'&&o.sub>.1){if(curTemp>90){o.cook=(o.cook||0)+dt;if(Math.random()<dt*8)spawnFog(P2.x+rand(-10,10),surfaceAt(P2.x)-4,true);if(o.cook>4&&!o.done){o.done=1;o.up.tint=o.dn.tint=0xffffff;if(!onceFx.rice){onceFx.rice=1;triggerSpecial('rice');}}}
+      if(items.some(y=>!y.dead&&y.type==='yeast'&&y.sub>.2)&&!onceFx.makgeolli){onceFx.makgeolli=1;cream=Math.max(cream,.35);triggerSpecial('makgeolli');}}
+    if(o.type==='sand'&&o.sub>.2&&curTemp>500&&!o.glass){o.glass=1;for(let k=0;k<3;k++)spawnItem('marble',P2.x+rand(-20,20),P2.y-10-k*20);for(let k=0;k<40;k++)spawnEmber(P2.x,P2.y,rand(-120,120),rand(-200,-40),k%2?0xbff4ff:0xff9a4a,rand(.5,1),rand(.12,.24),200);
+      if(!onceFx.glassBead){onceFx.glassBead=1;triggerSpecial('glassBead');}removeItem(o);return;}
+    if(o.type==='feather'){if(o.sub<.05&&!o.burn){const v=o.body.velocity;Body.setVelocity(o.body,{x:v.x*.9+Math.sin(T*2.4+o.th)*.35,y:Math.min(v.y,1.2)});Body.setAngle(o.body,Math.sin(T*2.4+o.th)*.5);}
+      if(o.sub>.05&&curTemp>500&&!o.burn){o.burn=1;o.up.tint=o.dn.tint=0xffa040;o.body.isSensor=true;if(!onceFx.phoenix){onceFx.phoenix=1;triggerSpecial('phoenix');}}
+      if(o.burn){o.burn+=dt;Body.setVelocity(o.body,{x:Math.sin(T*3)*2,y:-3-o.burn});for(let k=0;k<3;k++)spawnEmber(P2.x+rand(-6,6),P2.y+10,rand(-40,40),rand(20,90),k%2?0xff7a2a:0xffd27a,rand(.4,.8),rand(.15,.3),0);if(P2.y<topY()-60)removeItem(o);}}});
   // 레몬 전지
   {const le=items.find(i=>!i.dead&&i.type==='lemon'&&i.sub>.2),co=items.find(i=>!i.dead&&i.type==='coin'&&i.sub>.2),ba=items.find(i=>!i.dead&&i.type==='battery'&&i.sub>.2);
     if(le&&co&&ba){if(!onceFx.lemonBat){onceFx.lemonBat=1;Snd.zap();triggerSpecial('lemonBattery');}
