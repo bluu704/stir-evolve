@@ -592,6 +592,10 @@ const ITEMS = {
   icecream:{ label:'아이스크림', tag:'뜸·녹음',       r:15, rel:.9, dissolve:30 },
   mint:    { label:'박하사탕',  tag:'화하게 차가움',  r:9, rel:1.3, dissolve:14 },
   rocket:  { label:'장난감 로켓', tag:'뜨거우면 발사',  w:14, h:40, rel:.8, chamfer:5 },
+  cheese:  { label:'치즈',      tag:'뜨거우면 쭈욱',  w:30, h:22, rel:1.15, chamfer:3, dissolve:20 },
+  melon:   { label:'수박 조각', tag:'뜸·달콤',       w:38, h:26, rel:.92, chamfer:6, dissolve:40 },
+  crayon:  { label:'크레용',    tag:'뜨거우면 녹음',  w:10, h:38, rel:1.05, chamfer:4, dissolve:14 },
+  shark:   { label:'장난감 상어', tag:'헤엄·사냥',    w:52, h:24, rel:1.0, chamfer:10 },
 };
 const DROPS={dye:1,milk:1,honey:1,cola:1,plankton:1,vinegar:1,gold:1};   // 떨어지는 순간 용액에 섞이는 방울형 재료
 const MAGNETIC={battery:1,magnet:1};
@@ -608,7 +612,7 @@ const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ic
   cola:'쏟아지며 갈색 거품을 일으킴. 멘토스와 만나면…',poprock:'녹으면서 탁탁 튀는 작은 폭죽을 터뜨림',chili:'천천히 매운맛이 우러나며 용액이 뜨거워지고 붉어짐',
   marsh:'떠다니다 뜨거우면 부풀어 녹고, 불꽃에 닿으면 노릇하게 구워짐',sub:'태엽이 다할 때까지 잠수했다 떠올랐다를 반복하며 소나를 울림',crystal:'바닥에 가라앉아 소금물이나 차가운 용액에서 결정이 자라남',
   banana:'둥둥 뜨고, 뜨거우면 노릇하게 익음. 우유와 만나면…',jelly:'몸을 오므렸다 펴며 위로 헤엄치고 은은하게 빛남',teabag:'초록빛으로 천천히 우러남. 뜨거울수록 빨리 우러남',
-  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨'};
+  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님'};
 
 /* 히든 조합: 재료가 잠긴 상태로 해당 단계에서 rpm 이상으로 저으면 발동 */
 const MUTATIONS = [
@@ -883,6 +887,30 @@ const MUTATIONS = [
   { id:'rocketLaunch', special:true, item:'rocket', stage:0, rpm:0, name:'비커 우주 발사', how:['장난감 로켓','뜨거운 용액 또는 불꽃'], color:'#ff9a5a',
     look:{ top:'#ffe0c8', bottom:'#4a1a6a', stars:1, embers:.8 },
     hint:'작은 로켓 + 불', log:'장난감 로켓이 비커에서 발사되어 천장을 뚫고 나갔다. 위층 회계팀은 이번에도 결산 자료가 젖지는 않았다며 안도했다.' },
+  { id:'fondue', special:true, item:'cheese', stage:0, rpm:0, name:'치즈 퐁듀', how:['치즈','60°C 이상'], color:'#ffd84a',
+    look:{ top:'#fff0a0', bottom:'#d8a010', opacity:.95, viscosity:.15, meta:.6, metaColor:'#ffe070', sheen:.5 },
+    hint:'구멍 난 노란 덩어리 + 뜨겁게', log:'치즈가 녹아 쭈욱 늘어나는 퐁듀가 되었다. 젓기 막대에 빵을 꽂아 온 연구원이 경고를 받았다.' },
+  { id:'cheeseRamen', special:true, item:'cheese', stage:0, rpm:0, name:'치즈 라면', how:['치즈','라면 스프'], color:'#ffb040',
+    look:{ top:'#ffd890', bottom:'#c05a10', opacity:.88, foam:.4, viscosity:.08, temp:90 },
+    hint:'구멍 난 노란 덩어리 + 빨간 봉지', log:'라면 국물에 치즈가 녹아들었다. 야식 수요가 다시 한번 폭증했고 연구 생산성은 바닥을 찍었다.' },
+  { id:'hwachae', special:true, item:'melon', stage:0, rpm:0, name:'수박화채', how:['수박 조각','우유','얼음'], color:'#ff8aa0',
+    look:{ top:'#ffd8e0', bottom:'#e04a60', opacity:.85, glitter:.8 },
+    hint:'붉은 조각 + 하얀 방울 + 차가운 덩어리', log:'수박과 우유와 얼음이 만나 여름이 되었다. 바깥은 11월이지만 연구원들은 선풍기를 꺼냈다.' },
+  { id:'danjjan', special:true, item:'melon', stage:0, rpm:0, name:'단짠 수박', how:['수박 조각','소금'], color:'#ff5a70',
+    look:{ top:'#ffc0c8', bottom:'#c02a40', glitter:1 },
+    hint:'붉은 조각 + 짠 것', log:'수박에 소금을 치자 더 달아졌다. 연구원 F는 이 원리를 논문으로 쓰겠다고 했지만 이미 할머니가 알고 있었다.' },
+  { id:'crayonMelt', special:true, item:'crayon', stage:0, rpm:0, name:'녹은 크레용', how:['크레용','60°C 이상'], color:'#ff6ad0',
+    look:{ top:'#ffd0f0', bottom:'#6a2aa0', rainbow:.8, sheen:.6 },
+    hint:'색깔 막대 + 뜨겁게', log:'크레용이 녹아 용액에 알록달록한 물감이 번졌다. 미술 선생님 출신 연구원이 처음으로 실험에 흥미를 보였다.' },
+  { id:'marbling', special:true, item:'crayon', stage:0, rpm:0, name:'크레용 마블링', how:['크레용 3개','60°C 이상'], color:'#7ad8ff',
+    look:{ top:'#e0f4ff', bottom:'#3a1a6a', rainbow:1.6, aurora:1, glitter:1.2 },
+    hint:'색깔 막대 여러 개 + 뜨겁게', log:'여러 색 크레용이 녹아 대리석 무늬를 그렸다. 연구 보고서 표지가 처음으로 예뻐졌다.' },
+  { id:'foodChain', special:true, item:'shark', stage:0, rpm:0, name:'먹이사슬', how:['장난감 상어','태엽 물고기'], color:'#7aa0c8',
+    look:{ top:'#c8e0f4', bottom:'#1a3a5a', bubbles:.8, disp:16 },
+    hint:'이빨 달린 헤엄꾼 + 헤엄치는 장난감', log:'장난감 상어가 태엽 물고기를 한입에 삼켰다. 생태계 교과서의 한 페이지가 비커 안에서 재현되었다.' },
+  { id:'sharkAlert', special:true, item:'shark', stage:0, rpm:0, name:'상어 경보', how:['장난감 상어','러버덕'], color:'#ff6a5a',
+    look:{ top:'#d8ecff', bottom:'#2a4a7a', bubbles:.6 },
+    hint:'이빨 달린 헤엄꾼 + 노란 친구', log:'상어가 러버덕 주위를 빙글빙글 돌기 시작했다. 연구원들이 낮은 음으로 두 음을 번갈아 흥얼거렸다.' },
   { id:'dinoStomp', special:true, act:'quake', stage:0, rpm:0, name:'공룡 쿵쾅', how:['지진','다 자란 공룡'], color:'#b0e07a',
     hint:'다 자란 공룡 + 땅이 흔들리는 것', log:'땅이 흔들리자 공룡 스펀지가 맞춰서 발을 굴렀다. 지진계 기록을 보면 진원지는 비커 안이었다.' },
 ];
@@ -1310,6 +1338,18 @@ const DRAW={
     x.fillStyle='#e8402a';x.beginPath();x.moveTo(w/2,1);x.quadraticCurveTo(w*.8,h*.1,w*.86,h*.2);x.lineTo(w*.14,h*.2);x.quadraticCurveTo(w*.2,h*.1,w/2,1);x.fill();
     x.beginPath();x.moveTo(w*.18,h*.55);x.lineTo(0,h*.9);x.lineTo(w*.2,h*.82);x.fill();x.beginPath();x.moveTo(w*.82,h*.55);x.lineTo(w,h*.9);x.lineTo(w*.8,h*.82);x.fill();
     x.fillStyle='#3a8ad8';x.beginPath();x.arc(w/2,h*.38,w*.18,0,7);x.fill();x.fillStyle='#555';x.fillRect(w*.3,h*.78,w*.4,h*.1);},
+  cheese(x,W,H){pad(x,W,H,.04,(w,h)=>{x.fillStyle=LG(x,0,0,0,h,[[0,'#ffe680'],[1,'#f0b820']]);x.beginPath();x.moveTo(0,h*.35);x.lineTo(w,0);x.lineTo(w,h);x.lineTo(0,h);x.closePath();x.fill();
+    x.fillStyle='#ffd040';x.beginPath();x.moveTo(0,h*.35);x.lineTo(w,0);x.lineTo(w,h*.18);x.lineTo(0,h*.5);x.closePath();x.fill();
+    x.fillStyle='#d89a10';[[.3,.7,.09],[.6,.55,.12],[.8,.8,.07],[.5,.86,.06]].forEach(([a,b,r])=>{x.beginPath();x.arc(w*a,h*b,w*r,0,7);x.fill();});});},
+  melon(x,w,h){x.fillStyle='#2a8a2a';x.beginPath();x.moveTo(1,1);x.lineTo(w-1,1);x.lineTo(w/2,h-1);x.closePath();x.fill();x.fillStyle='#e8ffd0';x.beginPath();x.moveTo(w*.08,h*.1);x.lineTo(w*.92,h*.1);x.lineTo(w/2,h*.92);x.closePath();x.fill();
+    x.fillStyle=LG(x,0,0,0,h,[[0,'#ff3a50'],[1,'#ff7080']]);x.beginPath();x.moveTo(w*.13,h*.16);x.lineTo(w*.87,h*.16);x.lineTo(w/2,h*.84);x.closePath();x.fill();
+    x.fillStyle='#1a1a1a';[[.35,.35],[.55,.3],[.45,.52],[.62,.48],[.3,.25]].forEach(([a,b])=>{x.beginPath();x.ellipse(w*a,h*b,w*.025,h*.05,.3,0,7);x.fill();});},
+  crayon(x,w,h){x.fillStyle='#e8344a';x.beginPath();x.moveTo(w/2,1);x.lineTo(w-1,h*.18);x.lineTo(w-1,h-1);x.lineTo(1,h-1);x.lineTo(1,h*.18);x.closePath();x.fill();
+    x.fillStyle='#fff4e0';x.fillRect(1,h*.3,w-2,h*.5);x.fillStyle='#e8344a';x.fillRect(1,h*.42,w-2,h*.06);x.fillRect(1,h*.62,w-2,h*.06);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(w*.2,h*.18,w*.15,h*.8);},
+  shark(x,w,h){x.fillStyle=LG(x,0,0,0,h,[[0,'#7a90a8'],[.55,'#90a8c0'],[.6,'#f0f4f8'],[1,'#dfe6ee']]);x.beginPath();x.moveTo(w-1,h*.55);x.quadraticCurveTo(w*.8,h*.15,w*.45,h*.28);x.lineTo(w*.4,1);x.lineTo(w*.3,h*.32);
+    x.quadraticCurveTo(w*.15,h*.4,w*.1,h*.5);x.lineTo(1,h*.15);x.lineTo(w*.05,h*.55);x.lineTo(1,h*.95);x.lineTo(w*.12,h*.62);x.quadraticCurveTo(w*.5,h*.98,w*.85,h*.75);x.closePath();x.fill();
+    x.fillStyle='#1a1a1a';x.beginPath();x.arc(w*.82,h*.45,w*.025,0,7);x.fill();x.strokeStyle='#ffffff';x.lineWidth=w*.015;x.beginPath();for(let k=0;k<4;k++){x.moveTo(w*(.78+k*.035),h*.66);x.lineTo(w*(.795+k*.035),h*.74);x.lineTo(w*(.81+k*.035),h*.66);}x.stroke();
+    x.strokeStyle='rgba(40,60,80,.5)';x.beginPath();[.62,.66,.7].forEach(t=>{x.moveTo(w*t,h*.42);x.lineTo(w*(t-.02),h*.6);});x.stroke();},
   snow(x,w,h){const c=w/2,r=w/2-1;x.fillStyle=RG(x,c,c,0,c,c,r,[[0,'rgba(220,240,255,.55)'],[1,'rgba(220,240,255,0)']]);x.fillRect(0,0,w,h);
     x.strokeStyle='#ffffff';x.lineCap='round';for(let k=0;k<6;k++){const a=k*Math.PI/3;x.save();x.translate(c,c);x.rotate(a);x.lineWidth=w*.07;x.beginPath();x.moveTo(0,0);x.lineTo(0,-r*.92);x.stroke();
       x.lineWidth=w*.045;[.38,.62].forEach(t=>{x.beginPath();x.moveTo(0,-r*t);x.lineTo(-r*.2,-r*(t+.17));x.moveTo(0,-r*t);x.lineTo(r*.2,-r*(t+.17));x.stroke();});x.restore();}
@@ -1641,7 +1681,7 @@ let rpm=0,rpmN=0,swirlDir=1,dirAcc=0,omega=0,heat=0,vcx=CX;
 let boostTime=0,clarity=0,previewKick=0,foamLevel=0,rise=0,beat=0,beatPrev=0,drain=0,drainTarget=0,shake=0,glitchT=0;
 let cream=0,honeyV=0,coffeeAmt=0,dalgonaT=0,naBooms=[],onceFx={},fountainT=0,colaFizz=0,teaAmt=0;
 let lemonadeDone=false,drunkT=0,sojuN=0,hullDmg=0,rampTargets=[],nicholasDone=false,freeze=0,heatBoost=0,sparkBoost=0,burnerT=0,quakeT=0,gravT=0,evapOn=false,evapDrain=0,dinoDrain=0,evapT=0,curTemp=20,meltF=1,dissolveF=1,gen=1,pour=null,cycT=0,spilled=0,spillL=0,spillR=0,pudL=null,pudR=null,saltD=0,glitBoost=0,extraFoam=0,rodIn=true,rodTouch=0,lastRodClink=0,tint={color:0,amt:0},chill=0,swirlPh=0,vortD=0,sloshA=0,sloshV=0;let stress=0,cracks=[],nextCrack=.22;
-let ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
+let crayonN=0,ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
 let plank=[],plankGlow=0,electroT=0,interestT=0,interestN=0,dragon=null;const DRAGON_NEED=7;   // 별 1~7개 탁구공을 모두 모으면 신룡
 let mode='play';// play | broken | geyser
 let mut={active:null,amt:0,time:0,holds:{}};
@@ -1957,7 +1997,7 @@ function restoreBeaker(){
   shards.forEach(s=>P.shard.put(s.s));shards.length=0;drainTarget=0;rpm=0;
   $('flood').style.height='0';setTimeout(()=>{if(mode==='play')$('flood').style.visibility='hidden';},1100);sweep.forEach(s=>{s.el.style.transition='transform .9s cubic-bezier(.2,.9,.3,1.2)';s.el.style.transform='';});setTimeout(()=>sweep.forEach(s=>s.el.style.transition=''),1000);sweep.length=0;
 }
-function resetAll(){strands.length=0;lemonadeDone=false;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
+function resetAll(){strands.length=0;lemonadeDone=false;crayonN=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
   if(mode==='broken'){$('modal').classList.remove('on');restoreBeaker();}
   items.slice().forEach(i=>{if(!i.dead)removeItem(i);});items.length=0;mut.active=null;mut.amt=0;tint.amt=0;boostTime=0;clarity=0;rpm=0;stress=0;cracks=[];crackG.clear();
   for(let i=0;i<N;i++){sh[i]=0;sv[i]=0;}
@@ -2351,7 +2391,7 @@ function updateItems(dt){
     // ---- 전기뱀장어가 된 물고기 ----
     if(it.eel&&it.sub>.1&&Math.random()<dt*3){bolt(p.x,p.y,p.x+rand(-80,80),p.y+rand(-60,60),.12,1.8,0x9effe0);Snd.spark();}
     if(it.cosmic&&Math.random()<dt*20)spawnEmber(p.x,p.y,rand(-20,20),rand(-20,20),0xfff2a8,rand(.6,1.2),rand(.15,.3),0);
-    if(it.type==='ice'||it.type==='sugar'||it.type==='ramen'||it.type==='dryice'||it.type==='soap'||it.type==='gummy'||it.type==='salt'||it.type==='tablet'||it.type==='popcorn'||(it.type==='dino'&&!it.giant)||it.type==='snow'||it.type==='noodle'||it.type==='coffee'||it.type==='cotton'||it.type==='poprock'||it.type==='chili'||it.type==='marsh'||it.type==='crystal'||it.type==='teabag'||it.type==='yeast'||it.type==='choco'||it.type==='soda'||it.type==='icecream'||it.type==='mint'){const ns=Math.max(.05,it.size);const prevS=it.lastS||1;if(Math.abs(prevS-ns)>.02){Body.scale(b,ns/prevS,ns/prevS);it.lastS=ns;}
+    if(it.type==='ice'||it.type==='sugar'||it.type==='ramen'||it.type==='dryice'||it.type==='soap'||it.type==='gummy'||it.type==='salt'||it.type==='tablet'||it.type==='popcorn'||(it.type==='dino'&&!it.giant)||it.type==='snow'||it.type==='noodle'||it.type==='coffee'||it.type==='cotton'||it.type==='poprock'||it.type==='chili'||it.type==='marsh'||it.type==='crystal'||it.type==='teabag'||it.type==='yeast'||it.type==='choco'||it.type==='soda'||it.type==='icecream'||it.type==='mint'||it.type==='cheese'||it.type==='crayon'||it.type==='melon'){const ns=Math.max(.05,it.size);const prevS=it.lastS||1;if(Math.abs(prevS-ns)>.02){Body.scale(b,ns/prevS,ns/prevS);it.lastS=ns;}
       if(it.size<(it.type==='ice'||it.type==='dryice'?.22:.15)){if(it.type==='ice'||it.type==='dryice')burstPlume(p.x,p.y,0xffffff,8,8);removeItem(it);continue;}}
     if(it.type==='ice'&&(p.x<BX-GT||p.x>BR+GT)&&p.y>TABLE_Y-40){const m=dt/16;it.size-=m;if(!it.puddle)it.puddle=makePuddle(p.x);
       it.puddle.x=lerp(it.puddle.x,p.x,.1);it.puddle.amt=Math.min(1.3,it.puddle.amt+m*1.5);it.up.alpha=it.alpha*(.75+.25*it.size);}
@@ -2360,7 +2400,7 @@ function updateItems(dt){
     if(!it.rampage&&(p.y>H+200||p.y<-900||p.x<-400||p.x>W+400)){removeItem(it);continue;}
     // 스프라이트
     const sz=it.size*(1+.08*Math.cos(it.th)*rpmN*(it.sub>0?1:0));
-    for(const s of [it.up,it.dn]){s.position.set(p.x,p.y);s.rotation=b.angle;s.scale.set(sz/S*(it.tk||1));if(it.squash){s.scale.x*=2-it.squash;s.scale.y*=it.squash;}if((it.type==='fish'||it.type==='sub'||it.alive||it.rampage)&&it.dir<0)s.scale.x*=-1;}
+    for(const s of [it.up,it.dn]){s.position.set(p.x,p.y);s.rotation=b.angle;s.scale.set(sz/S*(it.tk||1));if(it.squash){s.scale.x*=2-it.squash;s.scale.y*=it.squash;}if((it.type==='fish'||it.type==='shark'||it.type==='sub'||it.alive||it.rampage)&&it.dir<0)s.scale.x*=-1;}
     it.up.alpha=it.alpha;it.dn.alpha=it.alpha*(1-look.opacity*.72);
     if(!it.cosmic&&it.type!=='dye'&&it.type!=='battery'&&!(it.type==='coin'&&mut.active&&mut.active.id==='amalgam'))it.dn.tint=mixC(0xffffff,look.top,.35);
   }
@@ -2930,6 +2970,25 @@ function updateExtras(dt){
     if(r3.fly){r3.fly+=dt;Body.setAngle(r3.body,0);Body.setAngularVelocity(r3.body,0);r3.body.isSensor=true;Body.setVelocity(r3.body,{x:Math.sin(T*8)*.6,y:-Math.min(22,2+r3.fly*14)});
       for(let k=0;k<4;k++)spawnEmber(P2.x+rand(-4,4),P2.y+20,rand(-40,40),rand(80,220),k%2?0xffb347:0xfff1a8,rand(.3,.6),rand(.15,.3),0);if(Math.random()<dt*20)spawnFog(P2.x,P2.y+24,true);
       if(P2.y<topY()-80)removeItem(r3);}});
+  // 치즈 / 수박 / 크레용 / 상어
+  items.forEach(o=>{if(o.dead)return;const P2=o.body.position;
+    if(o.type==='cheese'&&o.sub>.3){if(curTemp>60){o.size-=dt/ITEMS.cheese.dissolve*(1+rpmN)*dissolveF;tint.color=0xffd84a;tint.amt=Math.min(.8,tint.amt+dt*.08);honeyV=Math.max(honeyV,.35);
+        if(Math.random()<dt*6){const q=P.grain.get();q.scale.set(rand(.15,.3));q.alpha=1;q.tint=0xffe070;const cc=cyl(P2.x);grains.push({s:q,R:cc.R,th:cc.th,y:P2.y,vy:rand(-10,10),life:3,max:3});}
+        if(!onceFx.fondue){onceFx.fondue=1;triggerSpecial('fondue');}}
+      if(items.some(r4=>!r4.dead&&r4.type==='ramen'&&r4.sub>.2)||(mut.active&&mut.active.id==='broth')){if(!onceFx.cheeseRamen){onceFx.cheeseRamen=1;triggerSpecial('cheeseRamen');}}}
+    if(o.type==='melon'&&o.sub>.1){o.size-=dt/ITEMS.melon.dissolve*.3;tint.color=0xff5a70;tint.amt=Math.min(.35,tint.amt+dt*.02);
+      if(cream>.2&&items.some(i2=>!i2.dead&&i2.type==='ice'&&i2.sub>.1)&&!onceFx.hwachae){onceFx.hwachae=1;triggerSpecial('hwachae');}
+      if(saltD>.08&&!onceFx.danjjan){onceFx.danjjan=1;triggerSpecial('danjjan');}}
+    if(o.type==='crayon'&&o.sub>.2&&curTemp>60){o.size-=dt/ITEMS.crayon.dissolve*(1+rpmN)*dissolveF;o.cHue=(o.cHue==null?Math.random()*360:o.cHue);
+      if(Math.random()<dt*8)burstPlume(P2.x,P2.y,hueShift(0xff3a50,o.cHue+rand(-20,20)),6,14);tint.color=hueShift(0xff3a50,o.cHue);tint.amt=Math.min(.5,tint.amt+dt*.05);
+      if(!o.melted){o.melted=1;crayonN++;if(!onceFx.crayonMelt){onceFx.crayonMelt=1;triggerSpecial('crayonMelt');}if(crayonN>=3&&!onceFx.marbling){onceFx.marbling=1;glitBoost=2;triggerSpecial('marbling');}}}
+    if(o.type==='shark'&&o.sub>.3&&mode==='play'){const prey=items.filter(q=>!q.dead&&(q.type==='fish'||q.type==='duck')&&q!==o);let tgt=null,bd=1e9;prey.forEach(q=>{const d2=Math.hypot(q.body.position.x-P2.x,q.body.position.y-P2.y);if(d2<bd){bd=d2;tgt=q;}});
+      o.wan=(o.wan||0)+dt;const tx2=tgt?tgt.body.position.x+(tgt.type==='duck'?Math.cos(T*1.5)*70:0):CX+Math.sin(o.wan*.5)*(RMAX-30),ty2=tgt?(tgt.type==='duck'?Math.max(LEVEL+40,tgt.body.position.y+40):tgt.body.position.y):LEVEL+120+Math.sin(o.wan*.8)*80;
+      const dx=tx2-P2.x,dy=ty2-P2.y,dl=Math.hypot(dx,dy)||1;Body.applyForce(o.body,P2,{x:dx/dl*o.body.mass*6e-4,y:dy/dl*o.body.mass*4e-4+(P2.y<LEVEL+30?o.body.mass*3e-4:0)});
+      {const v=o.body.velocity,sp2=Math.hypot(v.x,v.y);if(sp2>4.5)Body.setVelocity(o.body,{x:v.x/sp2*4.5,y:v.y/sp2*4.5});}
+      if(o.body.velocity.x<-.2)o.dir=-1;else if(o.body.velocity.x>.2)o.dir=1;Body.setAngle(o.body,clamp(o.body.velocity.y*.08,-.35,.35)*(o.dir||1));Body.setAngularVelocity(o.body,0);
+      if(tgt&&tgt.type==='fish'&&bd<36){burstPlume(tgt.body.position.x,tgt.body.position.y,0xffffff,20,10);Snd.burp&&Snd.burp();removeItem(tgt);if(!onceFx.foodChain){onceFx.foodChain=1;triggerSpecial('foodChain');}}
+      if(tgt&&tgt.type==='duck'&&!onceFx.sharkAlert){o.duckT=(o.duckT||0)+dt;if(o.duckT>2){onceFx.sharkAlert=1;triggerSpecial('sharkAlert');}}}});
   // 레몬 전지
   {const le=items.find(i=>!i.dead&&i.type==='lemon'&&i.sub>.2),co=items.find(i=>!i.dead&&i.type==='coin'&&i.sub>.2),ba=items.find(i=>!i.dead&&i.type==='battery'&&i.sub>.2);
     if(le&&co&&ba){if(!onceFx.lemonBat){onceFx.lemonBat=1;Snd.zap();triggerSpecial('lemonBattery');}
