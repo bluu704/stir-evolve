@@ -298,7 +298,7 @@ body.tray-off #tray{display:none}
 body.glitch #stage canvas{animation:glitch .45s steps(2)}
 @keyframes glitch{20%{transform:translate(-6px,2px);filter:hue-rotate(80deg) saturate(2)}40%{transform:translate(5px,-2px);filter:hue-rotate(-60deg)}
   60%{transform:translate(-3px,1px) skewX(4deg)}80%{transform:translate(3px,0);filter:contrast(1.6)}}
-#flood{visibility:hidden;position:fixed;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
+#flood{visibility:hidden;position:fixed;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
 #ceiling{position:fixed;left:0;right:0;top:0;height:130px;z-index:7;pointer-events:none;opacity:0;transition:opacity .2s}
 #ceiling.on{opacity:1}
 #modal{position:fixed;inset:0;z-index:40;display:none;place-items:center;background:rgba(8,9,12,.62);backdrop-filter:blur(4px);padding:0 16px}
@@ -2015,7 +2015,8 @@ function shatter(o){o=o||{};
 }
 function startSweep(all){sweep.length=0;const wl=innerHeight*(1-Flood.H);document.querySelectorAll('#counter,#hud,.item,.act,#settings,#boardBtn,#rankBtn').forEach(el=>{const r=el.getBoundingClientRect();
   if(r.width===0||(!all&&r.bottom<wl+6))return;   // 물에 닿는 UI만 휩쓸림, 위쪽 UI는 그대로
-  sweep.push({el,r,x:0,y:0,vx:rand(-50,70),vy:rand(-240,-30),rot:0,vr:rand(-140,140),float:false,cur:rand(60,170),ph:rand(0,6),delay:rand(0,.35)});el.style.transition='none';});}
+  const k=clamp(innerWidth/1100,.35,1),kh=clamp(innerHeight/850,.5,1);
+  sweep.push({el,r,x:0,y:0,vx:rand(-40,60)*k,vy:rand(-200,-30)*kh,rot:0,vr:rand(-120,120)*k,float:false,cur:rand(50,140)*k,ph:rand(0,6),delay:rand(0,.35)});el.style.transition='none';});}
 /* 넘친 물: 캔버스에 여러 겹의 파도로 그림 (오른쪽으로 흘러감) */
 const Flood={on:false,lv:0,tgt:0,H:.3,c1:0xbfe6ff,c2:0x5fb3e8,cv:null,x:null,bub:[],
   start(a,b){this.c1=a;this.c2=b;this.on=true;this.tgt=1;this.cv=$('flood');this.cv.style.visibility='visible';this.x=this.cv.getContext('2d');this.bub.length=0;},
