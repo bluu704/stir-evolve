@@ -588,6 +588,10 @@ const ITEMS = {
   vinegar: { label:'식초',      tag:'시큼',          r:9, rel:1.01 },
   gold:    { label:'식용 금박', tag:'반짝·금빛',      r:9, rel:1.0 },
   seed:    { label:'해바라기 씨', tag:'자람',         w:12, h:20, rel:1.1, chamfer:5 },
+  egg:     { label:'달걀',      tag:'가라앉음·소금물에 뜸', w:26, h:32, rel:1.08, chamfer:12 },
+  icecream:{ label:'아이스크림', tag:'뜸·녹음',       r:15, rel:.9, dissolve:30 },
+  mint:    { label:'박하사탕',  tag:'화하게 차가움',  r:9, rel:1.3, dissolve:14 },
+  rocket:  { label:'장난감 로켓', tag:'뜨거우면 발사',  w:14, h:40, rel:.8, chamfer:5 },
 };
 const DROPS={dye:1,milk:1,honey:1,cola:1,plankton:1,vinegar:1,gold:1};   // 떨어지는 순간 용액에 섞이는 방울형 재료
 const MAGNETIC={battery:1,magnet:1};
@@ -604,7 +608,7 @@ const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ic
   cola:'쏟아지며 갈색 거품을 일으킴. 멘토스와 만나면…',poprock:'녹으면서 탁탁 튀는 작은 폭죽을 터뜨림',chili:'천천히 매운맛이 우러나며 용액이 뜨거워지고 붉어짐',
   marsh:'떠다니다 뜨거우면 부풀어 녹고, 불꽃에 닿으면 노릇하게 구워짐',sub:'태엽이 다할 때까지 잠수했다 떠올랐다를 반복하며 소나를 울림',crystal:'바닥에 가라앉아 소금물이나 차가운 용액에서 결정이 자라남',
   banana:'둥둥 뜨고, 뜨거우면 노릇하게 익음. 우유와 만나면…',jelly:'몸을 오므렸다 펴며 위로 헤엄치고 은은하게 빛남',teabag:'초록빛으로 천천히 우러남. 뜨거울수록 빨리 우러남',
-  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…'};
+  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨'};
 
 /* 히든 조합: 재료가 잠긴 상태로 해당 단계에서 rpm 이상으로 저으면 발동 */
 const MUTATIONS = [
@@ -855,6 +859,30 @@ const MUTATIONS = [
   { id:'sunflower', special:true, item:'seed', stage:0, rpm:0, name:'하룻밤 해바라기', how:['해바라기 씨','회중시계'], color:'#ffd21a',
     look:{ top:'#fff8b0', bottom:'#6a9a20', halo:1, glitter:1.2, accent:'#ffd21a' },
     hint:'작은 씨앗 + 째깍이는 것', log:'시간이 빨리 흐르자 씨앗이 하룻밤 만에 해바라기로 피었다. 꽃은 형광등을 해로 착각하고 천장만 바라본다.' },
+  { id:'floatEgg', special:true, item:'egg', stage:0, rpm:0, name:'떠오르는 달걀', how:['달걀','소금'], color:'#fff4dc',
+    look:{ top:'#fffaf0', bottom:'#c8c0b0', density:1.3, glitter:.5 },
+    hint:'가라앉는 껍데기 + 짠 것', log:'소금을 녹이자 가라앉아 있던 달걀이 둥실 떠올랐다. 사해 여행을 다녀온 연구원이 아는 척을 시작했다.' },
+  { id:'boiledEgg', special:true, item:'egg', stage:0, rpm:0, name:'반숙 달걀', how:['달걀','90°C 이상'], color:'#ffd86a',
+    look:{ top:'#fff4d0', bottom:'#e0a020', hot:.6, bubbles:.8 },
+    hint:'가라앉는 껍데기 + 아주 뜨겁게', log:'끓는 용액에서 달걀이 정확히 6분 30초 만에 반숙이 되었다. 비커는 이제 연구실 공식 달걀 삶는 기계다.' },
+  { id:'bouncyEgg', special:true, item:'egg', stage:0, rpm:0, name:'탱탱볼 달걀', how:['달걀','식초','기다리기'], color:'#ffe8d0',
+    look:{ top:'#fff6ea', bottom:'#d8b890', opacity:.6, bubbles:.9, bubbleSize:.6 },
+    hint:'가라앉는 껍데기 + 시큼한 방울 + 조금 기다리기', log:'식초가 껍데기를 녹여 달걀이 말랑한 탱탱볼이 되었다. 바닥에 떨어뜨려 본 연구원은 결과를 공유하지 않았다.' },
+  { id:'colaFloat', special:true, item:'icecream', stage:0, rpm:0, name:'콜라 플로트', how:['아이스크림','콜라'], color:'#a06030',
+    look:{ top:'#f0e0d0', bottom:'#3a1a0c', foam:1, bubbles:1, opacity:.9 },
+    hint:'차가운 동그라미 + 갈색 탄산', log:'콜라 위에 아이스크림이 동동 떴다. 거품이 비커 밖으로 넘치자 모두가 빨대를 찾았다.' },
+  { id:'affogato', special:true, item:'icecream', stage:0, rpm:0, name:'아포가토', how:['아이스크림','커피 원두'], color:'#c89060',
+    look:{ top:'#f4e4d0', bottom:'#4a2410', opacity:.92, sheen:.5 },
+    hint:'차가운 동그라미 + 우러난 갈색 콩', log:'진한 커피가 아이스크림 위로 흘러내렸다. 카페를 차리자는 안건이 연구실 회의에 정식으로 올라왔다.' },
+  { id:'mintChoco', special:true, item:'mint', stage:0, rpm:0, name:'민트초코', how:['박하사탕','초콜릿'], color:'#7affd0',
+    look:{ top:'#c8fff0', bottom:'#3a2010', glitter:1, opacity:.85 },
+    hint:'화한 사탕 + 갈색 판', log:'민트와 초콜릿이 섞이자 연구실이 둘로 쪼개졌다. 민초파는 환호했고 반민초파는 비커 사용을 거부했다.' },
+  { id:'mintFreeze', special:true, act:'freeze', stage:0, rpm:0, name:'극한의 상쾌함', how:['냉동 빔','박하사탕'], color:'#bffff0',
+    look:{ top:'#e8fffa', bottom:'#4ac8b0', glitter:1.6, aurora:.6 },
+    hint:'화한 사탕 + 얼리기', log:'박하 용액을 얼리자 너무 상쾌해서 근처 연구원들의 콧물이 멈췄다. 감기약 회사에서 연락이 왔다.' },
+  { id:'rocketLaunch', special:true, item:'rocket', stage:0, rpm:0, name:'비커 우주 발사', how:['장난감 로켓','뜨거운 용액 또는 불꽃'], color:'#ff9a5a',
+    look:{ top:'#ffe0c8', bottom:'#4a1a6a', stars:1, embers:.8 },
+    hint:'작은 로켓 + 불', log:'장난감 로켓이 비커에서 발사되어 천장을 뚫고 나갔다. 위층 회계팀은 이번에도 결산 자료가 젖지는 않았다며 안도했다.' },
   { id:'dinoStomp', special:true, act:'quake', stage:0, rpm:0, name:'공룡 쿵쾅', how:['지진','다 자란 공룡'], color:'#b0e07a',
     hint:'다 자란 공룡 + 땅이 흔들리는 것', log:'땅이 흔들리자 공룡 스펀지가 맞춰서 발을 굴렀다. 지진계 기록을 보면 진원지는 비커 안이었다.' },
 ];
@@ -1271,6 +1299,17 @@ const DRAW={
     pts.forEach((q,k)=>{x.fillStyle=k%2?'#ffd76b':'#f0b81a';x.beginPath();x.moveTo(q[0]*w,q[1]*h);x.lineTo(q[2]*w,q[3]*h);x.lineTo(q[4]*w,q[5]*h);x.lineTo(q[6]*w,q[7]*h);x.closePath();x.fill();x.strokeStyle='rgba(255,250,220,.8)';x.lineWidth=w*.02;x.stroke();});},
   seed(x,w,h){x.fillStyle=LG(x,0,0,w,0,[[0,'#1a1a1a'],[.5,'#3a3a3a'],[1,'#141414']]);x.beginPath();x.moveTo(w/2,1);x.quadraticCurveTo(w-1,h*.35,w*.8,h-2);x.quadraticCurveTo(w/2,h,w*.2,h-2);x.quadraticCurveTo(1,h*.35,w/2,1);x.fill();
     x.strokeStyle='rgba(240,240,230,.85)';x.lineWidth=w*.09;[.3,.5,.7].forEach(t=>{x.beginPath();x.moveTo(w*t,h*.15);x.quadraticCurveTo(w*t,h*.6,w*(.5+(t-.5)*.6),h*.95);x.stroke();});},
+  egg(x,w,h){x.fillStyle=RG(x,w*.38,h*.32,1,w/2,h*.55,w*.6,[[0,'#ffffff'],[.6,'#f6ecdc'],[1,'#d8c4a4']]);x.beginPath();x.moveTo(w/2,1);x.bezierCurveTo(w*1.02,h*.05,w,h*.98,w/2,h-1);x.bezierCurveTo(0,h*.98,-w*.02,h*.05,w/2,1);x.fill();
+    x.fillStyle='rgba(255,255,255,.7)';x.beginPath();x.ellipse(w*.36,h*.3,w*.1,h*.12,-.4,0,7);x.fill();},
+  icecream(x,w,h){const c=w/2,r=w/2-1;x.fillStyle=RG(x,c*.8,c*.7,1,c,c,r,[[0,'#ffffff'],[.7,'#fff2e0'],[1,'#e8d0b0']]);x.beginPath();x.arc(c,c,r,0,7);x.fill();
+    x.fillStyle='#fff8ee';for(let k=0;k<6;k++){const a=k*1.05;x.beginPath();x.arc(c+Math.cos(a)*r*.82,c+Math.sin(a)*r*.82,r*.22,0,7);x.fill();}
+    ['#ff6a8a','#6ad0ff','#ffe06a','#8aff9a'].forEach((col,k)=>{x.fillStyle=col;x.fillRect(c+Math.cos(k*1.6)*r*.4-1,c+Math.sin(k*1.6)*r*.4-w*.05,w*.06,w*.12);});},
+  mint(x,w,h){const c=w/2,r=w/2-1;x.fillStyle='#ffffff';x.beginPath();x.arc(c,c,r,0,7);x.fill();x.fillStyle='#e02838';for(let k=0;k<6;k++){x.beginPath();x.moveTo(c,c);x.arc(c,c,r*.92,k*1.047,k*1.047+.45);x.closePath();x.fill();}
+    x.fillStyle='rgba(255,255,255,.6)';x.beginPath();x.arc(c*.7,c*.65,r*.25,0,7);x.fill();},
+  rocket(x,w,h){x.fillStyle=LG(x,0,0,w,0,[[0,'#c8ccd4'],[.5,'#ffffff'],[1,'#a8acb4']]);x.beginPath();x.moveTo(w/2,1);x.quadraticCurveTo(w,h*.25,w*.82,h*.78);x.lineTo(w*.18,h*.78);x.quadraticCurveTo(0,h*.25,w/2,1);x.fill();
+    x.fillStyle='#e8402a';x.beginPath();x.moveTo(w/2,1);x.quadraticCurveTo(w*.8,h*.1,w*.86,h*.2);x.lineTo(w*.14,h*.2);x.quadraticCurveTo(w*.2,h*.1,w/2,1);x.fill();
+    x.beginPath();x.moveTo(w*.18,h*.55);x.lineTo(0,h*.9);x.lineTo(w*.2,h*.82);x.fill();x.beginPath();x.moveTo(w*.82,h*.55);x.lineTo(w,h*.9);x.lineTo(w*.8,h*.82);x.fill();
+    x.fillStyle='#3a8ad8';x.beginPath();x.arc(w/2,h*.38,w*.18,0,7);x.fill();x.fillStyle='#555';x.fillRect(w*.3,h*.78,w*.4,h*.1);},
   snow(x,w,h){const c=w/2,r=w/2-1;x.fillStyle=RG(x,c,c,0,c,c,r,[[0,'rgba(220,240,255,.55)'],[1,'rgba(220,240,255,0)']]);x.fillRect(0,0,w,h);
     x.strokeStyle='#ffffff';x.lineCap='round';for(let k=0;k<6;k++){const a=k*Math.PI/3;x.save();x.translate(c,c);x.rotate(a);x.lineWidth=w*.07;x.beginPath();x.moveTo(0,0);x.lineTo(0,-r*.92);x.stroke();
       x.lineWidth=w*.045;[.38,.62].forEach(t=>{x.beginPath();x.moveTo(0,-r*t);x.lineTo(-r*.2,-r*(t+.17));x.moveTo(0,-r*t);x.lineTo(r*.2,-r*(t+.17));x.stroke();});x.restore();}
@@ -2312,7 +2351,7 @@ function updateItems(dt){
     // ---- 전기뱀장어가 된 물고기 ----
     if(it.eel&&it.sub>.1&&Math.random()<dt*3){bolt(p.x,p.y,p.x+rand(-80,80),p.y+rand(-60,60),.12,1.8,0x9effe0);Snd.spark();}
     if(it.cosmic&&Math.random()<dt*20)spawnEmber(p.x,p.y,rand(-20,20),rand(-20,20),0xfff2a8,rand(.6,1.2),rand(.15,.3),0);
-    if(it.type==='ice'||it.type==='sugar'||it.type==='ramen'||it.type==='dryice'||it.type==='soap'||it.type==='gummy'||it.type==='salt'||it.type==='tablet'||it.type==='popcorn'||(it.type==='dino'&&!it.giant)||it.type==='snow'||it.type==='noodle'||it.type==='coffee'||it.type==='cotton'||it.type==='poprock'||it.type==='chili'||it.type==='marsh'||it.type==='crystal'||it.type==='teabag'||it.type==='yeast'||it.type==='choco'||it.type==='soda'){const ns=Math.max(.05,it.size);const prevS=it.lastS||1;if(Math.abs(prevS-ns)>.02){Body.scale(b,ns/prevS,ns/prevS);it.lastS=ns;}
+    if(it.type==='ice'||it.type==='sugar'||it.type==='ramen'||it.type==='dryice'||it.type==='soap'||it.type==='gummy'||it.type==='salt'||it.type==='tablet'||it.type==='popcorn'||(it.type==='dino'&&!it.giant)||it.type==='snow'||it.type==='noodle'||it.type==='coffee'||it.type==='cotton'||it.type==='poprock'||it.type==='chili'||it.type==='marsh'||it.type==='crystal'||it.type==='teabag'||it.type==='yeast'||it.type==='choco'||it.type==='soda'||it.type==='icecream'||it.type==='mint'){const ns=Math.max(.05,it.size);const prevS=it.lastS||1;if(Math.abs(prevS-ns)>.02){Body.scale(b,ns/prevS,ns/prevS);it.lastS=ns;}
       if(it.size<(it.type==='ice'||it.type==='dryice'?.22:.15)){if(it.type==='ice'||it.type==='dryice')burstPlume(p.x,p.y,0xffffff,8,8);removeItem(it);continue;}}
     if(it.type==='ice'&&(p.x<BX-GT||p.x>BR+GT)&&p.y>TABLE_Y-40){const m=dt/16;it.size-=m;if(!it.puddle)it.puddle=makePuddle(p.x);
       it.puddle.x=lerp(it.puddle.x,p.x,.1);it.puddle.amt=Math.min(1.3,it.puddle.amt+m*1.5);it.up.alpha=it.alpha*(.75+.25*it.size);}
@@ -2631,6 +2670,7 @@ function actFreeze(){const was=freeze>=.95,tx=CX+rand(-70,70),ty=surfaceAt(tx);b
   heatBoost-=150;chill=Math.min(1,chill+.5);freeze=Math.min(1,freeze+.12);Snd.freezeS();
   shockwave(0xbff0ff);flash();shake=Math.max(shake,.7);for(let k=0;k<80;k++)spawnEmber(tx,ty,rand(-380,380),rand(-420,60),0xc8f4ff,rand(.6,1.3),rand(.18,.4),300);
   for(let k=0;k<30;k++){const q=P.grain.get();q.scale.set(rand(.06,.14));q.alpha=.95;q.tint=0xffffff;const cc=cyl(tx+rand(-40,40));grains.push({s:q,R:cc.R,th:cc.th,y:ty+rand(5,60),vy:rand(-10,25),life:rand(1.5,3),max:3});}
+  if(!was&&items.some(i=>!i.dead&&i.type==='mint'&&i.sub>.2)){for(let k=0;k<40;k++)spawnEmber(rand(BX,BR),LEVEL,rand(-80,80),rand(-200,-60),0xbffff0,rand(.8,1.4),rand(.12,.22),0);setTimeout(()=>triggerSpecial('mintFreeze'),400);}
   if(was)triggerSpecial('iceAge');else if(items.some(i=>!i.dead&&i.type==='lemon'&&i.sub>.2))triggerSpecial('lemonSlush');}
 /* 가열 (비커 아래 버너) */
 const flameC=new PIXI.Container();L.glowL.addChild(flameC);const flames=[];
@@ -2871,6 +2911,25 @@ function updateExtras(dt){
       const lf=Math.min(1,g2/12);[[.45,-1],[.7,1]].forEach(([f,sg])=>{if(L2*f<10)return;const lx=lerp(P2.x,tx,f),ly=P2.y-L2*f;sproutG.beginFill(0x5ac83a).drawEllipse(lx+sg*10*lf,ly-3,11*lf,5*lf).endFill();});
       if(g2>=45){const r2=Math.min(1,(g2-43)/4);sproutG.beginFill(0xffd21a);for(let k=0;k<14;k++){const a=k/14*6.283+T*.2;sproutG.drawEllipse(tx+Math.cos(a)*24*r2,ty+Math.sin(a)*24*r2,13*r2,6*r2);}sproutG.endFill();sproutG.beginFill(0x5a3a10).drawCircle(tx,ty,15*r2).endFill();}
       else if(g2>=30){sproutG.beginFill(0x7ac83a).drawCircle(tx,ty,4+(g2-30)/3).endFill();}});}
+  // 달걀
+  items.forEach(e=>{if(e.dead||e.type!=='egg')return;const P2=e.body.position;
+    if(saltD>.12&&e.sub>.2&&P2.y<LEVEL+60){e.flT=(e.flT||0)+dt;if(e.flT>1&&!onceFx.floatEgg){onceFx.floatEgg=1;triggerSpecial('floatEgg');}}
+    if(e.sub>.1&&curTemp>90){e.boil=(e.boil||0)+dt;if(Math.random()<dt*10)spawnBubble(P2.x+rand(-12,12),P2.y,rand(1,2));if(e.boil>4&&!e.cooked){e.cooked=1;e.up.tint=e.dn.tint=0xfff0d8;if(!onceFx.boiledEgg){onceFx.boiledEgg=1;triggerSpecial('boiledEgg');}}}
+    if(e.sub>.1&&vinegarAmt>.15){e.vin=(e.vin||0)+dt;if(Math.random()<dt*14)spawnBubble(P2.x+rand(-12,12),P2.y+rand(-14,14),rand(.8,1.6));
+      if(e.vin>5&&!e.bouncy){e.bouncy=1;e.body.restitution=.92;e.up.alpha=e.dn.alpha=.75;if(!onceFx.bouncyEgg){onceFx.bouncyEgg=1;triggerSpecial('bouncyEgg');}}}});
+  // 아이스크림 / 박하사탕
+  items.forEach(o=>{if(o.dead)return;
+    if(o.type==='icecream'&&o.sub>.1){o.size-=dt/ITEMS.icecream.dissolve*(1+rpmN)*clamp(.4+curTemp/40,.2,6);cream=Math.min(1,cream+dt*.04);chill=Math.min(1,chill+dt*.03);
+      if(colaFizz>.3&&!onceFx.colaFloat){onceFx.colaFloat=1;extraFoam=Math.min(1.6,extraFoam+.6);triggerSpecial('colaFloat');}
+      if(coffeeAmt>.2&&!onceFx.affogato){onceFx.affogato=1;triggerSpecial('affogato');}}
+    if(o.type==='mint'&&o.sub>.3){o.size-=dt/ITEMS.mint.dissolve*(1+rpmN)*dissolveF;chill=Math.min(1,chill+dt*.06);heatBoost-=dt*20;tint.color=0x9fffd8;tint.amt=Math.min(.5,tint.amt+dt*.05);
+      if(items.some(c2=>!c2.dead&&c2.type==='choco'&&c2.sub>.2)&&!onceFx.mintChoco){onceFx.mintChoco=1;triggerSpecial('mintChoco');}}});
+  // 장난감 로켓: 뜨겁거나 불꽃이 닿으면 발사
+  items.forEach(r3=>{if(r3.dead||r3.type!=='rocket')return;const P2=r3.body.position;
+    if(!r3.fly&&((r3.sub>.1&&curTemp>80)||items.some(o=>!o.dead&&o.type==='sparkler'&&o.life>0&&Math.hypot(o.body.position.x-P2.x,o.body.position.y-P2.y)<50))){r3.fly=1;Snd.igniteS&&Snd.igniteS();shake=Math.max(shake,.5);if(!onceFx.rocket){onceFx.rocket=1;triggerSpecial('rocketLaunch');}}
+    if(r3.fly){r3.fly+=dt;Body.setAngle(r3.body,0);Body.setAngularVelocity(r3.body,0);r3.body.isSensor=true;Body.setVelocity(r3.body,{x:Math.sin(T*8)*.6,y:-Math.min(22,2+r3.fly*14)});
+      for(let k=0;k<4;k++)spawnEmber(P2.x+rand(-4,4),P2.y+20,rand(-40,40),rand(80,220),k%2?0xffb347:0xfff1a8,rand(.3,.6),rand(.15,.3),0);if(Math.random()<dt*20)spawnFog(P2.x,P2.y+24,true);
+      if(P2.y<topY()-80)removeItem(r3);}});
   // 레몬 전지
   {const le=items.find(i=>!i.dead&&i.type==='lemon'&&i.sub>.2),co=items.find(i=>!i.dead&&i.type==='coin'&&i.sub>.2),ba=items.find(i=>!i.dead&&i.type==='battery'&&i.sub>.2);
     if(le&&co&&ba){if(!onceFx.lemonBat){onceFx.lemonBat=1;Snd.zap();triggerSpecial('lemonBattery');}
