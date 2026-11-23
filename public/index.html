@@ -603,6 +603,7 @@ const ITEMS = {
   pearl:   { label:'진주',      tag:'가라앉음·산에 녹음', r:9, rel:2.7 },
   laver:   { label:'김',        tag:'바삭·뜸',        w:34, h:28, rel:.4, chamfer:2 },
   lego:    { label:'레고 블록', tag:'딱딱',           w:32, h:20, rel:1.05, chamfer:2 },
+  warship: { label:'장난감 전함', tag:'뜸·포격',       w:72, h:34, rel:.35, chamfer:6 },
 };
 const DROPS={dye:1,milk:1,honey:1,cola:1,plankton:1,vinegar:1,gold:1,ink:1};   // 떨어지는 순간 용액에 섞이는 방울형 재료
 const MAGNETIC={battery:1,magnet:1};
@@ -619,7 +620,7 @@ const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ic
   cola:'쏟아지며 갈색 거품을 일으킴. 멘토스와 만나면…',poprock:'녹으면서 탁탁 튀는 작은 폭죽을 터뜨림',chili:'천천히 매운맛이 우러나며 용액이 뜨거워지고 붉어짐',
   marsh:'떠다니다 뜨거우면 부풀어 녹고, 불꽃에 닿으면 노릇하게 구워짐',sub:'태엽이 다할 때까지 잠수했다 떠올랐다를 반복하며 소나를 울림',crystal:'바닥에 가라앉아 소금물이나 차가운 용액에서 결정이 자라남',
   banana:'둥둥 뜨고, 뜨거우면 노릇하게 익음. 우유와 만나면…',jelly:'몸을 오므렸다 펴며 위로 헤엄치고 은은하게 빛남',teabag:'초록빛으로 천천히 우러남. 뜨거울수록 빨리 우러남',
-  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님',rice:'가라앉아 있다가 뜨거운 용액에서 밥이 됨',sand:'바닥에 깔림. 아주 뜨거우면 녹아 유리가 되고, 흔들리면…',feather:'살랑살랑 천천히 떨어지고 물에 뜸. 아주 뜨거우면…',ink:'떨어지는 순간 용액을 새까맣게 물들임',candle:'물에 떠서 불이 켜진 채 흔들림. 물에 잠기거나 얼면 꺼지고, 뜨거우면 녹음',pearl:'반짝이며 가라앉음. 산성 용액에서는 천천히 녹아 없어짐',laver:'수면에 바삭하게 떠 있음. 짜고 뜨거우면 맛있어짐',lego:'알록달록한 블록. 여러 개 모이면…'};
+  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님',rice:'가라앉아 있다가 뜨거운 용액에서 밥이 됨',sand:'바닥에 깔림. 아주 뜨거우면 녹아 유리가 되고, 흔들리면…',feather:'살랑살랑 천천히 떨어지고 물에 뜸. 아주 뜨거우면…',ink:'떨어지는 순간 용액을 새까맣게 물들임',candle:'물에 떠서 불이 켜진 채 흔들림. 물에 잠기거나 얼면 꺼지고, 뜨거우면 녹음',pearl:'반짝이며 가라앉음. 산성 용액에서는 천천히 녹아 없어짐',laver:'수면에 바삭하게 떠 있음. 짜고 뜨거우면 맛있어짐',lego:'알록달록한 블록. 여러 개 모이면…',warship:'수면에 떠서 항해함. 물속에 헤엄치는 것이 있으면 포를 쏨'};
 
 /* 히든 조합: 재료가 잠긴 상태로 해당 단계에서 rpm 이상으로 저으면 발동 */
 const MUTATIONS = [
@@ -965,6 +966,21 @@ const MUTATIONS = [
     hint:'딱딱한 블록을 잔뜩', log:'비커 바닥에 레고 블록이 쌓여 작은 탑이 되었다. 설명서는 없었지만 다들 무엇인지 알아봤다.' },
   { id:'legoTrap', special:true, act:'quake', stage:0, rpm:0, name:'맨발 주의', how:['지진','레고 블록'], color:'#ffd21a',
     hint:'딱딱한 블록 + 땅이 흔들리는 것', log:'지진에 레고 블록이 실험실 바닥 곳곳으로 흩어졌다. 그날 저녁 맨발로 걷던 연구원의 비명이 세 번 들렸다.' },
+  { id:'spaceAge', special:true, item:'rocket', stage:0, rpm:0, name:'우주 개척 시대', how:['장난감 로켓','5번 발사'], color:'#9ab0ff',
+    look:{ top:'#d8e0ff', bottom:'#0a0a30', stars:2, nebula:.8, glitter:1.4, accent:'#ffd76b' },
+    hint:'작은 로켓을 여러 번 날려 보내기', log:'비커에서 쏘아 올린 로켓이 다섯 대를 넘어서자 하늘에 작은 우주 정거장이 생겼다. 연구실 이름이 비공식적으로 우주항공청이 되었다.' },
+  { id:'navalBattle', special:true, item:'warship', stage:0, rpm:0, name:'비커 해전', how:['장난감 전함','장난감 잠수함'], color:'#8a96a4',
+    look:{ top:'#c8d8e8', bottom:'#1a2a4a', bubbles:1, embers:.4, disp:14 },
+    hint:'떠 있는 군함 + 잠수하는 장난감', log:'전함과 잠수함이 비커 안에서 교전을 벌였다. 수심 15cm의 해전은 해군사관학교 교재에 실리지 않았다.' },
+  { id:'convoy', special:true, item:'warship', stage:0, rpm:0, name:'오리 호위 함대', how:['장난감 전함','러버덕'], color:'#ffd21a',
+    look:{ top:'#e0f0ff', bottom:'#3a6aa8', glitter:.6 },
+    hint:'떠 있는 군함 + 노란 친구', log:'러버덕들이 전함 뒤를 줄지어 따라갔다. 함장은 오리들에게 계급을 달아 주었다.' },
+  { id:'stormSail', special:true, act:'lightning', stage:0, rpm:0, name:'폭풍 속 항해', how:['번개','장난감 전함'], color:'#9ad0ff',
+    look:{ top:'#a8b8c8', bottom:'#1a2030', sparks:1.2, disp:18, dispSpeed:1.4 },
+    hint:'떠 있는 군함 + 하늘에서 내리치는 것', log:'번개 치는 폭풍 속에서도 전함은 꿋꿋이 항해했다. 갑판 위 장난감 선원들의 사기는 오히려 올라갔다.' },
+  { id:'sunkShip', special:true, act:'meteor', stage:0, rpm:0, name:'전함 침몰', how:['메테오','장난감 전함'], color:'#5a6472',
+    look:{ top:'#8a9aa8', bottom:'#0a1420', bubbles:1.4, sediment:.8 },
+    hint:'떠 있는 군함 + 하늘에서 떨어지는 것', log:'운석이 전함에 명중했다. 비커 바닥에 가라앉은 전함 주변으로 장난감 물고기들이 모여들어 인공 어초가 되었다.' },
   { id:'dinoStomp', special:true, act:'quake', stage:0, rpm:0, name:'공룡 쿵쾅', how:['지진','다 자란 공룡'], color:'#b0e07a',
     hint:'다 자란 공룡 + 땅이 흔들리는 것', log:'땅이 흔들리자 공룡 스펀지가 맞춰서 발을 굴렀다. 지진계 기록을 보면 진원지는 비커 안이었다.' },
 ];
@@ -1292,6 +1308,8 @@ function vial(x,w,h,c1,c2,cap,label,lc){const nx=w*.32,nw=w*.36;x.fillStyle=cap;
   if(label){x.fillStyle='#f6f2e8';rr(x,w*.2,h*.56,w*.6,h*.22,w*.04);x.fill();x.fillStyle=lc||'#333';x.font='bold '+(w*.16)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(label,w/2,h*.675);}}
 function dropPath(x,w,h){x.beginPath();x.moveTo(w/2,1);x.bezierCurveTo(w*.62,h*.28,w-1,h*.5,w-1,h*.68);x.arc(w/2,h*.68,w/2-1,0,Math.PI);x.bezierCurveTo(1,h*.5,w*.38,h*.28,w/2,1);x.closePath();}
 function dropFill(x,w,h,c1,c2){dropPath(x,w,h);x.fillStyle=LG(x,0,0,0,h,[[0,c1],[1,c2]]);x.fill();x.fillStyle='rgba(255,255,255,.6)';x.beginPath();x.ellipse(w*.36,h*.56,w*.08,h*.12,-.3,0,7);x.fill();}
+function legoBrick(x,w,h,c1,c2,c3){const top=h*.28;[.25,.75].forEach(t=>{x.fillStyle=LG(x,w*(t-.14),0,w*(t+.14),0,[[0,c2],[.5,c1],[1,c3]]);x.fillRect(w*(t-.14),top*.15,w*.28,top*.9);x.fillStyle=c1;x.beginPath();x.ellipse(w*t,top*.15,w*.14,top*.18,0,0,7);x.fill();});
+  x.fillStyle=LG(x,0,top,0,h,[[0,c1],[1,c3]]);rr(x,0,top,w,h-top,w*.04);x.fill();x.fillStyle='rgba(0,0,0,.14)';x.fillRect(0,h*.88,w,h*.12);x.fillStyle='rgba(255,255,255,.45)';x.fillRect(w*.04,top+h*.04,w*.92,h*.06);}
 const DRAW={
   sugar(x,W,H){pad(x,W,H,.04,(w,h)=>{const d=cube(x,w,h,LG(x,0,0,0,h,[[0,'#fdfaf3'],[1,'#e4dccb']]),'#ffffff',LG(x,w-10,0,w,h,[[0,'#ddd5c4'],[1,'#c4baa6']]),'rgba(120,100,70,.28)');
     for(let i=0;i<80;i++){x.fillStyle=Math.random()<.55?'rgba(255,255,255,.95)':'rgba(160,145,118,.35)';const s=rand(.6,1.5)*w/40;x.fillRect(rand(1,w-d-2),rand(d+1,h-2),s,s);}
@@ -1450,9 +1468,17 @@ const DRAW={
   laver(x,w,h){x.fillStyle=LG(x,0,0,w,h,[[0,'#1e3a22'],[.5,'#0e1e12'],[1,'#1a3020']]);x.beginPath();x.moveTo(w*.04,h*.08);x.lineTo(w*.96,h*.04);x.lineTo(w*.94,h*.94);x.lineTo(w*.06,h*.96);x.closePath();x.fill();
     for(let k=0;k<40;k++){x.fillStyle=k%2?'rgba(80,140,80,.35)':'rgba(0,0,0,.35)';x.fillRect(w*(.08+.84*((k*13%31)/31)),h*(.08+.84*((k*7%29)/29)),w*.06,h*.02);}
     x.fillStyle='rgba(255,255,255,.12)';x.beginPath();x.moveTo(w*.1,h*.1);x.lineTo(w*.6,h*.08);x.lineTo(w*.12,h*.4);x.closePath();x.fill();},
-  lego(x,w,h){DRAW.legow(x,w,h);x.globalCompositeOperation='multiply';x.fillStyle='#e8302a';x.fillRect(0,0,w,h);x.globalCompositeOperation='destination-in';DRAW.legow(x,w,h);x.globalCompositeOperation='source-over';},
-  legow(x,w,h){const top=h*.28;x.fillStyle='#e8e8e8';[.25,.75].forEach(t=>{x.fillStyle=LG(x,w*(t-.14),0,w*(t+.14),0,[[0,'#d8d8d8'],[.5,'#ffffff'],[1,'#c4c4c4']]);x.fillRect(w*(t-.14),top*.15,w*.28,top*.9);x.fillStyle='#f4f4f4';x.beginPath();x.ellipse(w*t,top*.15,w*.14,top*.18,0,0,7);x.fill();});
-    x.fillStyle=LG(x,0,top,0,h,[[0,'#ffffff'],[1,'#c8c8c8']]);rr(x,0,top,w,h-top,w*.04);x.fill();x.fillStyle='rgba(0,0,0,.12)';x.fillRect(0,h*.88,w,h*.12);x.fillStyle='rgba(255,255,255,.6)';x.fillRect(w*.04,top+h*.04,w*.92,h*.06);},
+  lego(x,w,h){legoBrick(x,w,h,'#ff5a4a','#e8302a','#a81a14');},
+  legow(x,w,h){legoBrick(x,w,h,'#ffffff','#e4e4e4','#b8b8b8');},
+  warship(x,w,h){const wl=h*.62;   // 회색 전함: 선체·함교·포탑·굴뚝·깃발
+    x.fillStyle=LG(x,0,wl,0,h,[[0,'#7a8694'],[.5,'#5a6472'],[1,'#8a2a2a']]);x.beginPath();x.moveTo(1,wl);x.lineTo(w-1,wl-h*.04);x.lineTo(w*.9,h-1);x.lineTo(w*.08,h-1);x.closePath();x.fill();
+    x.fillStyle='#8a2a2a';x.fillRect(w*.08,h*.9,w*.82,h*.1);x.fillStyle='#e8ecf0';x.fillRect(w*.06,wl+h*.05,w*.86,h*.025);
+    x.fillStyle=LG(x,0,h*.3,0,wl,[[0,'#a8b2be'],[1,'#7a8694']]);x.fillRect(w*.36,h*.36,w*.26,wl-h*.36);x.fillRect(w*.42,h*.22,w*.14,h*.15);
+    x.fillStyle='#2a3440';for(let k=0;k<4;k++)x.fillRect(w*(.38+k*.055),h*.42,w*.03,h*.05);x.fillRect(w*.44,h*.26,w*.1,h*.04);
+    x.fillStyle='#4a525c';x.fillRect(w*.6,h*.28,w*.06,h*.2);x.fillStyle='#2a2e34';x.fillRect(w*.6,h*.26,w*.06,h*.03);
+    [[.18,1],[.78,-1]].forEach(([t,d])=>{x.fillStyle='#8a96a4';x.beginPath();x.ellipse(w*t,wl-h*.03,w*.07,h*.07,0,Math.PI,0);x.fill();x.fillRect(w*t-w*.07,wl-h*.04,w*.14,h*.04);
+      x.strokeStyle='#5a6470';x.lineWidth=h*.04;x.beginPath();x.moveTo(w*t,wl-h*.07);x.lineTo(w*(t+d*.15),wl-h*.12);x.stroke();});
+    x.strokeStyle='#3a3f46';x.lineWidth=w*.008;x.beginPath();x.moveTo(w*.49,h*.22);x.lineTo(w*.49,h*.02);x.stroke();x.fillStyle='#e8302a';x.fillRect(w*.49,h*.03,w*.07,h*.06);x.fillStyle='#ffffff';x.fillRect(w*.49,h*.06,w*.07,h*.015);},
   snow(x,w,h){const c=w/2,r=w/2-1;x.fillStyle=RG(x,c,c,0,c,c,r,[[0,'rgba(220,240,255,.55)'],[1,'rgba(220,240,255,0)']]);x.fillRect(0,0,w,h);
     x.strokeStyle='#ffffff';x.lineCap='round';for(let k=0;k<6;k++){const a=k*Math.PI/3;x.save();x.translate(c,c);x.rotate(a);x.lineWidth=w*.07;x.beginPath();x.moveTo(0,0);x.lineTo(0,-r*.92);x.stroke();
       x.lineWidth=w*.045;[.38,.62].forEach(t=>{x.beginPath();x.moveTo(0,-r*t);x.lineTo(-r*.2,-r*(t+.17));x.moveTo(0,-r*t);x.lineTo(r*.2,-r*(t+.17));x.stroke();});x.restore();}
@@ -1789,7 +1815,7 @@ let rpm=0,rpmN=0,swirlDir=1,dirAcc=0,omega=0,heat=0,vcx=CX;
 let boostTime=0,clarity=0,previewKick=0,foamLevel=0,rise=0,beat=0,beatPrev=0,drain=0,drainTarget=0,shake=0,glitchT=0;
 let cream=0,honeyV=0,coffeeAmt=0,dalgonaT=0,naBooms=[],onceFx={},fountainT=0,colaFizz=0,teaAmt=0;
 let lemonadeDone=false,drunkT=0,sojuN=0,hullDmg=0,rampTargets=[],nicholasDone=false,freeze=0,heatBoost=0,sparkBoost=0,burnerT=0,quakeT=0,gravT=0,evapOn=false,evapDrain=0,dinoDrain=0,evapT=0,curTemp=20,meltF=1,dissolveF=1,gen=1,pour=null,cycT=0,spilled=0,spillL=0,spillR=0,pudL=null,pudR=null,saltD=0,glitBoost=0,extraFoam=0,rodIn=true,rodTouch=0,lastRodClink=0,tint={color:0,amt:0},chill=0,swirlPh=0,vortD=0,sloshA=0,sloshV=0;let stress=0,cracks=[],nextCrack=.22;
-let inkT=0,crayonN=0,ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
+let rocketN=0,inkT=0,crayonN=0,ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
 let plank=[],plankGlow=0,electroT=0,interestT=0,interestN=0,dragon=null;const DRAGON_NEED=7;   // 별 1~7개 탁구공을 모두 모으면 신룡
 let mode='play';// play | broken | geyser
 let mut={active:null,amt:0,time:0,holds:{}};
@@ -1886,7 +1912,7 @@ const TRAY_GROUPS=[['방울·액체',['dye','milk','honey','cola','soju','vinega
   ['간식·음식',['mentos','gummy','popcorn','poprock','cotton','marsh','choco','cheese','icecream','mint','coffee','teabag','noodle','egg','laver']],
   ['차갑고 뜨거운 것',['ice','dryice','sodium','sparkler','candle','pumice']],
   ['전기·자석·빛',['battery','magnet','bulb','glowstick']],
-  ['장난감·물건',['duck','pingpong','balloon','coin','soap','lego','crayon','feather','watch','rocket','pearl','crystal']],
+  ['장난감·물건',['duck','warship','pingpong','balloon','coin','soap','lego','crayon','feather','watch','rocket','pearl','crystal']],
   ['헤엄치는 것',['fish','sub','shark','jelly','dino']]];
 {const used=new Set(TRAY_GROUPS.flatMap(g=>g[1]));const rest=Object.keys(ITEMS).filter(k=>!used.has(k)&&!ITEMS[k].hidden);if(rest.length)TRAY_GROUPS.push(['기타',rest]);}
 const TRAY_ORDER=[];TRAY_GROUPS.forEach(([g,ks],gi)=>{TRAY_ORDER.push({head:g,first:gi===0});ks.forEach(k=>{if(ITEMS[k]&&!ITEMS[k].hidden)TRAY_ORDER.push(k);});});
@@ -2144,7 +2170,7 @@ function restoreBeaker(){
   shards.forEach(s=>P.shard.put(s.s));shards.length=0;drainTarget=0;rpm=0;
   Flood.stop();sweep.forEach(s=>{s.el.style.transition='transform .9s cubic-bezier(.2,.9,.3,1.2)';s.el.style.transform='';});setTimeout(()=>sweep.forEach(s=>s.el.style.transition=''),1000);sweep.length=0;
 }
-function resetAll(){strands.length=0;lemonadeDone=false;crayonN=0;inkT=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
+function resetAll(){strands.length=0;lemonadeDone=false;rocketN=0;crayonN=0;inkT=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
   if(mode==='broken'){$('modal').classList.remove('on');restoreBeaker();}
   items.slice().forEach(i=>{if(!i.dead)removeItem(i);});items.length=0;mut.active=null;mut.amt=0;tint.amt=0;boostTime=0;clarity=0;rpm=0;stress=0;cracks=[];crackG.clear();
   for(let i=0;i<N;i++){sh[i]=0;sv[i]=0;}
@@ -2373,7 +2399,6 @@ function updateItems(dt){
         for(let k=0;k<30;k++)spawnBubble(p.x+rand(-30,30),p.y+rand(0,60),rand(1.5,3.5));
         if(items.some(o=>!o.dead&&o.type==='mentos'&&o.sub>.2)){fountainT=3.2;Snd.fountain();shake=Math.max(shake,1);triggerSpecial('colaFountain');}removeItem(it);continue;}
       if(it.type==='sodium'&&freeze<.5)Snd.naFizz();
-      if(it.type==='sub')Snd.sonar();
       if(it.type==='marsh')Snd.squish();
       if(it.type==='coffee')Snd.bean();
       if(it.type==='dye'||it.type==='lemon')Snd.drip();
@@ -2514,7 +2539,7 @@ function updateItems(dt){
     if(it.type==='sub'){it.life-=dt/ITEMS.sub.life;if(it.sub>.3&&it.life>0){if(!it.dir)it.dir=Math.random()<.5?-1:1;if(p.x<BX+40)it.dir=1;else if(p.x>BR-40)it.dir=-1;
         it.cyc=(it.cyc||0)+dt;const deep=Math.sin(it.cyc*.8)>0,ty=deep?BB-30:surfaceAt(p.x)+12;
         Body.applyForce(b,p,{x:it.dir*b.mass*4e-4,y:(ty-p.y)*b.mass*6e-6});Body.setAngle(b,clamp((ty-p.y)*.002,-.25,.25));Body.setAngularVelocity(b,0);
-        if(Math.random()<dt*6)spawnBubble(p.x-it.dir*22,p.y,rand(1,2.4));if((it.ping=(it.ping||0)-dt)<=0){it.ping=4;Snd.sonar();rings.push({x:p.x,r:8,life:.8,delay:0,sp:120});}}}
+        if(Math.random()<dt*6)spawnBubble(p.x-it.dir*22,p.y,rand(1,2.4));if((it.ping=(it.ping||0)-dt)<=0){it.ping=4;rings.push({x:p.x,r:8,life:.8,delay:0,sp:120});}}}
     // ---- 수정 씨앗: 소금물·차가운 용액에서 자라남 ----
     if(it.type==='crystal'&&it.sub>.3){const grow=(saltD>.15?saltD*.5:0)+(curTemp<5?.15:0)+(freeze>.2?.2:0);
       if(grow>0&&it.size<2.4){it.size=Math.min(2.4,it.size+dt*grow*.12);if(Math.random()<dt*2)Snd.chime();if(Math.random()<dt*8)spawnEmber(p.x+rand(-14,14)*it.size,p.y+rand(-14,10)*it.size,0,-8,0xe8deff,rand(.4,.8),rand(.1,.18),0);}
@@ -2550,7 +2575,7 @@ function updateItems(dt){
     if(!it.rampage&&(p.y>H+200||p.y<-900||p.x<-400||p.x>W+400)){removeItem(it);continue;}
     // 스프라이트
     const sz=it.size*(1+.08*Math.cos(it.th)*rpmN*(it.sub>0?1:0));
-    for(const s of [it.up,it.dn]){s.position.set(p.x,p.y);s.rotation=b.angle;s.scale.set(sz/S*(it.tk||1));if(it.squash){s.scale.x*=2-it.squash;s.scale.y*=it.squash;}if((it.type==='fish'||it.type==='shark'||it.type==='sub'||it.alive||it.rampage)&&it.dir<0)s.scale.x*=-1;}
+    for(const s of [it.up,it.dn]){s.position.set(p.x,p.y);s.rotation=b.angle;s.scale.set(sz/S*(it.tk||1));if(it.squash){s.scale.x*=2-it.squash;s.scale.y*=it.squash;}if((it.type==='fish'||it.type==='shark'||it.type==='warship'||it.type==='sub'||it.alive||it.rampage)&&it.dir<0)s.scale.x*=-1;}
     it.up.alpha=it.alpha;it.dn.alpha=it.alpha*(1-look.opacity*.72);
     if(!it.cosmic&&it.type!=='dye'&&it.type!=='battery'&&!(it.type==='coin'&&mut.active&&mut.active.id==='amalgam'))it.dn.tint=mixC(it.legoC||0xffffff,look.top,.35);
   }
@@ -2831,7 +2856,7 @@ function sodiumBoom(it){const p=it.body.position;it.boomed=true;Snd.naBoom();sha
   items.forEach(o=>{if(o.dead||o===it||o.giant)return;const q=o.body.position,dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy)||1;if(d<160){const k=o.body.mass*.03*(1-d/160);Body.applyForce(o.body,q,{x:dx/d*k,y:(dy/d-.6)*k});}
     if(d<120&&o.type==='popcorn')o.sparkHot=true;});
   removeItem(it);naBooms.push(T);naBooms=naBooms.filter(t=>T-t<12);if(naBooms.length>=3){naBooms=[];triggerSpecial('sodiumBoom');}}
-function meteorImpact(x){items.forEach(o=>{if(!o.dead&&o.type==='sodium')o.naT=99;});const y=surfaceAt(x);splashFx(x,1,true);splashFx(x+rand(-20,20),.9,true);for(let k=0;k<4;k++)rings.push({x,r:12,life:1,delay:k*.1,sp:190});
+function meteorImpact(x){{const ws=items.filter(i=>!i.dead&&i.type==='warship'&&!i.sunk);if(ws.length){ws.forEach(i=>{i.sunk=1;i.body.plugin.rel=4;Body.setVelocity(i.body,{x:0,y:4});i.up.tint=i.dn.tint=0x9aa0a8;});setTimeout(()=>triggerSpecial('sunkShip'),700);}}items.forEach(o=>{if(!o.dead&&o.type==='sodium')o.naT=99;});const y=surfaceAt(x);splashFx(x,1,true);splashFx(x+rand(-20,20),.9,true);for(let k=0;k<4;k++)rings.push({x,r:12,life:1,delay:k*.1,sp:190});
   impulse(x,14,8);shockwave(0xff9a4a);flash();shake=1.4;heatBoost+=380;hullDmg+=.17;addCrack();if(hullDmg>.5)addCrack();Snd.boom();
   if(hullDmg>=1){setTimeout(()=>{if(mode==='play')shatter({tag:'ACCIDENT REPORT',title:'운석 폭격',body:'비커에 운석이 연달아 떨어져 유리가 버티지 못했다. 보험사는 운석 피해를 보장 항목에서 제외했다고 통보했다.'});},350);}
   splashFx(x+rand(-30,30),1,true);for(let k=0;k<6;k++)rings.push({x,r:20,life:1.2,delay:k*.08,sp:260});shockwave(0xffd27a);
@@ -2853,6 +2878,7 @@ function actLightning(){const x1=rand(BX+50,BR-50),y1=surfaceAt(x1)+rand(30,140)
   items.forEach(i=>{if(i.dead)return;if(i.type==='glowstick')i.life=1;});
   {const js=items.filter(i=>!i.dead&&i.type==='jelly'&&i.sub>.2&&i.life>0);if(js.length){js.forEach(i=>{i.zap=true;i.life=1;});triggerSpecial('jellySpark');}}
   {const fs=items.filter(i=>!i.dead&&i.type==='fish'&&i.sub>.3&&i.life>0);if(fs.length){fs.forEach(i=>{i.eel=true;i.life=1;});triggerSpecial('eel');}}
+  if(items.some(i=>!i.dead&&i.type==='warship'&&!i.sunk))triggerSpecial('stormSail');
   if(hasGrownDino()){items.filter(i=>!i.dead&&i.type==='dino'&&i.grown).forEach(i=>{i.alive=true;});triggerSpecial('zombieDino');}}
 /* 냉동 빔 */
 const beams=[],beamG=new PIXI.Graphics();beamG.blendMode=ADD;L.fx.addChild(beamG);
@@ -3119,7 +3145,7 @@ function updateExtras(dt){
       if(items.some(c2=>!c2.dead&&c2.type==='choco'&&c2.sub>.2)&&!onceFx.mintChoco){onceFx.mintChoco=1;triggerSpecial('mintChoco');}}});
   // 장난감 로켓: 뜨겁거나 불꽃이 닿으면 발사
   items.forEach(r3=>{if(r3.dead||r3.type!=='rocket')return;const P2=r3.body.position;
-    if(!r3.fly&&((r3.sub>.1&&curTemp>80)||items.some(o=>!o.dead&&o.type==='sparkler'&&o.life>0&&Math.hypot(o.body.position.x-P2.x,o.body.position.y-P2.y)<50))){r3.fly=1;Snd.igniteS&&Snd.igniteS();shake=Math.max(shake,.5);if(!onceFx.rocket){onceFx.rocket=1;triggerSpecial('rocketLaunch');}}
+    if(!r3.fly&&((r3.sub>.1&&curTemp>80)||items.some(o=>!o.dead&&o.type==='sparkler'&&o.life>0&&Math.hypot(o.body.position.x-P2.x,o.body.position.y-P2.y)<50))){r3.fly=1;rocketN++;if(rocketN>1)toast('LAUNCH',`로켓 발사 ${rocketN}번째`,'#ff9a5a');if(rocketN>=5&&!onceFx.spaceAge){onceFx.spaceAge=1;setTimeout(()=>{flash();for(let k=0;k<60;k++)spawnEmber(rand(BX-200,BR+200),topY()+rand(40,160),rand(-20,20),rand(-10,10),0xffffff,rand(1.5,3),rand(.08,.18),0);triggerSpecial('spaceAge');},1200);}Snd.igniteS&&Snd.igniteS();shake=Math.max(shake,.5);if(!onceFx.rocket){onceFx.rocket=1;triggerSpecial('rocketLaunch');}}
     if(r3.fly){r3.fly+=dt;Body.setAngle(r3.body,0);Body.setAngularVelocity(r3.body,0);r3.body.isSensor=true;Body.setVelocity(r3.body,{x:Math.sin(T*8)*.6,y:-Math.min(22,2+r3.fly*14)});
       for(let k=0;k<4;k++)spawnEmber(P2.x+rand(-4,4),P2.y+20,rand(-40,40),rand(80,220),k%2?0xffb347:0xfff1a8,rand(.3,.6),rand(.15,.3),0);if(Math.random()<dt*20)spawnFog(P2.x,P2.y+24,true);
       if(P2.y<topY()-80)removeItem(r3);}});
@@ -3168,6 +3194,18 @@ function updateExtras(dt){
       if(saltD>.08&&burnerT>0&&!onceFx.seasonedGim){onceFx.seasonedGim=1;o.up.tint=o.dn.tint=0x6a8a3a;triggerSpecial('seasonedGim');}}
     if(o.type==='lego'&&o.legoFly){o.legoFly-=dt;if(o.legoFly<=0){o.legoFly=0;o.body.isSensor=false;}}});
   if(!onceFx.legoTower&&items.filter(i=>!i.dead&&i.type==='lego'&&i.body.position.x>BX&&i.body.position.x<BR&&i.body.position.y>BY).length>=4){onceFx.legoTower=1;triggerSpecial('legoTower');}
+  // 장난감 전함: 수면에서 항해 + 헤엄치는 것에 포격
+  items.forEach(w2=>{if(w2.dead||w2.type!=='warship'||w2.sunk)return;const P2=w2.body.position;if(w2.sub<.05)return;
+    if(!w2.dir)w2.dir=1;if(P2.x<BX+50)w2.dir=1;else if(P2.x>BR-50)w2.dir=-1;Body.applyForce(w2.body,P2,{x:w2.dir*w2.body.mass*1.2e-4,y:0});
+    Body.setAngle(w2.body,Math.sin(T*1.8+w2.th)*.06);Body.setAngularVelocity(w2.body,0);if(Math.random()<dt*6)spawnBubble(P2.x-w2.dir*34,P2.y+10,rand(1,2));
+    const tg=items.filter(o=>!o.dead&&(o.type==='sub'||o.type==='shark'||o.type==='fish')&&o.sub>.5);
+    if(tg.length){w2.gun=(w2.gun||1.2)-dt;if(w2.gun<=0){w2.gun=rand(1.8,2.8);const t2=tg[Math.random()*tg.length|0].body.position,gx=P2.x+w2.dir*24,gy=P2.y-10;
+      for(let k=0;k<14;k++)spawnEmber(gx,gy,w2.dir*rand(60,220)+rand(-40,40),rand(-80,10),k%2?0xffd27a:0xff7a2a,rand(.2,.45),rand(.12,.24),100);spawnFog(gx,gy-4,true);spawnFog(gx+w2.dir*8,gy-6,true);
+      Snd.burst&&Snd.ctx&&!Snd.muted&&Snd.burst({dur:.35,vol:.18,f:420,q:.6,rev:.3});shake=Math.max(shake,.25);
+      setTimeout(()=>{if(mode!=='play')return;splashFx(clamp(t2.x,BX+10,BR-10),.5,false);rings.push({x:t2.x,r:6,life:.7,delay:0,sp:140});for(let k=0;k<12;k++)spawnBubble(t2.x+rand(-14,14),t2.y+rand(-10,10),rand(1,2.5));},450);
+      w2.shots=(w2.shots||0)+1;if(w2.shots>=2&&tg.some(o=>o.type==='sub')&&!onceFx.navalBattle){onceFx.navalBattle=1;triggerSpecial('navalBattle');}}}
+    const ducks=items.filter(o=>!o.dead&&o.type==='duck'&&o.sub>.05);ducks.forEach((d,k)=>{const tx=P2.x-w2.dir*(60+k*40),dp=d.body.position;Body.applyForce(d.body,dp,{x:clamp(tx-dp.x,-80,80)*d.body.mass*2e-6,y:0});});
+    if(ducks.length&&!onceFx.convoy){w2.cvT=(w2.cvT||0)+dt;if(w2.cvT>2){onceFx.convoy=1;triggerSpecial('convoy');}}});
   // 레몬 전지
   {const le=items.find(i=>!i.dead&&i.type==='lemon'&&i.sub>.2),co=items.find(i=>!i.dead&&i.type==='coin'&&i.sub>.2),ba=items.find(i=>!i.dead&&i.type==='battery'&&i.sub>.2);
     if(le&&co&&ba){if(!onceFx.lemonBat){onceFx.lemonBat=1;Snd.zap();triggerSpecial('lemonBattery');}
