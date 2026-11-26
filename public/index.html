@@ -612,6 +612,9 @@ const ITEMS = {
   tofu:    { label:'두부',      tag:'말랑·하얀 네모', w:32, h:24, rel:1.05, chamfer:4 },
   sausage: { label:'소시지',    tag:'둥둥·구우면 지글', w:40, h:14, rel:.95, chamfer:7 },
   garlic:  { label:'마늘',      tag:'가라앉음·향이 셈', w:26, h:28, rel:1.2, chamfer:10 },
+  doenjang:{ label:'된장',      tag:'구수함·녹음',    w:30, h:24, rel:1.2, chamfer:6, dissolve:24 },
+  eomuk:   { label:'어묵꼬치',  tag:'둥둥·끓이면 탱글', w:40, h:16, rel:.9, chamfer:5 },
+  miyeok:  { label:'미역',      tag:'흐늘흐늘',       w:36, h:20, rel:1.05, chamfer:4 },
   curry:   { label:'카레 블록', tag:'뜨거우면 녹음',  w:30, h:22, rel:1.2, chamfer:3, dissolve:20 },
 };
 const DROPS={dye:1,milk:1,honey:1,cola:1,plankton:1,vinegar:1,gold:1,ink:1};   // 떨어지는 순간 용액에 섞이는 방울형 재료
@@ -629,7 +632,7 @@ const DESC={sugar:'바닥에 가라앉아 녹는 동안 젓기 효율 ×1.25',ic
   cola:'쏟아지며 갈색 거품을 일으킴. 멘토스와 만나면…',poprock:'녹으면서 탁탁 튀는 작은 폭죽을 터뜨림',chili:'천천히 매운맛이 우러나며 용액이 뜨거워지고 붉어짐',
   marsh:'떠다니다 뜨거우면 부풀어 녹고, 불꽃에 닿으면 노릇하게 구워짐',sub:'태엽이 다할 때까지 잠수했다 떠올랐다를 반복하며 소나를 울림',crystal:'바닥에 가라앉아 소금물이나 차가운 용액에서 결정이 자라남',
   banana:'둥둥 뜨고, 뜨거우면 노릇하게 익음. 우유와 만나면…',jelly:'몸을 오므렸다 펴며 위로 헤엄치고 은은하게 빛남',teabag:'초록빛으로 천천히 우러남. 뜨거울수록 빨리 우러남',
-  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님',rice:'가라앉아 있다가 뜨거운 용액에서 밥이 됨',sand:'바닥에 깔림. 아주 뜨거우면 녹아 유리가 되고, 흔들리면…',feather:'살랑살랑 천천히 떨어지고 물에 뜸. 아주 뜨거우면…',ink:'떨어지는 순간 용액을 새까맣게 물들임',candle:'물에 떠서 불이 켜진 채 흔들림. 물에 잠기거나 얼면 꺼지고, 뜨거우면 녹음',pearl:'반짝이며 가라앉음. 산성 용액에서는 천천히 녹아 없어짐',laver:'수면에 바삭하게 떠 있음. 짜고 뜨거우면 맛있어짐',lego:'알록달록한 블록. 여러 개 모이면…',warship:'수면에 떠서 항해함. 물속에 헤엄치는 것이 있으면 포를 쏨',compass:'바늘이 늘 북쪽을 가리킴. 자석이나 번개 근처에서는…',leaf:'수면에 둥둥 뜸. 뜨거우면 단풍이 들고, 얼리면 서리가 낌',penguin:'수면에 떠서 뒤뚱거림. 얼음이나 추위를 좋아함',potato:'가라앉음. 뜨거우면 쪄지고, 동전과 전구가 있으면 전기를 만듦',kimchi:'가라앉아 용액을 붉고 시큼하게 물들임. 뜨거우면 보글보글 끓음',tofu:'말랑하게 가라앉음. 매운 국물이나 김치와 잘 어울리고, 얼리면 구멍이 숭숭 생김',sausage:'수면에 둥둥 뜸. 150°C 이상이면 지글지글 구워짐',garlic:'가라앉아 알싸한 향을 풍김. 시간이 빨리 흐르면 까맣게 숙성됨',curry:'60°C 이상에서 녹아 용액을 노랗고 진하게 만듦. 밥이나 감자와 잘 어울림'};
+  pumice:'구멍이 숭숭 뚫려 돌인데도 물에 뜸. 뜨거운 곳에서는 붉게 달아오름',watch:'가라앉아 째깍거림. 시간과 관련된 용액에서 이상한 일이 생김',clover:'수면에 떠서 초록빛 행운의 반짝임을 뿌림',plankton:'용액 속에 퍼져 소용돌이를 따라 떠다님. 휘저으면 살짝 빛나고, 전기를 받으면…',yeast:'가라앉아 보글보글 발효함. 달콤한 것이 있으면 훨씬 활발해짐',choco:'뜨거운 용액에서 녹아 갈색으로 퍼짐. 우유·바나나·마시멜로와 잘 어울림',bulb:'살짝 뜨는 작은 전구. 전기가 흐르면 불이 켜짐',iron:'물에 닿으면 까만 가루로 퍼져 가라앉음. 자석 근처에서 가시처럼 일어섬',soda:'가라앉아 녹으며, 산성인 것을 만나면 거품이 확 일어남',vinegar:'떨어지는 순간 용액을 시큼하게 만듦. 금속과 만나면…',gold:'떨어지는 순간 금빛 조각이 흩날리며 천천히 가라앉음',seed:'적당한 온도의 물에서 싹을 틔움. 시간이 빨리 흐르면…',egg:'맹물에서는 가라앉지만 소금물에서는 떠오름. 뜨거우면 익고, 식초에 오래 두면…',icecream:'둥둥 떠서 녹으며 용액을 하얗고 차갑게 만듦',mint:'녹으면서 용액을 화하게 식히고 민트빛으로 물들임',rocket:'물에 뜨는 장난감 로켓. 용액이 뜨거워지거나 불꽃이 닿으면 발사됨',cheese:'60°C 이상에서 쭈욱 녹아 용액을 노랗고 끈적하게 만듦',melon:'둥둥 떠서 달콤한 붉은빛을 우려냄',crayon:'60°C 이상에서 녹아 알록달록한 물감이 번짐',shark:'비커 안을 헤엄치며 다른 헤엄치는 것을 쫓아다님',rice:'가라앉아 있다가 뜨거운 용액에서 밥이 됨',sand:'바닥에 깔림. 아주 뜨거우면 녹아 유리가 되고, 흔들리면…',feather:'살랑살랑 천천히 떨어지고 물에 뜸. 아주 뜨거우면…',ink:'떨어지는 순간 용액을 새까맣게 물들임',candle:'물에 떠서 불이 켜진 채 흔들림. 물에 잠기거나 얼면 꺼지고, 뜨거우면 녹음',pearl:'반짝이며 가라앉음. 산성 용액에서는 천천히 녹아 없어짐',laver:'수면에 바삭하게 떠 있음. 짜고 뜨거우면 맛있어짐',lego:'알록달록한 블록. 여러 개 모이면…',warship:'수면에 떠서 항해함. 물속에 헤엄치는 것이 있으면 포를 쏨',compass:'바늘이 늘 북쪽을 가리킴. 자석이나 번개 근처에서는…',leaf:'수면에 둥둥 뜸. 뜨거우면 단풍이 들고, 얼리면 서리가 낌',penguin:'수면에 떠서 뒤뚱거림. 얼음이나 추위를 좋아함',potato:'가라앉음. 뜨거우면 쪄지고, 동전과 전구가 있으면 전기를 만듦',kimchi:'가라앉아 용액을 붉고 시큼하게 물들임. 뜨거우면 보글보글 끓음',tofu:'말랑하게 가라앉음. 매운 국물이나 김치와 잘 어울리고, 얼리면 구멍이 숭숭 생김',sausage:'수면에 둥둥 뜸. 150°C 이상이면 지글지글 구워짐',garlic:'가라앉아 알싸한 향을 풍김. 시간이 빨리 흐르면 까맣게 숙성됨',doenjang:'천천히 녹아 용액을 구수한 갈색으로 만듦. 두부와 잘 어울림',eomuk:'꼬치에 꽂힌 어묵. 수면에 둥둥 뜨고 뜨거우면 국물을 우려냄',miyeok:'물에 닿으면 흐늘흐늘 풀어짐. 뜨거우면 국이 됨',curry:'60°C 이상에서 녹아 용액을 노랗고 진하게 만듦. 밥이나 감자와 잘 어울림'};
 
 /* 히든 조합: 재료가 잠긴 상태로 해당 단계에서 rpm 이상으로 저으면 발동 */
 const MUTATIONS = [
@@ -1071,6 +1074,30 @@ const MUTATIONS = [
   { id:'honeyGarlic', special:true, item:'garlic', stage:0, rpm:0, name:'꿀마늘', how:['마늘','꿀'], color:'#e8b030',
     look:{ top:'#ffe080', bottom:'#a86a10', sheen:.8 },
     hint:'하얀 쪽 + 끈적한 황금빛 액체', log:'마늘이 꿀에 푹 잠겼다. 감기에 좋다며 연구원들이 한 숟갈씩 떠먹고 갔다.' },
+  { id:'doenjangStew', special:true, item:'doenjang', stage:0, rpm:0, name:'된장찌개', how:['된장','두부','90°C 이상'], color:'#a87a40',
+    look:{ top:'#d8b070', bottom:'#5a3a14', haze:.7, bubbles:.8 },
+    hint:'구수한 갈색 덩어리 + 말랑한 하얀 네모 + 아주 뜨겁게', log:'구수한 냄새가 복도까지 퍼졌다. 옆 연구실에서 밥을 들고 찾아왔다.' },
+  { id:'tteokbokki', special:true, item:'chili', stage:0, rpm:0, name:'떡볶이', how:['떡','청양고추','90°C 이상'], color:'#e0401a',
+    look:{ top:'#ff7040', bottom:'#901806', haze:.5, sheen:.5 },
+    hint:'흔들어 만든 말랑한 것 + 매운 것 + 아주 뜨겁게', log:'떡이 빨간 국물에 졸여져 반짝였다. 하교 시간의 분식집 냄새가 났다.' },
+  { id:'rabokki', special:true, item:'ramen', stage:0, rpm:0, name:'라볶이', how:['떡볶이','라면 스프'], color:'#e05a20',
+    look:{ top:'#ff8a4a', bottom:'#8a2008', haze:.5 },
+    hint:'빨간 떡 요리 + 꼬불꼬불 스프', log:'떡볶이에 라면이 들어가자 순식간에 사라졌다. 누가 먹었는지는 끝내 밝혀지지 않았다.' },
+  { id:'eomukTang', special:true, item:'eomuk', stage:0, rpm:0, name:'어묵탕', how:['어묵꼬치','90°C 이상'], color:'#e8c890',
+    look:{ top:'#fff0c8', bottom:'#b8904a', haze:.8, bubbles:.6 },
+    hint:'꼬치에 꽂힌 것 + 아주 뜨겁게', log:'어묵 꼬치가 국물 속에서 통통하게 불었다. 겨울 포장마차 앞에 선 것처럼 손이 녹았다.' },
+  { id:'tteokguk', special:true, item:'egg', stage:0, rpm:0, name:'떡국', how:['떡','달걀','90°C 이상'], color:'#fbf4e4',
+    look:{ top:'#fffcf0', bottom:'#d8c8a0', haze:.6 },
+    hint:'흔들어 만든 말랑한 것 + 동그란 것 + 아주 뜨겁게', log:'하얀 떡국이 끓었다. 한 그릇 먹은 연구원들이 한 살씩 더 먹었다고 우겼다.' },
+  { id:'miyeokguk', special:true, item:'miyeok', stage:0, rpm:0, name:'미역국', how:['미역','90°C 이상'], color:'#4a7a3a',
+    look:{ top:'#a8d080', bottom:'#1e3a14', haze:.6 },
+    hint:'흐늘흐늘한 초록 + 아주 뜨겁게', log:'미역이 풀어지며 뽀얀 국물이 우러났다. 오늘이 생일인 연구원이 있는지 다들 두리번거렸다.' },
+  { id:'gamjatang', special:true, item:'potato', stage:0, rpm:0, name:'감자탕', how:['감자','청양고추','90°C 이상'], color:'#c8501e',
+    look:{ top:'#f09050', bottom:'#6a1a06', haze:.7, bubbles:.8 },
+    hint:'흙 묻은 덩이 + 매운 것 + 아주 뜨겁게', log:'얼큰한 감자탕이 끓어올랐다. 정작 뼈는 없었지만 아무도 불평하지 않았다.' },
+  { id:'bunsik', special:true, item:'eomuk', stage:0, rpm:0, name:'분식 세트', how:['떡','어묵꼬치','김'], color:'#f0a060',
+    look:{ top:'#ffd0a0', bottom:'#a84a1a', glitter:.4 },
+    hint:'흔들어 만든 말랑한 것 + 꼬치에 꽂힌 것 + 바삭한 검은 종이', log:'떡과 어묵과 김이 한 비커에 모였다. 연구실이 순식간에 학교 앞 분식집이 되었다.' },
   { id:'dinoStomp', special:true, act:'quake', stage:0, rpm:0, name:'공룡 쿵쾅', how:['지진','다 자란 공룡'], color:'#b0e07a',
     hint:'다 자란 공룡 + 땅이 흔들리는 것', log:'땅이 흔들리자 공룡 스펀지가 맞춰서 발을 굴렀다. 지진계 기록을 보면 진원지는 비커 안이었다.' },
 ];
@@ -1612,6 +1639,20 @@ const DRAW={
     x.fillStyle='#9a1008';for(let k=0;k<16;k++){x.beginPath();x.arc(w*(.1+.8*((k*7%13)/13)),h*(.2+.6*((k*5%11)/11)),w*.01,0,7);x.fill();}
     x.fillStyle='#4aa02a';x.beginPath();x.ellipse(w*.72,h*.3,w*.07,h*.03,-.5,0,7);x.fill();x.beginPath();x.ellipse(w*.3,h*.78,w*.05,h*.025,.4,0,7);x.fill();
     x.fillStyle='#fff4dc';for(let k=0;k<5;k++){x.beginPath();x.ellipse(w*(.22+k*.13),h*(.5+(k%2)*.16),w*.011,w*.006,k,0,7);x.fill();}},
+  doenjang(x,w,h){x.fillStyle='rgba(0,0,0,.2)';x.beginPath();x.ellipse(w/2,h*.92,w*.44,h*.08,0,0,7);x.fill();
+    x.fillStyle=LG(x,0,0,w,0,[[0,'#8a6a40'],[.5,'#c8a070'],[1,'#7a5a30']]);rr(x,w*.1,h*.36,w*.8,h*.56,w*.1);x.fill();x.fillStyle='#5a3e1e';x.beginPath();x.ellipse(w/2,h*.38,w*.4,h*.1,0,0,7);x.fill();
+    x.fillStyle=RG(x,w*.45,h*.3,1,w/2,h*.36,w*.34,[[0,'#c89050'],[.7,'#9a6a2a'],[1,'#6a4418']]);x.beginPath();x.moveTo(w*.14,h*.4);x.quadraticCurveTo(w*.3,h*.1,w*.52,h*.14);x.quadraticCurveTo(w*.78,h*.12,w*.86,h*.4);x.closePath();x.fill();
+    x.fillStyle='rgba(60,35,10,.5)';for(let k=0;k<12;k++){x.beginPath();x.arc(w*(.22+.56*((k*7%11)/11)),h*(.2+.18*((k*5%7)/7)),w*.018,0,7);x.fill();}
+    x.fillStyle='rgba(255,255,255,.25)';x.fillRect(w*.16,h*.5,w*.06,h*.34);},
+  eomuk(x,w,h){x.strokeStyle='#d8b880';x.lineWidth=h*.09;x.lineCap='round';x.beginPath();x.moveTo(w*.01,h*.5);x.lineTo(w*.99,h*.5);x.stroke();
+    for(let k=0;k<4;k++){const cx=w*(.24+k*.17),tilt=(k%2?-1:1)*.22;x.save();x.translate(cx,h*.5);x.rotate(tilt);
+      x.fillStyle=LG(x,-w*.1,0,w*.1,0,[[0,'#c8904a'],[.35,'#f4d498'],[.7,'#e8bc78'],[1,'#a8743a']]);rr(x,-w*.1,-h*.44,w*.2,h*.88,w*.06);x.fill();
+      x.strokeStyle='rgba(120,70,20,.5)';x.lineWidth=w*.01;x.stroke();x.fillStyle='rgba(255,245,220,.45)';rr(x,-w*.06,-h*.36,w*.04,h*.72,w*.02);x.fill();x.restore();}},
+  miyeok(x,w,h){x.fillStyle='rgba(0,0,0,.18)';x.beginPath();x.ellipse(w/2,h*.9,w*.44,h*.08,0,0,7);x.fill();
+    [[.3,'#2a4a1a','#4a7a2a'],[.55,'#1e3a14','#3a6a20'],[.75,'#2a4a1a','#5a8a30']].forEach(([cy,c1,c2],i)=>{x.fillStyle=LG(x,0,h*(cy-.2),0,h*(cy+.2),[[0,c2],[1,c1]]);x.beginPath();x.moveTo(w*.04,h*cy);
+      for(let k=0;k<=8;k++){const px=w*(.04+k*.115);x.quadraticCurveTo(px-w*.05,h*(cy-.22+((k+i)%2)*.08),px,h*(cy-.12));}
+      for(let k=8;k>=0;k--){const px=w*(.04+k*.115);x.quadraticCurveTo(px+w*.05,h*(cy+.2-((k+i)%2)*.08),px,h*(cy+.1));}x.fill();
+      x.strokeStyle='rgba(160,200,110,.35)';x.lineWidth=w*.012;x.beginPath();x.moveTo(w*.06,h*cy);x.quadraticCurveTo(w*.5,h*(cy-.06),w*.96,h*cy);x.stroke();});},
   tofu(x,w,h){x.fillStyle='rgba(0,0,0,.16)';x.beginPath();x.ellipse(w/2,h*.92,w*.46,h*.08,0,0,7);x.fill();
     x.fillStyle=LG(x,0,0,0,h,[[0,'#fffef8'],[1,'#e8e0c8']]);rr(x,w*.06,h*.3,w*.88,h*.6,w*.06);x.fill();
     x.fillStyle=LG(x,0,0,0,h,[[0,'#ffffff'],[1,'#f4eedc']]);x.beginPath();x.moveTo(w*.06,h*.32);x.lineTo(w*.22,h*.1);x.lineTo(w*.98,h*.1);x.lineTo(w*.94,h*.32);x.closePath();x.fill();
@@ -1962,7 +2003,7 @@ const P={bubble:new Pool(lc.bubbles,TX.bubble),plume:new Pool(lc.plume,TX.soft),
 let T=0,stageIdx=-1,progress=0,look=lerpLook(STAGES[0].look,STAGES[0].look,0),baseLook={};
 let rpm=0,rpmN=0,swirlDir=1,dirAcc=0,omega=0,heat=0,vcx=CX;
 let boostTime=0,clarity=0,previewKick=0,foamLevel=0,rise=0,beat=0,beatPrev=0,drain=0,drainTarget=0,shake=0,glitchT=0;
-let brothOn=0,chiliOn=0,curryAmt=0,cream=0,honeyV=0,coffeeAmt=0,dalgonaT=0,naBooms=[],onceFx={},fountainT=0,colaFizz=0,teaAmt=0;
+let djAmt=0,stewT={},brothOn=0,chiliOn=0,curryAmt=0,cream=0,honeyV=0,coffeeAmt=0,dalgonaT=0,naBooms=[],onceFx={},fountainT=0,colaFizz=0,teaAmt=0;
 let lemonadeDone=false,drunkT=0,sojuN=0,hullDmg=0,rampTargets=[],nicholasDone=false,freeze=0,heatBoost=0,sparkBoost=0,burnerT=0,quakeT=0,gravT=0,evapOn=false,evapDrain=0,dinoDrain=0,evapT=0,curTemp=20,meltF=1,dissolveF=1,gen=1,pour=null,cycT=0,spilled=0,spillL=0,spillR=0,pudL=null,pudR=null,saltD=0,glitBoost=0,extraFoam=0,rodIn=true,rodTouch=0,lastRodClink=0,tint={color:0,amt:0},chill=0,swirlPh=0,vortD=0,sloshA=0,sloshV=0;let stress=0,cracks=[],nextCrack=.22;
 const compassG=new PIXI.Graphics();L.fx.addChild(compassG);
 let rocketN=0,inkT=0,crayonN=0,ironAmt=0,vinegarAmt=0,goldAmt=0,volT=0;const ironG=new PIXI.Graphics(),sproutG=new PIXI.Graphics();
@@ -2058,8 +2099,8 @@ const flasks=MUTATIONS.map(m=>{const b=document.createElement('button');b.classN
   flaskRow.appendChild(b);return b;});
 const TRAY_GROUPS=[['방울·액체',['dye','milk','honey','cola','soju','vinegar','ink','glitter','gold']],
   ['가루·알갱이',['sugar','salt','soda','yeast','ramen','tablet','rice','sand','iron']],
-  ['과일·채소',['lemon','banana','melon','potato','kimchi','garlic','chili','seed','leaf','clover']],
-  ['간식·음식',['mentos','gummy','popcorn','poprock','cotton','marsh','choco','cheese','icecream','mint','coffee','teabag','noodle','egg','laver','curry','tofu','sausage']],
+  ['과일·채소',['lemon','banana','melon','potato','kimchi','garlic','miyeok','chili','seed','leaf','clover']],
+  ['간식·음식',['mentos','gummy','popcorn','poprock','cotton','marsh','choco','cheese','icecream','mint','coffee','teabag','noodle','egg','laver','curry','tofu','sausage','doenjang','eomuk']],
   ['차갑고 뜨거운 것',['ice','dryice','sodium','sparkler','candle','pumice']],
   ['전기·자석·빛',['battery','magnet','bulb','glowstick']],
   ['움직이는 장난감',['fish','sub','shark','warship','rocket','duck','penguin','dino']],
@@ -2321,7 +2362,7 @@ function restoreBeaker(){
   shards.forEach(s=>P.shard.put(s.s));shards.length=0;drainTarget=0;rpm=0;
   Flood.stop();sweep.forEach(s=>{s.el.style.transition='transform .9s cubic-bezier(.2,.9,.3,1.2)';s.el.style.transform='';});setTimeout(()=>sweep.forEach(s=>s.el.style.transition=''),1000);sweep.length=0;
 }
-function resetAll(){brothOn=0;chiliOn=0;curryAmt=0;strands.length=0;lemonadeDone=false;rocketN=0;crayonN=0;inkT=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
+function resetAll(){djAmt=0;stewT={};brothOn=0;chiliOn=0;curryAmt=0;strands.length=0;lemonadeDone=false;rocketN=0;crayonN=0;inkT=0;ironAmt=0;vinegarAmt=0;goldAmt=0;volT=0;clearPlankton();endDragon();electroT=0;interestT=0;interestN=0;butterT=0;quakeLv=0;aftT=0;quakeT=0;cream=0;honeyV=0;coffeeAmt=0;dalgonaT=0;naBooms=[];onceFx={};fountainT=0;colaFizz=0;teaAmt=0;
   if(mode==='broken'){$('modal').classList.remove('on');restoreBeaker();}
   items.slice().forEach(i=>{if(!i.dead)removeItem(i);});items.length=0;mut.active=null;mut.amt=0;tint.amt=0;boostTime=0;clarity=0;rpm=0;stress=0;cracks=[];crackG.clear();
   for(let i=0;i<N;i++){sh[i]=0;sv[i]=0;}
@@ -2356,7 +2397,7 @@ app.ticker.add(()=>{
   clarity=Math.max(0,clarity-dt*.012);look.opacity*=1-clarity*.45;
   if(cream>0){look.top=mixC(look.top,0xfdfbf6,cream*.6);look.bottom=mixC(look.bottom,0xe9e2d6,cream*.45);look.opacity=Math.min(1,look.opacity+cream*.55);cream=Math.max(0,cream-dt*.008);}
   if(honeyV>0){look.sheen+=honeyV*.4;honeyV=Math.max(0,honeyV-dt*.015);}
-  heatBoost*=Math.exp(-dt/14);if(burnerT>0){burnerT-=dt;heatBoost+=dt*18;}
+  heatBoost*=Math.exp(-dt/14);if(burnerT>0){burnerT-=dt;heatBoost+=dt*12;}
   curTemp=look.temp>=9000?9999:look.temp+heat*(4+look.hot*160)-clarity*8-chill*60+heatBoost;
   // 영하 10도 아래에서 서서히 결빙 (젓고 있으면 잘 얼지 않음), 따뜻해지면 녹음
   if(mode==='play'){if(curTemp<-10)freeze=Math.min(1,freeze+dt*clamp((-10-curTemp)/60,.05,.8)*.05*Math.max(0,1-rpmN*1.1));
@@ -2614,7 +2655,7 @@ function updateItems(dt){
         Body.applyForce(b,p,{x:it.dir*b.mass*7e-4*Math.min(1,it.life*3),y:(it.ty-p.y)*b.mass*5e-6});Body.setAngle(b,Math.sin(T*12)*.12);Body.setAngularVelocity(b,0);
         if(Math.random()<dt*3)spawnBubble(p.x-it.dir*16,p.y,rand(1,2.2));}}
     if(it.alive&&it.sub>.1){if(!it.dir)it.dir=1;if(p.x<BX+60)it.dir=1;else if(p.x>BR-60)it.dir=-1;Body.applyForce(b,p,{x:it.dir*b.mass*5e-4,y:(LEVEL+90-p.y)*b.mass*3e-6});if(Math.random()<dt*2)bolt(p.x,p.y,p.x+rand(-60,60),p.y+rand(-50,50),.12,1.6);}
-    if(it.type==='meteorite'){if(it.heat===undefined)it.heat=1;it.heat=Math.max(0,it.heat-dt/25);it.up.tint=it.dn.tint=mixC(0xffffff,0xff8a3c,it.heat);heatBoost+=dt*25*it.heat;
+    if(it.type==='meteorite'){if(it.heat===undefined)it.heat=1;it.heat=Math.max(0,it.heat-dt/25);it.up.tint=it.dn.tint=mixC(0xffffff,0xff8a3c,it.heat);heatBoost+=dt*12*it.heat;
       if(it.heat>.3&&it.sub>.3&&Math.random()<dt*14)spawnBubble(p.x+rand(-8,8),p.y-6,rand(2,4));if(it.heat>.3&&Math.random()<dt*4)spawnFog(p.x,surfaceAt(p.x)-3,true);}
     if(it.type==='glowstick'){it.life-=dt/ITEMS.glowstick.life;if(it.sub>.2&&!it.light){Snd.snap();it.light=new PIXI.Sprite(TX.glow);it.light.anchor.set(.5);it.light.blendMode=ADD;it.light.tint=[0x5cff9d,0xff5cd6,0x5cd8ff][Math.random()*3|0];lc.stars.addChild(it.light);Snd.item('glowstick',10);}
       if(it.light){const a=Math.max(0,it.life);it.light.position.set(p.x,p.y);it.light.width=it.light.height=230+Math.sin(T*3)*12;it.light.alpha=.55*a;it.up.tint=it.dn.tint=mixC(0x555555,0xffffff,a);}}
@@ -2657,7 +2698,7 @@ function updateItems(dt){
         it.light.position.set(tx,ty);it.light.width=it.light.height=(110+Math.random()*50)*a+50;it.light.alpha=(.45+Math.random()*.15)*a;
         for(let k=0;k<3;k++)if(Math.random()<dt*16)spawnEmber(tx,ty,rand(-230,230),rand(-280,120),Math.random()<.6?0xffe08a:0xffffff,rand(.15,.4),rand(.08,.18),400);
         if(Math.random()<dt*14)Snd.crackle();
-        if(it.sub>.3){heatBoost+=dt*14;if(Math.random()<dt*24)spawnBubble(tx+rand(-5,5),ty,rand(1.5,3));}
+        if(it.sub>.3){heatBoost+=dt*6;if(Math.random()<dt*24)spawnBubble(tx+rand(-5,5),ty,rand(1.5,3));}
         items.forEach(o=>{if(!o.dead&&o.type==='popcorn'&&!o.popped&&Math.hypot(o.body.position.x-tx,o.body.position.y-ty)<80)o.sparkHot=true;});
         it.up.tint=mixC(0x6a5f52,0xffffff,a);}
       else{if(it.light){it.light.destroy();it.light=null;Snd.hiss();}if(it.life<-.2)it.fading=true;}}
@@ -2678,7 +2719,7 @@ function updateItems(dt){
       if(Math.random()<dt*18){const c=[0xff5fae,0x5fd8ff,0xffe25f,0x9dff6a][Math.random()*4|0];for(let k=0;k<4;k++)spawnEmber(p.x+rand(-8,8),p.y+rand(-6,6),rand(-90,90),rand(-120,40),c,rand(.15,.35),rand(.08,.15),200);
         Snd.crackle();if(Math.random()<.3)impulse(p.x,-1.5,2);Body.applyForce(b,p,{x:rand(-1,1)*b.mass*.003,y:-rand(0,1)*b.mass*.002});}}
     // ---- 청양고추: 매운맛이 우러나며 뜨거워짐 / 풀린 면과 만나면 불닭 ----
-    if(it.type==='chili'&&it.sub>.3){it.size-=dt/ITEMS.chili.dissolve*(1+rpmN)*clamp(dissolveF,.3,3)*.6;heatBoost+=dt*9;tint.color=0xd81a0c;tint.amt=Math.min(.5,tint.amt+dt*.04);
+    if(it.type==='chili'&&it.sub>.3){it.size-=dt/ITEMS.chili.dissolve*(1+rpmN)*clamp(dissolveF,.3,3)*.6;heatBoost+=dt*3;tint.color=0xd81a0c;tint.amt=Math.min(.5,tint.amt+dt*.04);
       if(Math.random()<dt*5)spawnEmber(p.x+rand(-12,12),p.y,rand(-20,20),rand(-80,-30),0xff4a1a,rand(.4,.8),rand(.1,.2),-40);if(Math.random()<dt*1.5)Snd.sizzle();
       if(!onceFx.buldak&&items.some(o=>!o.dead&&o.type==='noodle'&&o.loose)){onceFx.buldak=1;triggerSpecial('buldak');}}
     // ---- 마시멜로: 뜨거우면 부풀어 녹고, 불꽃에 구워짐 ----
@@ -2718,7 +2759,7 @@ function updateItems(dt){
     // ---- 전기뱀장어가 된 물고기 ----
     if(it.eel&&it.sub>.1&&Math.random()<dt*3){bolt(p.x,p.y,p.x+rand(-80,80),p.y+rand(-60,60),.12,1.8,0x9effe0);Snd.spark();}
     if(it.cosmic&&Math.random()<dt*20)spawnEmber(p.x,p.y,rand(-20,20),rand(-20,20),0xfff2a8,rand(.6,1.2),rand(.15,.3),0);
-    if(it.type==='ice'||it.type==='sugar'||it.type==='ramen'||it.type==='dryice'||it.type==='soap'||it.type==='gummy'||it.type==='salt'||it.type==='tablet'||it.type==='popcorn'||(it.type==='dino'&&!it.giant)||it.type==='snow'||it.type==='noodle'||it.type==='coffee'||it.type==='cotton'||it.type==='poprock'||it.type==='chili'||it.type==='marsh'||it.type==='crystal'||it.type==='teabag'||it.type==='yeast'||it.type==='choco'||it.type==='soda'||it.type==='icecream'||it.type==='mint'||it.type==='cheese'||it.type==='crayon'||it.type==='melon'||it.type==='pearl'||it.type==='candle'||it.type==='curry'){const ns=Math.max(.05,it.size);const prevS=it.lastS||1;if(Math.abs(prevS-ns)>.02){Body.scale(b,ns/prevS,ns/prevS);it.lastS=ns;}
+    if(it.type==='ice'||it.type==='sugar'||it.type==='ramen'||it.type==='dryice'||it.type==='soap'||it.type==='gummy'||it.type==='salt'||it.type==='tablet'||it.type==='popcorn'||(it.type==='dino'&&!it.giant)||it.type==='snow'||it.type==='noodle'||it.type==='coffee'||it.type==='cotton'||it.type==='poprock'||it.type==='chili'||it.type==='marsh'||it.type==='crystal'||it.type==='teabag'||it.type==='yeast'||it.type==='choco'||it.type==='soda'||it.type==='icecream'||it.type==='mint'||it.type==='cheese'||it.type==='crayon'||it.type==='melon'||it.type==='pearl'||it.type==='candle'||it.type==='curry'||it.type==='doenjang'){const ns=Math.max(.05,it.size);const prevS=it.lastS||1;if(Math.abs(prevS-ns)>.02){Body.scale(b,ns/prevS,ns/prevS);it.lastS=ns;}
       if(it.size<(it.type==='ice'||it.type==='dryice'?.22:.15)){if(it.type==='ice'||it.type==='dryice')burstPlume(p.x,p.y,0xffffff,8,8);removeItem(it);continue;}}
     if(it.type==='ice'&&(p.x<BX-GT||p.x>BR+GT)&&p.y>TABLE_Y-40){const m=dt/16;it.size-=m;if(!it.puddle)it.puddle=makePuddle(p.x);
       it.puddle.x=lerp(it.puddle.x,p.x,.1);it.puddle.amt=Math.min(1.3,it.puddle.amt+m*1.5);it.up.alpha=it.alpha*(.75+.25*it.size);}
@@ -3387,6 +3428,20 @@ function updateExtras(dt){
     if(o.type==='potato'&&o.sub>.1){if(curTemp>90){o.st=(o.st||0)+dt;if(Math.random()<dt*6)spawnFog(P2.x+rand(-10,10),surfaceAt(P2.x)-4,true);if(o.st>4&&!o.steamed){o.steamed=1;o.up.tint=o.dn.tint=0xfff0c0;if(!onceFx.steamPotato){onceFx.steamPotato=1;triggerSpecial('steamPotato');}}}
       if(items.some(c3=>!c3.dead&&c3.type==='coin'&&c3.sub>.1)){const bs=items.filter(b3=>!b3.dead&&b3.type==='bulb');bs.forEach(b3=>{b3.lit=Math.max(b3.lit||0,.45);});
         if(bs.length&&!onceFx.potatoBattery){onceFx.potatoBattery=1;triggerSpecial('potatoBattery');}if(bs.length&&Math.random()<dt*2){const c4=items.find(c3=>!c3.dead&&c3.type==='coin').body.position;bolt(P2.x,P2.y,c4.x,c4.y,.1,1.2,0xe8ff9a);}}}});
+  // 국·찌개 / 분식
+  {const dj=items.filter(i=>!i.dead&&i.type==='doenjang'&&i.sub>.3);if(dj.length){dj.forEach(d=>{d.size-=dt/ITEMS.doenjang.dissolve*(1+rpmN)*dissolveF;});djAmt=Math.min(1,djAmt+dt*.12);tint.color=0x9a7040;tint.amt=Math.min(.7,tint.amt+dt*.05);}}
+  {const hot=curTemp>90,tk=items.some(i=>!i.dead&&i.type==='rice'&&i.tteok&&i.sub>.1),has=t=>items.some(i=>!i.dead&&i.type===t&&i.sub>.05);
+    const cook=(id,cond,col)=>{if(onceFx[id]||!cond)return;stewT[id]=(stewT[id]||0)+dt;if(Math.random()<dt*8)spawnBubble(rand(BX+30,BR-30),LEVEL+rand(20,120),rand(1,2.4));if(stewT[id]>3){onceFx[id]=1;if(col){tint.color=col;tint.amt=Math.min(.8,tint.amt+.3);}triggerSpecial(id);}};
+    cook('doenjangStew',hot&&djAmt>.15&&has('tofu'),0x9a7040);
+    cook('tteokbokki',hot&&tk&&chiliOn,0xd8361a);
+    if(onceFx.tteokbokki&&brothOn&&!onceFx.rabokki){onceFx.rabokki=1;triggerSpecial('rabokki');}
+    cook('eomukTang',hot&&has('eomuk'),0xe8c890);
+    cook('tteokguk',hot&&tk&&has('egg'),0xfbf4e4);
+    cook('miyeokguk',hot&&has('miyeok'),0x4a7a3a);
+    cook('gamjatang',hot&&chiliOn&&has('potato'),0xc8501e);
+    if(!onceFx.bunsik&&tk&&has('eomuk')&&has('laver')){onceFx.bunsik=1;triggerSpecial('bunsik');}}
+  items.forEach(o=>{if(o.dead)return;if(o.type==='miyeok'&&o.sub>.1){Body.setAngle(o.body,Math.sin(T*1.3+o.th)*.3);}
+    if(o.type==='eomuk'&&o.sub>.05)Body.setAngle(o.body,Math.sin(T*1.6+o.th)*.12);});
   // 두부 / 소시지 / 마늘
   if(items.some(i=>!i.dead&&i.type==='ramen'&&i.sub>.3))brothOn=1;if(items.some(i=>!i.dead&&i.type==='chili'&&i.sub>.3))chiliOn=1;
   items.forEach(o=>{if(o.dead)return;const P2=o.body.position;
